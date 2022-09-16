@@ -158,10 +158,10 @@ class reader:
         for i in range(self.pathnum):
             # Calculate the weight of the path
             weight = 0
-            if(self.path_dist == 'normal'):
-                weight = round(np.random.randn(), 2)
-            elif(self.path_dist == 'uniform'):
-                weight = 1 / self.pathnum
+            if(self.path_dist == 'normal'): # Normal distribution
+                weight = np.random.binomial(n=100, p=0.5, size=1)[0] # Binomial approximation of the normal distribution
+            elif(self.path_dist == 'uniform'): # Uniform distribution
+                weight = 1 # Equal weight for all paths
             
             # Pick a path from the path stack randomly
             path = self.path_stack[np.random.randint(0, len(self.path_stack))]
@@ -181,7 +181,7 @@ if(__name__ == '__main__'):
     entry_points    = ['A','C','E','G']     # Points that are valid for entering the traffic system
     vrate           = 60                    # Rate of vehicles coming in from each entry point
     paths_to_gen    = 6                     # How many paths to generate
-    path_dist    = 'normal'              # One of 'normal', 'uniform' 
+    path_dist    = 'uniform'              # One of 'normal', 'uniform' 
     
     r = reader(filename, entry_points, vrate, paths_to_gen, path_dist)
     roads, vehicle_mtx = r.get_matrices()

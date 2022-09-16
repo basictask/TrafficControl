@@ -6,17 +6,27 @@ This is a demonstration of how a city can be set up with a geogebra construction
 
 @author: daniel_kuknyo
 """
+
 # Imports
 from trafficSimulator import *
 from city_constructor import reader
 
 #%% Set up the reader
 
-filepath        = 'cities/simple_color.html'    # A .html GeoGebra construction protocol
-entry_points    = ['A','C','E','G']             # Points that are valid for entering the traffic system
-vrate           = 60                            # Rate of vehicles coming in from each entry point
-paths_to_gen    = 6                             # How many paths to generate
-path_dist    = 'normal'                         # One of 'normal', 'uniform' 
+# A .html GeoGebra construction protocol
+filepath = 'cities/simple.html'
+
+# Points that are valid for entering the traffic system
+entry_points = ['A','C','E','G']
+
+# Rate of vehicles coming in from each entry point
+vrate = 60
+
+# How many paths to generate
+paths_to_gen = 3
+
+# One of 'normal', 'uniform' 
+path_dist = 'uniform'                   
 
 r = reader(filepath, entry_points, vrate, paths_to_gen, path_dist)
 roads, vehicle_mtx = r.get_matrices()
