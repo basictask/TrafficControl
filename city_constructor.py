@@ -3,7 +3,10 @@
 import pandas as pd
 import random as rnd
 import numpy as np
+import inspect
 import re
+
+# TODO: add_point, add_segment, redo_config
 
 #%% Class definition
 
@@ -22,11 +25,29 @@ class reader:
         
         # Set up inner params
         self.read()                 # Read the file
+        self.redo_config()          # Re-generate all the necessary configurations
+    
+    def redo_config(self):
+        # Regenerate all the necessary configurations
         self.gen_road_mtx()         # Create a matrix of all the roads (locs)
         self.gen_path_graph()       # Construct a graph of all nodes
         self.gen_paths()            # Find possible paths in the graph
         self.gen_vehicle_mtx()      # Create the matrix of the paths
-                
+    
+    def assemble_segments(self, df_segments, add_reversed):
+        # Assemble into segment map
+        if(add_reversed): # If this is turned on all added streets will be bidirectional
+            forward_segm = list(df_segments['Definition'])
+            reverse_segm = [(x[1], x[0]) for x in df_segments['Definition']] # Reverse all connections
+            forward_segm.extend(reverse_segm)
+            df_segments = pd.DataFrame({'Definition':forward_segm}, index=range(len(forward_segm)))
+            
+        df_segments.sort_values('Definition', ignore_index=True)
+        segment_map = {x:y for x,y in zip(df_segments['Definition'], list(df_segments.index))}
+        
+        self.segment_map = segment_map
+        self.segments = df_segments
+                               
     def read(self):
         # Read the file
         df = pd.read_html(self.filepath)[0]
@@ -53,19 +74,47 @@ class reader:
         df_segments['Definition'] = [tuple(x) for x in df_segments['Definition']]
         df_segments.drop('Value', axis=1, inplace=True)
         
-        # Assemble into segment map
-        forward_segm = list(df_segments['Definition'])
-        reverse_segm = [(x[1], x[0]) for x in df_segments['Definition']]
-        forward_segm.extend(reverse_segm)
-        
-        df_segments = pd.DataFrame({'Definition':forward_segm}, index=range(len(forward_segm)))
-        df_segments.sort_values('Definition', ignore_index=True)
-        segment_map = {x:y for x,y in zip(df_segments['Definition'], list(df_segments.index))}
-        
-        self.segment_map = segment_map
         self.points = locations
-        self.segments = df_segments
+        self.assemble_segments(df_segments, add_reversed=True) # Create the segment map and list segments
+
+    def check_valid_segment(self, start, end):                  ############ ITT TARTOK SZEGMENS VALIDALAST MEGCSINALNI#####
+        # Checks if a segment is valid in order to remove it or add it
+        if(start == end):
+            return False
+        elif(start not in self.points.keys()):
+            return False
+        elif(end not in self.points.keys()):
+            return False
+        elif(inspect.stack()[1].function == 'add_segment'):
+            if((start, end) in set(self.segments['Definition'])):
+                return False
+        elif(inspect.stack()[1].function == 'remove_segment'):
+            if((start, end) not in set(self.segments['Definition'])):
+                return False
+        return True
         
+    def add_segment(self, start, end):
+        # Adds a segment to the matrix between existing points
+        # Invalid cases --> negative reward
+        if(self.check_valid_segment(start, end)):
+            df_segments = pd.concat([self.segments, pd.DataFrame({'Definition':[(start, end)]})],ignore_index=True,axis=0)
+            self.assemble_segments(df_segments, add_reversed=False)
+            self.redo_config()
+        else:
+            return 0
+    
+    def remove_segment(self, start, end):
+        # Removes a segment specified by start and end
+        if(self.check_valid_segment(start, end)): # The entered points are valid
+            i = 0
+            while(self.segments['Definition'][i] != (start, end)):
+                i += 1
+            self.segments.drop(i, axis=0, inplace=True) # Remove element with the marked index
+            self.segments.index = np.arange(len(self.segments)) # Reset indices
+            self.redo_config() # reset the environment
+        else:
+            return 0
+            
     def gen_road_mtx(self):
         # Creates the matrix that is used to generate the roads
         lst = []

@@ -18,7 +18,7 @@ class Window:
         """Set default configuration"""
         self.width = 1400
         self.height = 900
-        self.bg_color = (250, 250, 250)
+        self.bg_color = (50, 150, 50)
 
         self.fps = 60
         self.zoom = 5
