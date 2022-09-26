@@ -27,14 +27,14 @@ def start_sim(roads, vehicle_mtx, offset, steps_per_update):
     
 #%% Set up the reader from a .html GeoGebra construction protocol
 
-filepath = 'cities/simple.html'
+# filepath = 'cities/simple.html'
 # filepath = 'cities/starcity.html'
-# filepath = 'cities/bakats.html'
+filepath = 'cities/bakats.html'
 
 # Points that are valid for entering the traffic system
-entry_points = ['A','C','E','G'] # Simple
+# entry_points = ['A','C','E','G'] # Simple
 # entry_points = ['A','D','F','H','J'] # Star city
-# entry_points = ['P','O','Q','M','K','J','T','S','R','G','E','F'] # Bakats area 
+entry_points = ['P','O','Q','M','K','J','T','S','R','G','E','F'] # Bakats area 
 
 # Rate of vehicles coming in from each entry point
 vrate = 60

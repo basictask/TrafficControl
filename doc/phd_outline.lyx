@@ -1,0 +1,951 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\float_placement H
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Traffic Control and Infrastructure Organization Using Reinforcement Learning
+\end_layout
+
+\begin_layout Author
+Daniel Kuknyo
+\end_layout
+
+\begin_layout Date
+2022.09.26.
+\end_layout
+
+\begin_layout Address
+PhD / MsC outline
+\end_layout
+
+\begin_layout Part
+Introduction
+\end_layout
+
+\begin_layout Standard
+In recent years the traffic of cities became a rising topic with more and
+ more city governments realizing that a motor-focused city design is unsustainab
+le.
+ Cities all around western Europe have started designing their cities around
+ humans and public transit, and not around cars.
+ E.g.
+ Paris is planning to be a 15-minute city, Barcelona is incorporating the
+ superblock design, Finland is creating non-intersecting paths between the
+ common intersections and the Dutch are using intelligent traffic light
+ systems to manipulate traffic flow in order to optimize it for both cars
+ and pedestrians.
+ 
+\end_layout
+
+\begin_layout Standard
+If one takes a look at how the Dutch infrastructure is designed, they will
+ see that despite having less car lanes and overall less space for cars,
+ the traffic flows more smoothly.
+ This is thanks to the intelligent design of intersections, traffic lights
+ and infrastructure.
+ The methodology of this has been known ever since the 1970s, but the auto
+ industry has been fighting against it ever since in order to gain more
+ market.
+ In Northern America one can observe what happens if a city is designed
+ with cars in mind, requiring everyone to own a vehicle in order to participate
+ in society.
+ This results in worse accessibility to the city for the disabled, incapable,
+ elderly and young people as well.
+ The methodology of how to create walkable, human-centered and intelligent
+ infrastructure that is optimal for both pedestrians and cars is laid out
+ in detail by books from authors such as Strong Towns, an urban planning
+ organization.
+\end_layout
+
+\begin_layout Standard
+The aim for this research is to able to model a system of roads or city,
+ and being able to pinpoint mistakes made by development engineers, with
+ the goal in mind to make the city more humanly livable, liquidate urban
+ highways and make traffic infrastructure more efficient.
+\end_layout
+
+\begin_layout Part
+Goals and Outline
+\end_layout
+
+\begin_layout Standard
+The project will focus on building an interface that models traffic flow
+ in a graph-based structure, then train a reinforcement learning algorithm
+ to find the optimal configuration of the roads in order to transport the
+ most cars in the most effective way possible.
+ Here's when the urban design principles come in: one can easily observe
+ that the most effective way to transport as many cars as possible is if
+ all roads are 8-lane highways.
+ However it's also easy to see that it's miserable to live in a city where
+ there are no quiet, auto-low streets and only 8-lane highways.
+ This might be the best configuration for cars, but it would make the life
+ of people living in the city absolutely horrible.
+ The rewarding system of the reinforcement learning environment will be
+ designed in order to reflect these principles: building cost, traffic light/rou
+ndabout tradeoffs, how humans would feel living next to the road.
+ The agent will have to decide where to build, destruct, or make roads 1-way
+ to make the city's transportation flow dynamic but also make it livable
+ for humans.
+ The rewarding scheme will reflect the principles laid down by Strong Towns
+ and other urban planning organizations significant in the field like Happy
+ Cities: Transforming Our Lives through urban design.
+\end_layout
+
+\begin_layout Part
+Methodology
+\end_layout
+
+\begin_layout Section
+Constructing a city 
+\end_layout
+
+\begin_layout Standard
+The developed software will provide an interface where the user can make
+ a graph, describing the intersections (nodes) and roads (edges) of the
+ city in question.
+ This for example can be done in GeoGebra and exported into a construction
+ protocol in order to work as an input for the model.
+ Below is an example simple city constructed:
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename simple_city.png
+	width 8cm
+	height 8cm
+	keepAspectRatio
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The interface will read a construction protocol, construct a graph and all
+ the possible pathways from it.
+ And create a starting configuration with 2-way roads between all the nodes
+ of the graph.
+ The vehicle rate and distribution can be controlled before starting the
+ simulation.
+ A constructed 
+\begin_inset Quotes eld
+\end_inset
+
+starting
+\begin_inset Quotes erd
+\end_inset
+
+ city according to the previously shown graph will look like as follows:
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename simple_city_road.png
+	width 8cm
+	height 8cm
+	keepAspectRatio
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So far this is a simple configuration for demonstration.
+ The vehicles are passing from one entry point to another, without necessarily
+ choosing the shortest path, or being evenly distributed among all the roads,
+ just as one would find in real life.
+ The drivers' model will incorporate an intelligent behavior, like slowing
+ down after the car in front is slowing down or gradually speeding up after
+ a light has turned green with a comfortable acceleration parameter.
+ 
+\end_layout
+
+\begin_layout Standard
+The road configuration will be examined with multiple metrics like how many
+ steps does it take for the roads to transport 100 cars or how much the
+ road infrastructure would cost.
+ If the agent is handed a road configuration it will be able to find the
+ optimal one, with the least cost, least unnecessary roads and fastest transport
+ation for a given amount of cars.
+ 
+\end_layout
+
+\begin_layout Standard
+As a distant goal it would also be reasonable for the application to accept
+ Osmosis data and construct a graph based on that.
+ This would require a more sophisticated preprocessor as the Osmosis data
+ would have to be stripped of metadata and guarantees of format conversions
+ between world-coordinates and graph-node coordinates would have to be implement
+ed.
+ However it is possible to convert into the inner representation format
+ of the road simulation module.
+ 
+\end_layout
+
+\begin_layout Section
+Deep learning configuration
+\end_layout
+
+\begin_layout Subsection
+Action space
+\end_layout
+
+\begin_layout Standard
+A starting configuration will provide the agent with a 2-way road between
+ each graph node.
+ From here on the goal is to add / destroy roads, lanes and intersections
+ in order to optimize the throughput and cost of the road.
+ Each action of the agent will take two graph nodes as a parameter and the
+ roads will be configured accordingly.
+ Any action for node 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ will assume a single directed edge 
+\begin_inset Formula $A\rightarrow B$
+\end_inset
+
+ starting for 
+\begin_inset Formula $A$
+\end_inset
+
+ and ending in 
+\begin_inset Formula $B$
+\end_inset
+
+.
+ There are cases where semantically it would make more sense to have more
+ or less than 2 parameters but these cases can be generalized to an action
+ with two parameters and hence be channeled into a neural network output
+ of the same shape and size as all other cases.
+\end_layout
+
+\begin_layout Standard
+The list of actions for the discrete action space: 
+\end_layout
+
+\begin_layout Enumerate
+
+\shape italic
+add_lane(
+\begin_inset Formula $A,B$
+\end_inset
+
+): 
+\emph on
+Adds a single one way lane going from 
+\begin_inset Formula $A\rightarrow B$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\emph on
+remove_lane(
+\begin_inset Formula $A,B$
+\end_inset
+
+): 
+\emph default
+Removes a single lane going from 
+\begin_inset Formula $A\rightarrow B$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\emph on
+add_road(
+\begin_inset Formula $A,B$
+\end_inset
+
+): 
+\emph default
+Adds two lanes between the nodes 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ going 
+\begin_inset Formula $A\rightarrow B$
+\end_inset
+
+ and 
+\begin_inset Formula $B\rightarrow A$
+\end_inset
+
+.
+ Only valid in case of nodes that don't have edges connecting them.
+\end_layout
+
+\begin_layout Enumerate
+
+\emph on
+remove_road(
+\begin_inset Formula $A,B$
+\end_inset
+
+): 
+\emph default
+Removes two lanes between nodes 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ going from 
+\begin_inset Formula $A\rightarrow B$
+\end_inset
+
+ and 
+\begin_inset Formula $B\rightarrow A$
+\end_inset
+
+.
+ Only valid between nodes that have edges connecting them.
+ 
+\end_layout
+
+\begin_layout Enumerate
+
+\emph on
+add_trafficlight(
+\begin_inset Formula $A,B$
+\end_inset
+
+): 
+\emph default
+Creates a traffic light system to all roads entering the intersection of
+ graph node 
+\begin_inset Formula $B$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\emph on
+add_roundabout(
+\begin_inset Formula $A,B$
+\end_inset
+
+): 
+\emph default
+Adds a roundabout to all roads entering the intersection of graph node 
+\begin_inset Formula $B$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\emph on
+reset_intersection(
+\begin_inset Formula $A,B$
+\end_inset
+
+): 
+\emph default
+Removes current traffic light and roundabout infrastructure to create a
+ right-hand priority intersection in graph node 
+\begin_inset Formula $B$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+State space
+\end_layout
+
+\begin_layout Subsubsection*
+Representation
+\end_layout
+
+\begin_layout Standard
+First, the plan will focus on how to represent a certain type of road between
+ two nodes.
+ The state between graph node 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ will have to be represented by a single number in every case.
+ The bases that this scalar value will have to cover the number of lanes
+ between 
+\begin_inset Formula $A\rightarrow B$
+\end_inset
+
+ and the type of intersection in the node 
+\begin_inset Formula $B$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+For a state-vector element corresponding to the one-way connection between
+ nodes 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ the possible values are as follows:
+\end_layout
+
+\begin_layout Enumerate
+One-lane road between 
+\begin_inset Formula $A\rightarrow B\Longrightarrow1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Two-lane road betwen 
+\begin_inset Formula $A\rightarrow B\Longrightarrow2$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Two-way road, one lane in each direction: 
+\begin_inset Formula $A\rightarrow B\Longrightarrow1;$
+\end_inset
+
+ 
+\begin_inset Formula $B\rightarrow A\Longrightarrow1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Two way road, two lanes in each direction: 
+\begin_inset Formula $A\rightarrow B\Longrightarrow2;$
+\end_inset
+
+ 
+\begin_inset Formula $B\rightarrow A\Longrightarrow2$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+One-lane road ending in roundabout between 
+\begin_inset Formula $A\rightarrow B\Longrightarrow$
+\end_inset
+
+11.
+\end_layout
+
+\begin_layout Enumerate
+Two-lane road ending in a traffic light junction between 
+\begin_inset Formula $A\rightarrow B\Longrightarrow22$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The state vector keeps track of the connections in a directed fashion, storing
+ the number of lanes from 
+\begin_inset Formula $A\rightarrow B$
+\end_inset
+
+ and 
+\begin_inset Formula $B\rightarrow A$
+\end_inset
+
+ in separate values.
+ A single scalar of 
+\begin_inset Formula $k$
+\end_inset
+
+ means that it's a 
+\begin_inset Formula $k$
+\end_inset
+
+-laned road ending in a right-hand priority intersection without any dedicated
+ infrastructure.
+ A scalar of value 
+\begin_inset Formula $10<k<20$
+\end_inset
+
+ means that the road ends in a roundabout.
+ A scalar of value 
+\begin_inset Formula $20<k<30$
+\end_inset
+
+ means that the road ends in a traffic light based junction.
+ The last digit always translates to the number of lanes going from 
+\begin_inset Formula $A\rightarrow B$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
+Naive implementation
+\end_layout
+
+\begin_layout Standard
+The state space requires precise designing and execution as there's a possibilit
+y of exponential explosion if it's represented using an all-to-all fashion.
+ If the state space keeps track of all the incoming connections from all
+ the nodes to all other nodes, for a graph 
+\begin_inset Formula $G$
+\end_inset
+
+ of 
+\begin_inset Formula $k$
+\end_inset
+
+ nodes the state space will require a vector of length 
+\begin_inset Formula $k^{2}-k$
+\end_inset
+
+.
+ There's no need to record the recusive connections.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="9">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $...$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{k}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{k}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{k}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{k}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $N_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $...$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{k}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $...$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $...$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{k-1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This gives reason to explore the possibilities of being able to shorten
+ the state space vector by eliminating connectioins that are for sure not
+ going to participate in the learning.
+\end_layout
+
+\begin_layout Subsubsection*
+Radius-based approach
+\end_layout
+
+\begin_layout Standard
+It's easy to notice that it isn't needed to have roads connecting all intersecti
+ons with all other intersections.
+ This would make the city a convoluted mess.
+ A valid approach to reduce the size of the state vector is to define a
+ radius around the nodes and only store the number of lanes between them.
+ 
+\end_layout
+
+\begin_layout Subsection
+Rewarding mechanism
+\end_layout
+
+\begin_layout Standard
+// Rewardin scheme comes here
+\end_layout
+
+\begin_layout Subsection
+Network architecture
+\end_layout
+
+\begin_layout Standard
+// Network architecture comes here
+\end_layout
+
+\end_body
+\end_document
