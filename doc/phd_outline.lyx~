@@ -28,7 +28,9 @@
 \output_sync 0
 \bibtex_command default
 \index_command default
+\float_placement H
 \paperfontsize default
+\spacing single
 \use_hyperref false
 \papersize default
 \use_geometry false
@@ -44,6 +46,7 @@
 \use_package undertilde 1
 \cite_engine basic
 \cite_engine_type default
+\biblio_style plain
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
@@ -184,6 +187,7 @@ The developed software will provide an interface where the user can make
 \begin_layout Standard
 \align center
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status collapsed
@@ -235,6 +239,7 @@ starting
 \begin_layout Standard
 \align center
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status collapsed
@@ -494,6 +499,142 @@ State space
 \end_layout
 
 \begin_layout Subsubsection*
+Representation
+\end_layout
+
+\begin_layout Standard
+First, the plan will focus on how to represent a certain type of road between
+ two nodes.
+ The state between graph node 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ will have to be represented by a single number in every case.
+ The bases that this scalar value will have to cover the number of lanes
+ between 
+\begin_inset Formula $A\rightarrow B$
+\end_inset
+
+ and the type of intersection in the node 
+\begin_inset Formula $B$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+For a state-vector element corresponding to the one-way connection between
+ nodes 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ the possible values are as follows:
+\end_layout
+
+\begin_layout Enumerate
+One-lane road between 
+\begin_inset Formula $A\rightarrow B\Longrightarrow1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Two-lane road betwen 
+\begin_inset Formula $A\rightarrow B\Longrightarrow2$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Two-way road, one lane in each direction: 
+\begin_inset Formula $A\rightarrow B\Longrightarrow1;$
+\end_inset
+
+ 
+\begin_inset Formula $B\rightarrow A\Longrightarrow1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Two way road, two lanes in each direction: 
+\begin_inset Formula $A\rightarrow B\Longrightarrow2;$
+\end_inset
+
+ 
+\begin_inset Formula $B\rightarrow A\Longrightarrow2$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+One-lane road ending in roundabout between 
+\begin_inset Formula $A\rightarrow B\Longrightarrow$
+\end_inset
+
+11.
+\end_layout
+
+\begin_layout Enumerate
+Two-lane road ending in a traffic light junction between 
+\begin_inset Formula $A\rightarrow B\Longrightarrow22$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The state vector keeps track of the connections in a directed fashion, storing
+ the number of lanes from 
+\begin_inset Formula $A\rightarrow B$
+\end_inset
+
+ and 
+\begin_inset Formula $B\rightarrow A$
+\end_inset
+
+ in separate values.
+ A single scalar of 
+\begin_inset Formula $k$
+\end_inset
+
+ means that it's a 
+\begin_inset Formula $k$
+\end_inset
+
+-laned road ending in a right-hand priority intersection without any dedicated
+ infrastructure.
+ A scalar of value 
+\begin_inset Formula $10<k<20$
+\end_inset
+
+ means that the road ends in a roundabout.
+ A scalar of value 
+\begin_inset Formula $20<k<30$
+\end_inset
+
+ means that the road ends in a traffic light based junction.
+ The last digit always translates to the number of lanes going from 
+\begin_inset Formula $A\rightarrow B$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
 Naive implementation
 \end_layout
 
@@ -683,7 +824,7 @@ y of exponential explosion if it's represented using an all-to-all fashion.
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $N_{...}$
+\begin_inset Formula $...$
 \end_inset
 
 
@@ -743,7 +884,7 @@ y of exponential explosion if it's represented using an all-to-all fashion.
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $N_{...}$
+\begin_inset Formula $...$
 \end_inset
 
 
@@ -778,11 +919,130 @@ This gives reason to explore the possibilities of being able to shorten
 \end_layout
 
 \begin_layout Subsubsection*
-Removing unneeded connections
+Radius-based approach
 \end_layout
 
 \begin_layout Standard
+It's easy to notice that it isn't needed to have roads connecting all intersecti
+ons with all other intersections.
+ This would make the city a convoluted mess.
+ A valid approach to reduce the size of the state vector is to define a
+ radius around the nodes and only store the number of lanes between them.
+ For this a radius parameter will have to be input in order to define the
+ possible connections before running the simulation.
+ On the image below an example of such a circle is shown for graph node
+ 
+\begin_inset Formula $E$
+\end_inset
 
+ with the radius of 150.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Exponential_radius.png
+	width 8cm
+	height 8cm
+	keepAspectRatio
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is fairly straightforward to see that this would result in a configuration
+ where no road's length exceeds the radius of the neighborhood.
+ This can be considered as a good design approach because it would eliminate
+ the need to build long and straight roads through the city which are shown
+ to be more dangerous regarding traffic accidents.
+ The reason for this is that motorists can go with higher speeds as the
+ road is wide and forgiving like a highway.
+ It is empirically shown that the best way to reduce speeds is to force
+ the drivers to obey speed limits by creating the geometry of the road in
+ a way that enforces it.
+ One won't go with 70-90 km/h on a street that is say 150 meters long.
+ 
+\end_layout
+
+\begin_layout Standard
+The disadvantage of this method is that the state vector would be unevenly
+ distributed between the nodes of the graph.
+ Some of the nodes would have more elements in the vector than others resulting
+ an unnecessary high representation.
+ It's also possible that an outlier node gets cut off from the rest, and
+ becomes an 'island' that is unreachable from anywhere.
+ This happening is considered a design fail.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+NN-based method
+\end_layout
+
+\begin_layout Standard
+The number of tracked connections in the state vector can also be reduced
+ if only the 
+\begin_inset Formula $m$
+\end_inset
+
+ nearest neighbors to a node is allowed.
+ This would allow for a more evenly distributed state representation as
+ for each node there's only a need to register 
+\begin_inset Formula $m$
+\end_inset
+
+ connections instead of 
+\begin_inset Formula $k-1$
+\end_inset
+
+.
+ This approach would however also limit the number of incoming connections
+ into a junction.
+ E.g.
+ if the parameter is set to 
+\begin_inset Formula $m=4$
+\end_inset
+
+ the previously shown graph would not be possible to construct and some
+ node may be separated from all other ones, isolating them from the rest
+ of the infrastructure.
+ This is considered a bad resolution of the problem.
+ 
+\end_layout
+
+\begin_layout Standard
+A combination of the previously mentioned methods can also be taken into
+ consideration in order to reduce the state vector size, e.g.
+ allowing connections from a specific radius but in cases where there's
+ not a sufficient number of possible neighboring nodes the system will have
+ to find the 
+\begin_inset Formula $m$
+\end_inset
+
+ closest nodes and keep track of roads coming and going from them.
+ 
 \end_layout
 
 \begin_layout Subsection

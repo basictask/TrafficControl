@@ -304,7 +304,55 @@ As a distant goal it would also be reasonable for the application to accept
 ed.
  However it is possible to convert into the inner representation format
  of the road simulation module.
- 
+ Osmosis construction has the following steps: 
+\end_layout
+
+\begin_layout Enumerate
+Highlight a map segment
+\end_layout
+
+\begin_layout Enumerate
+Load it into a graph
+\end_layout
+
+\begin_layout Enumerate
+Load the graph into a simulation
+\end_layout
+
+\begin_layout Standard
+The steps are visualized on the following graphics from left to right: 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename bakats_full_process.png
+	width 10cm
+	height 10cm
+	keepAspectRatio
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -928,7 +976,128 @@ ons with all other intersections.
  This would make the city a convoluted mess.
  A valid approach to reduce the size of the state vector is to define a
  radius around the nodes and only store the number of lanes between them.
+ For this a radius parameter will have to be input in order to define the
+ possible connections before running the simulation.
+ On the image below an example of such a circle is shown for graph node
  
+\begin_inset Formula $E$
+\end_inset
+
+ with the radius of 150.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Exponential_radius.png
+	width 8cm
+	height 8cm
+	keepAspectRatio
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is fairly straightforward to see that this would result in a configuration
+ where no road's length exceeds the radius of the neighborhood.
+ This can be considered as a good design approach because it would eliminate
+ the need to build long and straight roads through the city which are shown
+ to be more dangerous regarding traffic accidents.
+ The reason for this is that motorists can go with higher speeds as the
+ road is wide and forgiving like a highway.
+ It is empirically shown that the best way to reduce speeds is to force
+ the drivers to obey speed limits by creating the geometry of the road in
+ a way that enforces it.
+ One won't go with 70-90 km/h on a street that is say 150 meters long.
+ 
+\end_layout
+
+\begin_layout Standard
+The disadvantage of this method is that the state vector would be unevenly
+ distributed between the nodes of the graph.
+ Some of the nodes would have more elements in the vector than others resulting
+ an unnecessary high representation.
+ It's also possible that an outlier node gets cut off from the rest, and
+ becomes an 'island' that is unreachable from anywhere.
+ This happening is considered a design fail.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+NN-based method
+\end_layout
+
+\begin_layout Standard
+The number of tracked connections in the state vector can also be reduced
+ if only the 
+\begin_inset Formula $m$
+\end_inset
+
+ nearest neighbors to a node is allowed.
+ This would allow for a more evenly distributed state representation as
+ for each node there's only a need to register 
+\begin_inset Formula $m$
+\end_inset
+
+ connections instead of 
+\begin_inset Formula $k-1$
+\end_inset
+
+.
+ This approach would however also limit the number of incoming connections
+ into a junction.
+ E.g.
+ if the parameter is set to 
+\begin_inset Formula $m=4$
+\end_inset
+
+ the previously shown graph would not be possible to construct and some
+ node may be separated from all other ones, isolating them from the rest
+ of the infrastructure.
+ This is considered a bad resolution of the problem.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+Practical implementation
+\end_layout
+
+\begin_layout Standard
+A combination of the previously mentioned methods can also be taken into
+ consideration in order to reduce the state vector size, e.g.
+ allowing connections from a specific radius but in cases where there's
+ not a sufficient number of possible neighboring nodes the system will have
+ to find the 
+\begin_inset Formula $m$
+\end_inset
+
+ closest nodes and keep track of roads coming and going from them.
+ It's also worth noting that combining the advantages of the two methods
+ intelligently can yield a representation where each node has a specific,
+ even number of connections that is significantly less than the total number
+ of nodes in the system.
 \end_layout
 
 \begin_layout Subsection
@@ -936,7 +1105,41 @@ Rewarding mechanism
 \end_layout
 
 \begin_layout Standard
-// Rewardin scheme comes here
+At each time step in the reinforcement learning agent-environment framework,
+ the agent takes an action and as a result, the environment changes its
+ state and returns a reward to the environment.
+ The agent can also observe the environment through the state variable described
+ in the previous section.
+ This part will deal with the principles that will be reflected during sending
+ the reward signal to the agent.
+ The main directives like exact costs and traffic engineering perspectives
+ will be further explored in the literature review.
+ For now it's enough to deal with the main.
+\end_layout
+
+\begin_layout Standard
+The main goal for the agent is to build a city that is livable for humans
+ by keeping the number of lanes and roads to the minimum at all times.
+ If this constraint was not present, the agent could simply build 8-lane
+ highways in streets that are a few hundred meters long.
+ This would render being a pedestrian miserable.
+ It's also necessary to not build roads between nodes that is not necessary
+ from a transportation perspective.
+ If there's a reasonable detour between two endpoints, the cars should take
+ that road.
+\end_layout
+
+\begin_layout Subsubsection*
+Building lanes
+\end_layout
+
+\begin_layout Standard
+The cost of building a lane has to be taken into consideration.
+ It is more expensive to add new lanes to existing infrastructure than to
+ build the first lanes at the beginning.
+ This is because the sidewalk has to be destructed and then rebuilt.
+ Also traffic flow is slower in the time of the construction because of
+ closed roads, leading to congestions.
 \end_layout
 
 \begin_layout Subsection
