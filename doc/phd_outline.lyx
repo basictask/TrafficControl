@@ -356,6 +356,73 @@ status collapsed
 \end_layout
 
 \begin_layout Section
+Intelligent driver model
+\end_layout
+
+\begin_layout Standard
+The intelligent driver model is a time-continuous car following model for
+ the simulation of urban traffic.
+ It describes the behavior of the drivers.
+ and the positions of vehicles.
+ The model defines 6 parameters that influence how a driver behaves:
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $v_{0}$
+\end_inset
+
+: The desired velocity of the vehicle.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $T$
+\end_inset
+
+: Safe following time.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $a$
+\end_inset
+
+: Maximum acceleration.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $b$
+\end_inset
+
+: Comfortable deceleration.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\delta$
+\end_inset
+
+: Acceleration exponent.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $s_{0}$
+\end_inset
+
+: Minimum distance.
+\end_layout
+
+\begin_layout Standard
+Using these variables and the positions of other vehicles it is possible
+ at every time step to completely determine the position of every vehicle.
+ Furthermore, vehicles can influence eachothers' positions, as there can
+ be car pileups in an intersection with cars waiting for eachother.
+ This model will consider only cars of uniform size, without taking into
+ account other types of vehicles like vans and semitrucks.
+ Every driver is assumed to have the same skillset e.g.
+ safe following time, comfortable deceleration and so on.
+ This can be a fairly good approximation of a real world driver's parameters.
+ 
+\end_layout
+
+\begin_layout Section
 Deep learning configuration
 \end_layout
 
@@ -528,7 +595,7 @@ Adds a roundabout to all roads entering the intersection of graph node
 \begin_layout Enumerate
 
 \emph on
-reset_intersection(
+add_righthand(
 \begin_inset Formula $A,B$
 \end_inset
 
@@ -1130,7 +1197,7 @@ The main goal for the agent is to build a city that is livable for humans
 \end_layout
 
 \begin_layout Subsubsection*
-Building lanes
+Inter-node infrastructure
 \end_layout
 
 \begin_layout Standard
@@ -1140,6 +1207,234 @@ The cost of building a lane has to be taken into consideration.
  This is because the sidewalk has to be destructed and then rebuilt.
  Also traffic flow is slower in the time of the construction because of
  closed roads, leading to congestions.
+ Out of the 7 possible actions of the agent 4 are in relation to building
+ roads and lanes.
+ The relationship between them is the following:
+\end_layout
+
+\begin_layout Enumerate
+The cost of building and destroying is linearly dependend on the length
+ of the segment.
+ The length cost of a unit of lane is 
+\begin_inset Formula $l_{lane}.$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+The cost of building a unit (e.g.
+ meter) of one-way lane is: 
+\begin_inset Formula $c_{lane}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+The cost of building a lane is taken as 
+\begin_inset Formula $b_{lane}=c_{lane}*l_{lane}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+The cost of building a road is equivalent to building two lanes: 
+\begin_inset Formula $b_{road}=2b_{lane}=2*c_{lane}*l_{lane}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+The cost of destroying a lane is less than building a lane.
+ The coefficient parameter is denoted 
+\begin_inset Formula $\delta$
+\end_inset
+
+: 
+\begin_inset Formula $0<\delta<1$
+\end_inset
+
+ Then the cost of destroying is: 
+\begin_inset Formula $d_{lane}=\delta b_{lane}=\delta*c_{lane}*l_{lane}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Then the cost of destroying a road: 
+\begin_inset Formula $d_{road}=2\delta b_{lane}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The necessary inputs are: 
+\begin_inset Formula $c_{lane},\delta$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
+Intra-node infrastructure
+\end_layout
+
+\begin_layout Standard
+The next section will describe the cost of building different types of junctions.
+ The types of junctions in increasing order of cost are: 
+\end_layout
+
+\begin_layout Enumerate
+Right-hand intersection: it is the cheapest, however it is also the most
+ unsafe.
+ Cheap to build and to maintain.
+ Also inexpensive to convert to from all other types of junctions.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Roundabout: a reasonable tradeoff between cost and safety, however it is
+ difficult to destroy an intersection and build a roundabout in place of
+ it as it requires widening the intersection.
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename junction-roundabout.png
+	width 8cm
+	height 8cm
+	keepAspectRatio
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Traffic light: the most expensive and the safest type of junction is the
+ traffic light one as it requires dedicated infrastructure and the maintenance
+ costs are higher than in case of all the other junctions.
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename junction-trafficlight.png
+	width 8cm
+	height 8cm
+	keepAspectRatio
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As a graph node must be at all times assigned to a type of junction, and
+ each type can be converted into any other type, the relationship between
+ them can be defined by a triangle.
+ The cost of converting from one to another can be parametrized and can
+ be subject to change depending on how expensive building infrastructure
+ is on a given terrain or economical environment.
+ The conversion table is shown below: 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename intersection_relations.png
+	width 8cm
+	height 8cm
+	keepAspectRatio
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The conversion will require the inputs to and from each type of intersection,
+ as these are not necessarily functions on eachother.
+ Some dependency can be added later but that is independent of the current
+ high-level model.
+ The required inputs are: 
+\begin_inset Formula $\alpha,\alpha\prime,\beta,\beta\prime,\gamma,\gamma\prime$
+\end_inset
+
+.
+ Each variable represents a conversion between two types of infrastructure.
+ The prime version of the variable is the reversion of the same building
+ procedure.
+ The prime will always reflect a 'destruction' e.g.
+ demolishing an expensive piece of infrastructure and building a cheaper
+ one in place.
+ The non-prime variable will denote the building of a more expensive piece
+ of infrastructure from a cheaper one.
 \end_layout
 
 \begin_layout Subsection
