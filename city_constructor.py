@@ -5,6 +5,7 @@ import random as rnd
 import numpy as np
 import inspect
 import re
+import os
 
 # TODO: add_point, add_segment, redo_config
 
@@ -14,7 +15,9 @@ class reader:
     def __init__(self, filepath, entry_points, vrate, pathnum, path_dist):
         # Error checking
         if(path_dist not in ['normal','uniform']):
-            raise Exception('Invalid parameter for path distribution')
+            raise Exception('Invalid parameter for path distribution: ' + path_dist)
+        if(not os.path.exists(filepath)):
+            raise Exception('Input file not found: ' + filepath)
         
         # Params
         self.filepath = filepath
@@ -77,7 +80,7 @@ class reader:
         self.points = locations
         self.assemble_segments(df_segments, add_reversed=True) # Create the segment map and list segments
 
-    def check_valid_segment(self, start, end):                  ############ ITT TARTOK SZEGMENS VALIDALAST MEGCSINALNI#####
+    def check_valid_segment(self, start, end):
         # Checks if a segment is valid in order to remove it or add it
         if(start == end):
             return False
@@ -106,11 +109,17 @@ class reader:
     def remove_segment(self, start, end):
         # Removes a segment specified by start and end
         if(self.check_valid_segment(start, end)): # The entered points are valid
+            df_segments = self.segments
+            
             i = 0
-            while(self.segments['Definition'][i] != (start, end)):
+            while(df_segments['Definition'][i] != (start, end)):
                 i += 1
-            self.segments.drop(i, axis=0, inplace=True) # Remove element with the marked index
-            self.segments.index = np.arange(len(self.segments)) # Reset indices
+            if(i==len(df_segments)):
+                raise Exception('Cannot find segment: (' + start + ', ' + end + ')')
+            
+            df_segments.drop(i, axis=0, inplace=True) # Remove element with the marked index
+            df_segments.index = np.arange(len(df_segments)) # Reset indices
+            self.assemble_segments(df_segments, add_reversed=False)
             self.redo_config() # reset the environment
         else:
             return 0

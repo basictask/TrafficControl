@@ -5,5 +5,4 @@ from .simulation import *
 from .window import *
 from .vehicle_generator import *
 from .traffic_signal import *
-from .city_constructor import *
 from .sim_wrapper import *

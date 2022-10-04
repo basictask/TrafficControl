@@ -1295,6 +1295,38 @@ Right-hand intersection: it is the cheapest, however it is also the most
  Cheap to build and to maintain.
  Also inexpensive to convert to from all other types of junctions.
  
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename junction-twoway-intersection.png
+	width 8cm
+	height 8cm
+	keepAspectRatio
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Enumerate
@@ -1427,6 +1459,23 @@ The conversion will require the inputs to and from each type of intersection,
 \end_inset
 
 .
+ Each variable represents a conversion between two types of infrastructure.
+ The prime version of the variable is the reversion of the same building
+ procedure.
+ The prime will always reflect a 'destruction' e.g.
+ demolishing an expensive piece of infrastructure and building a cheaper
+ one in place.
+ The non-prime variable will denote the building of a more expensive piece
+ of infrastructure from a cheaper one.
+\end_layout
+
+\begin_layout Standard
+There are limiting factors to different types of junctions e.g.
+ how many roads can it intersect.
+ The roundabout is famous for being able to intersect five or more roads
+ without any problem, because of the structure of it.
+ Traffic lights can also have more roads than average coming in and out
+ of it.
  
 \end_layout
 
