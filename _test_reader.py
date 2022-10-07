@@ -1,6 +1,6 @@
 # Imports
 import os
-os.chdir('C:\\Users\\daniel_kuknyo\\Documents\\ELTE\\trafficControl')
+os.chdir('C:\\Users\\admin\\Documents\\ELTE\\trafficControl')
 
 from trafficSimulator import *
 from city_constructor import *

@@ -1,3 +1,15 @@
+# This is the internal creator of the road configuration. 
+# It handles adding and removing nodes from the graph. 
+# The input is a construction from Geogebra that contains points and segments. Any other geometric shape will be ignored.
+# The output is a vehicle matrix and roads.
+    
+# roads
+# It contains the data for road segments from node A --> B in the format (Ax, Ay) --> (Bx, By)
+
+# vehicle matrix
+# Contains the paths that vehicles take in the configuration: A --> B, B --> C, C --> D
+
+
 #%% Importing libraries
 
 import pandas as pd
