@@ -1,0 +1,25 @@
+digraph "ann_singlehead" { 
+    // Label properies 
+    label = "Action-prediction architecture"
+    labelloc = "top"
+    
+    // Make graph vertical 
+    rankdir = "LR"
+
+    // Defining nodes
+    input [label = "x"]
+    hidden1 [label = "h1"]
+    hidden2 [label = "..."]
+    A [label = "A"]
+    B [label = "B"]
+    x [label = "x(A,B)"]
+	action [label = "softmax(action)"]
+
+    // Defining connections
+    input -> hidden1
+    hidden1 -> hidden2
+    hidden2 -> action
+    A -> action
+    B -> action
+    x -> action
+}

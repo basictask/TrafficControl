@@ -1476,6 +1476,13 @@ There are limiting factors to different types of junctions e.g.
  without any problem, because of the structure of it.
  Traffic lights can also have more roads than average coming in and out
  of it.
+ For the most part right-hand intersections can handle at most four bidirectiona
+l roads.
+ This is because human attention cannot be focused to so many places at
+ the same time.
+ More roads will translate to a more dangerous environment and will require
+ highly dedicated infrastructure.
+ It is possible, but the cost will have to be tuned accordingly.
  
 \end_layout
 

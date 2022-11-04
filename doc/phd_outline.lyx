@@ -1459,9 +1459,8 @@ The conversion will require the inputs to and from each type of intersection,
 \end_inset
 
 .
- Each variable represents a conversion between two types of infrastructure.
- The prime version of the variable is the reversion of the same building
- procedure.
+ Each variable represents a conversion cost between two types of infrastructure.
+ The prime version of the variable is the reverse of the same building procedure.
  The prime will always reflect a 'destruction' e.g.
  demolishing an expensive piece of infrastructure and building a cheaper
  one in place.
