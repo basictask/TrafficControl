@@ -1,0 +1,22 @@
+digraph "ann_multihead" {
+    // Label properies 
+    label = "Skip connection architecture"
+    labelloc = "top"
+    
+    // Make graph vertical 
+    rankdir = "LR"
+
+    // Defining nodes
+    input [label = "x"]
+    hidden1 [label = "h1"]
+    hidden2 [label = "..."]
+    outA [label = "softmax(A)"]
+    outB [label = "softmax(B)"]
+
+    // Defining connections
+    input -> hidden1
+    hidden1 -> hidden2
+    hidden2 -> outA
+    hidden2 -> outB 
+    outA -> outB
+}

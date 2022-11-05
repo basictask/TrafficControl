@@ -1,20 +1,20 @@
 # Imports
 import os
-os.chdir('C:\\Users\\admin\\Documents\\ELTE\\trafficControl')
+os.chdir('/home/daniel/Documents/ELTE/trafficControl')
 
 from trafficSimulator import *
 from city_constructor import *
     
 #%% Set up the reader from a .html GeoGebra construction protocol
 
-# filepath = 'cities/simple.html'
+filepath = 'cities/Simple.html'
 # filepath = 'cities/starcity.html'
-filepath = 'cities/bakats.html'
+# filepath = 'cities/bakats.html'
 
 # Points that are valid for entering the traffic system
-# entry_points = ['A','C','E','G'] # Simple
+entry_points = ['A','C','G','J'] # Simple
 # entry_points = ['A','D','F','H','J'] # Star city
-entry_points = ['P','O','Q','M','K','J','T','S','R','G','E','F'] # Bakats area 
+# entry_points = ['P','O','Q','M','K','J','T','S','R','G','E','F'] # Bakats area 
 
 vrate = 60 # Rate of vehicles coming in from each entry point
 paths_to_gen = 10 # How many paths to generate

@@ -1,0 +1,28 @@
+digraph "ann_singlehead" { 
+    // Label properies 
+    label = "Practical architecture"
+    labelloc = "top"
+    
+    // Make graph vertical 
+    rankdir = "LR"
+
+    // Defining nodes
+    input [label = "x"]
+    hidden1 [label = "h1"]
+    hidden2 [label = "..."]
+    A [label = "softmax(A)"]
+    B [label = "softmax(B)"]
+    x [label = "x(A,B)"]
+	action [label = "softmax(action)"]
+
+    // Defining connections
+    input -> hidden1
+    hidden1 -> hidden2
+    hidden2 -> action
+    hidden2 -> A
+    hidden2 -> B
+    A -> action
+    B -> action
+    A -> B
+    x -> action
+}

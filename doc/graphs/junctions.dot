@@ -1,0 +1,26 @@
+digraph "round-table" { 
+    // Label properies 
+    label = "Conversion rates between junctions"
+    labelloc = "top"
+    
+    // Make graph vertical 
+    rankdir = "LR"
+
+    // Defining nodes
+    roundabout [label="Roundabout"]
+    trafficLight [label="Traffic Light"]
+    rightHand [label="Right-handed"]      
+
+    // Defining connections
+    // a' a
+    roundabout -> trafficLight [ label="α"] 
+    trafficLight -> roundabout [ label="α\'"]
+
+    // b' b
+    rightHand -> trafficLight [label="β"]
+    trafficLight -> rightHand [label="β\'"]
+
+    // c c'
+    roundabout -> rightHand [label="γ\'"]
+    rightHand -> roundabout [label="γ"]
+}

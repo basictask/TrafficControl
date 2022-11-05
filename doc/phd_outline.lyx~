@@ -29,11 +29,11 @@
 \bibtex_command default
 \index_command default
 \float_placement H
-\paperfontsize default
-\spacing single
+\paperfontsize 12
+\spacing onehalf
 \use_hyperref false
-\papersize default
-\use_geometry false
+\papersize a4paper
+\use_geometry true
 \use_package amsmath 1
 \use_package amssymb 1
 \use_package cancel 1
@@ -58,6 +58,10 @@
 \shortcut idx
 \color #008000
 \end_index
+\leftmargin 3.5cm
+\topmargin 2.5cm
+\rightmargin 2.5cm
+\bottommargin 2.5cm
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
@@ -87,15 +91,42 @@ Daniel Kuknyo
 \end_layout
 
 \begin_layout Date
-2022.09.26.
+2022 Fall Semester
 \end_layout
 
-\begin_layout Address
-PhD / MsC outline
+\begin_layout Abstract
+The purpose of this research was to develop a reinforcement learning model
+ that can optimize traffic flow in a city by building roads, lanes and intersect
+ions between predefined nodes that are defined on a user-friendly interface.
+ The model will take into account how fast and dynamically does traffic
+ flow and how friendly a city is to its residents: the number of lanes and
+ infrastructure cost have to be minimal while also minimizing the time taken
+ to travel between junctions.
+ To conduct the experiment, the machine learning model uses a simulated
+ environment that incorporates an intelligent driver model in order to provide
+ the most accurate mapping between real life and the modeled environment.
+ Future uses cases include optimizing current road structure and generating
+ new paths between already existing cities or settlements that use the least
+ amount of taxpayer money while also providing them with the fastest travel
+ times.
+ The developed framework can also be generalized for uses in public transport:
+ using smart forecasting to optimize bus or train lanes to cover the most
+ area, for as many people as possible.
+\end_layout
+
+\begin_layout Abstract
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Part
 Introduction
+\end_layout
+
+\begin_layout Section
+Historic overview
 \end_layout
 
 \begin_layout Standard
@@ -140,7 +171,7 @@ The aim for this research is to able to model a system of roads or city,
  highways and make traffic infrastructure more efficient.
 \end_layout
 
-\begin_layout Part
+\begin_layout Section
 Goals and Outline
 \end_layout
 
@@ -165,6 +196,29 @@ ndabout tradeoffs, how humans would feel living next to the road.
  The rewarding scheme will reflect the principles laid down by Strong Towns
  and other urban planning organizations significant in the field like Happy
  Cities: Transforming Our Lives through urban design.
+\end_layout
+
+\begin_layout Standard
+The main metrics that are taken into account during the research are:
+\end_layout
+
+\begin_layout Enumerate
+Time taken to arrive to the goal junction
+\end_layout
+
+\begin_layout Enumerate
+Cost of infrastructure
+\end_layout
+
+\begin_layout Enumerate
+Livability by humans (number of lanes, connection density)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Part
@@ -221,8 +275,8 @@ status collapsed
 \begin_layout Standard
 The interface will read a construction protocol, construct a graph and all
  the possible pathways from it.
- And create a starting configuration with 2-way roads between all the nodes
- of the graph.
+ As a starting configuration every road is 2-way on the edges that have
+ been defined in the graph.
  The vehicle rate and distribution can be controlled before starting the
  simulation.
  A constructed 
@@ -275,7 +329,7 @@ status collapsed
 \end_layout
 
 \begin_layout Standard
-So far this is a simple configuration for demonstration.
+So far this is a simple setup for demonstration.
  The vehicles are passing from one entry point to another, without necessarily
  choosing the shortest path, or being evenly distributed among all the roads,
  just as one would find in real life.
@@ -336,6 +390,7 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename bakats_full_process.png
+	lyxscale 50
 	width 10cm
 	height 10cm
 	keepAspectRatio
@@ -423,7 +478,7 @@ Using these variables and the positions of other vehicles it is possible
 \end_layout
 
 \begin_layout Section
-Deep learning configuration
+Deep learning architecture
 \end_layout
 
 \begin_layout Subsection
@@ -657,7 +712,7 @@ For a state-vector element corresponding to the one-way connection between
 
 \begin_layout Enumerate
 One-lane road between 
-\begin_inset Formula $A\rightarrow B\Longrightarrow1$
+\begin_inset Formula $A\rightarrow B\Rightarrow1$
 \end_inset
 
 .
@@ -665,7 +720,7 @@ One-lane road between
 
 \begin_layout Enumerate
 Two-lane road betwen 
-\begin_inset Formula $A\rightarrow B\Longrightarrow2$
+\begin_inset Formula $A\rightarrow B\Rightarrow2$
 \end_inset
 
 .
@@ -673,11 +728,11 @@ Two-lane road betwen
 
 \begin_layout Enumerate
 Two-way road, one lane in each direction: 
-\begin_inset Formula $A\rightarrow B\Longrightarrow1;$
+\begin_inset Formula $A\rightarrow B\Rightarrow1;$
 \end_inset
 
  
-\begin_inset Formula $B\rightarrow A\Longrightarrow1$
+\begin_inset Formula $B\rightarrow A\Rightarrow1$
 \end_inset
 
 .
@@ -685,11 +740,11 @@ Two-way road, one lane in each direction:
 
 \begin_layout Enumerate
 Two way road, two lanes in each direction: 
-\begin_inset Formula $A\rightarrow B\Longrightarrow2;$
+\begin_inset Formula $A\rightarrow B\Rightarrow2;$
 \end_inset
 
  
-\begin_inset Formula $B\rightarrow A\Longrightarrow2$
+\begin_inset Formula $B\rightarrow A\Rightarrow2$
 \end_inset
 
 .
@@ -697,15 +752,15 @@ Two way road, two lanes in each direction:
 
 \begin_layout Enumerate
 One-lane road ending in roundabout between 
-\begin_inset Formula $A\rightarrow B\Longrightarrow$
+\begin_inset Formula $A\rightarrow B\Rightarrow11$
 \end_inset
 
-11.
+.
 \end_layout
 
 \begin_layout Enumerate
 Two-lane road ending in a traffic light junction between 
-\begin_inset Formula $A\rightarrow B\Longrightarrow22$
+\begin_inset Formula $A\rightarrow B\Rightarrow22$
 \end_inset
 
 .
@@ -761,23 +816,32 @@ y of exponential explosion if it's represented using an all-to-all fashion.
 \begin_inset Formula $G$
 \end_inset
 
- of 
-\begin_inset Formula $k$
+ of nodes 
+\begin_inset Formula $N_{1},N_{2},\ldots,N_{k}$
 \end_inset
 
- nodes the state space will require a vector of length 
+the state space will require a vector of length 
 \begin_inset Formula $k^{2}-k$
 \end_inset
 
 .
- There's no need to record the recusive connections.
+ There's no need to keep record of connections to and from the same node
+ (self-loops): 
+\begin_inset Formula $N_{i}\rightarrow N_{i}=\emptyset;\forall i\in[1,k]$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="9">
+<lyxtabular version="3" rows="2" columns="13">
 <features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -829,6 +893,54 @@ y of exponential explosion if it's represented using an all-to-all fashion.
 
 \begin_layout Plain Layout
 \begin_inset Formula $N_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{2}$
 \end_inset
 
 
@@ -963,6 +1075,67 @@ y of exponential explosion if it's represented using an all-to-all fashion.
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $N_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $...$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $N_{k}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 \begin_inset Formula $...$
 \end_inset
 
@@ -1031,6 +1204,11 @@ y of exponential explosion if it's represented using an all-to-all fashion.
 This gives reason to explore the possibilities of being able to shorten
  the state space vector by eliminating connectioins that are for sure not
  going to participate in the learning.
+ The rationale behind this is that it's an errenous design decision to connect
+ the furthest junctions with direct roads.
+ This would mean destroying currently existing residential zoning and thereby
+ cut the city in half.
+ 
 \end_layout
 
 \begin_layout Subsubsection*
@@ -1067,6 +1245,7 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename Exponential_radius.png
+	lyxscale 50
 	width 8cm
 	height 8cm
 	keepAspectRatio
@@ -1143,8 +1322,8 @@ The number of tracked connections in the state vector can also be reduced
  the previously shown graph would not be possible to construct and some
  node may be separated from all other ones, isolating them from the rest
  of the infrastructure.
- This is considered a bad resolution of the problem.
- 
+ This is considered a bad resolution of the problem, but the approach can
+ be used in combination with other approaches.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -1306,6 +1485,7 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename junction-twoway-intersection.png
+	lyxscale 30
 	width 8cm
 	height 8cm
 	keepAspectRatio
@@ -1345,6 +1525,7 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename junction-roundabout.png
+	lyxscale 30
 	width 8cm
 	height 8cm
 	keepAspectRatio
@@ -1384,6 +1565,7 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename junction-trafficlight.png
+	lyxscale 30
 	width 8cm
 	height 8cm
 	keepAspectRatio
@@ -1422,14 +1604,14 @@ As a graph node must be at all times assigned to a type of junction, and
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename intersection_relations.png
+	filename graphs/junctions.png
 	width 8cm
 	height 8cm
 	keepAspectRatio
@@ -1459,14 +1641,21 @@ The conversion will require the inputs to and from each type of intersection,
 \end_inset
 
 .
- Each variable represents a conversion between two types of infrastructure.
- The prime version of the variable is the reversion of the same building
- procedure.
- The prime will always reflect a 'destruction' e.g.
+ Each variable represents a conversion cost between two types of infrastructure.
+ The prime version of the variable is the reverse of the same building procedure.
+ The prime (
+\begin_inset Formula $'$
+\end_inset
+
+) will always reflect a 
+\emph on
+'destruction'
+\emph default
+ e.g.
  demolishing an expensive piece of infrastructure and building a cheaper
  one in place.
- The non-prime variable will denote the building of a more expensive piece
- of infrastructure from a cheaper one.
+ The non-prime variable denotes the building of a more expensive piece of
+ infrastructure from a cheaper one.
 \end_layout
 
 \begin_layout Standard
@@ -1482,7 +1671,8 @@ l roads.
  the same time.
  More roads will translate to a more dangerous environment and will require
  highly dedicated infrastructure.
- It is possible, but the cost will have to be tuned accordingly.
+ It is possible, but it's rarely seen in the real world and the cost will
+ have to be tuned accordingly.
  
 \end_layout
 
@@ -1491,7 +1681,655 @@ Network architecture
 \end_layout
 
 \begin_layout Standard
-// Network architecture comes here
+The modeling structure is vastly dependent on the task that is given to
+ it, therefore this section will only give a general overview of the inner
+ workings of the deep learning model.
+ The main steps of a single iteration of simulation are given below
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The modeling process
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Input: a state vector 
+\begin_inset Formula $x$
+\end_inset
+
+ that describes connetions 
+\begin_inset Formula $A\rightarrow B$
+\end_inset
+
+ in a graph 
+\begin_inset Formula $G$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Plain Layout
+Output: the road configuration which is optimal for travel time, cost and
+ livability.
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing single
+Repeat until stopping criterion isn't met:
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing single
+Agent observes state vector 
+\begin_inset Formula $x$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing single
+Agent chooses a 
+\shape italic
+'from'
+\shape default
+ node 
+\begin_inset Formula $A\in N_{1},N_{2},\ldots,N_{k}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing single
+Agent chooses a 
+\emph on
+'to' node 
+\begin_inset Formula $B\in N_{1},N_{2},\ldots,N_{k};B\neq A$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing single
+Agent chooses an action 
+\begin_inset Formula $a\in a_{1},a_{2},\ldots,a_{7}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing single
+The environment executes action 
+\begin_inset Formula $a$
+\end_inset
+
+ on the connection: 
+\begin_inset Formula $A\stackrel{a}{\rightarrow}B$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing single
+The simulation runs to a given stopping criterion (e.g.
+ time elapsed, number of cars finished).
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing single
+The environment passes the agent the reward signal 
+\begin_inset Formula $r$
+\end_inset
+
+ and the modified state vector 
+\begin_inset Formula $x$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing single
+The agent executes a learning step based on the reward 
+\begin_inset Formula $r$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing single
+Back to step 1.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It's easy to observe that the machine learning model has a particularly
+ difficult job in this case.
+ The action it has to take in each iteration consists of multiple variables,
+ not just a single one: 
+\begin_inset Formula $A\stackrel{a}{\rightarrow}B$
+\end_inset
+
+.
+ For this reason a highly specialized deep learning configuration is needed.
+ The input vector is the size of the state space as described by the node
+ connections in section 5.2 of this chapter and the number and size of the
+ hidden layers is highly dependant on the size of the input graph, so the
+ rest of this section will deal with the problem of predicting 
+\begin_inset Formula $A,B$
+\end_inset
+
+ and 
+\begin_inset Formula $a$
+\end_inset
+
+.
+ First the 
+\emph on
+'to'
+\emph default
+ and 
+\emph on
+'from'
+\emph default
+ node prediction will be taken into account.
+ For this there are two proposed architectures, the single and the multi-headed
+ ones.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+Single-head architecture
+\end_layout
+
+\begin_layout Standard
+This is a simple configuration that uses a feedforward network to predict
+ nodes 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+.
+ The input is the state vector, and there are an arbitrary number of hidden
+ layers.
+ This has been denoted as 
+\begin_inset Formula $\ldots$
+\end_inset
+
+ in the figure.
+ In the prediction phase of the modeling the model first predicts 
+\begin_inset Formula $A$
+\end_inset
+
+, then based on that prediction produces a prediction for graph node 
+\begin_inset Formula $B$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename graphs/ann_singlehead.png
+	width 10cm
+	height 10cm
+	keepAspectRatio
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Both of the predictions use softmax nodes that estimates the probability
+ 
+\begin_inset Formula $\hat{p_{k}}$
+\end_inset
+
+ that the action belongs to action class 
+\begin_inset Formula $k$
+\end_inset
+
+ thereby choosing an action from 
+\begin_inset Formula $a_{1},a_{2},\ldots,a_{7}$
+\end_inset
+
+, where 
+\begin_inset Formula $k\in\{1,2,\ldots,7\}$
+\end_inset
+
+.
+ For 
+\begin_inset Formula $k$
+\end_inset
+
+ as the number of classes the softmax function is defined as:
+\begin_inset Formula 
+\[
+\hat{p_{k}}=\sigma(s(x))_{k}=\frac{exp(s_{k}(x))}{\sum_{j=i}^{k}exp(s_{j}(x))}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $s(x)$
+\end_inset
+
+ is a vector containing the scores for each action of the current state
+ 
+\begin_inset Formula $x$
+\end_inset
+
+ and 
+\begin_inset Formula $\sigma(s(x))_{k}$
+\end_inset
+
+ is the estimated probability that the state vector 
+\begin_inset Formula $x$
+\end_inset
+
+ belongs to class 
+\begin_inset Formula $k$
+\end_inset
+
+, given the scores for each class of that instance.
+ The final prediction is the class where the probability is the highest.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\hat{y}=\underset{k}{argmax}\sigma(s(x))_{k}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this case the prediction is a node from the set of all nodes.
+ Another important criterion is that 
+\begin_inset Formula $A\neq B$
+\end_inset
+
+.
+ In the case where the two predictions match the agent should either run
+ the prediction again or receive a negative reward to penalize the weight
+ within the neural network.
+ This research denotes a softmax unit that predicts class C as 
+\begin_inset Formula $softmax(C)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
+Multi-head architecture
+\end_layout
+
+\begin_layout Standard
+Another way of predicting the starting and ending nodes is by using two
+ heads on the same neural network.
+ In this case the last hidden node will be in connection with both the softmax
+ neurons:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename graphs/ann_multihead.png
+	width 10cm
+	height 10cm
+	keepAspectRatio
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In the same way as before, the two predictions must be different.
+\end_layout
+
+\begin_layout Subsubsection*
+Comparison
+\end_layout
+
+\begin_layout Standard
+This part is dedicated to describing the advantages and disadvantages of
+ the two proposed network architectures.
+ The main idea behind the single-head (SH) architecture is that the neural
+ network has connections between the two prediction nodes, so the 
+\begin_inset Formula $B$
+\end_inset
+
+ node will be dependant on the 
+\begin_inset Formula $A$
+\end_inset
+
+ node.
+ This is very useful in learning what junctions are close to eachother and
+ are relevant in building the infrastructure and also has a built-in way
+ of learning that the two nodes should be different.
+ However in the SH configuration the 
+\begin_inset Formula $B$
+\end_inset
+
+ node has no prior information about the state vector as it has already
+ been accumulated in the softmax node.
+ The output of the softmax node is a single class, therefore the B node
+ should be only predicted based on that integer number.
+ 
+\end_layout
+
+\begin_layout Standard
+The multi-head architecture (MH) can counter this problem: both prediction
+ nodes are in connection with the last hidden state vector, therefore they
+ both have knowledge of the information extracted.
+ This leads to a problem where the two nodes have no connection to eachother,
+ hence there is no way to actively penalize predictions where the two outputs
+ match.
+ 
+\end_layout
+
+\begin_layout Standard
+A practical realization of this problem is to introduce a skip connection
+ between the last hidden unit and the 
+\begin_inset Formula $B$
+\end_inset
+
+ node.
+ Using this method the 
+\emph on
+'to'
+\emph default
+ node would acquire knowledge about the 
+\emph on
+'from' 
+\emph default
+node and the information extracted by the neural network.
+ A high-level architectural diagram of this approach is shown below:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename graphs/ann_skipconnection.png
+	width 10cm
+	height 10cm
+	keepAspectRatio
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Action-prediction architecture
+\end_layout
+
+\begin_layout Standard
+The last task of the network is to predict what action to take between the
+ nodes 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+.
+ The action denotes if the agent will build or destroy lanes or change the
+ type of the intersection.
+ For this purpose it's necessary that the network has knowledge about the
+ predictions made on the two softmax nodes defined in the previous section.
+ It's also essential that the network can access the state vector transformed
+ by the hidden units and the current state of the graph connection, e.g.
+ how many lanes it currently has and what type of intersection is currently
+ built there.
+ The proposed architecture is as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename graphs/ann_actionpred.png
+	width 10cm
+	height 10cm
+	keepAspectRatio
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $x(A,B)$
+\end_inset
+
+ denotes the current state of the graph connection between 
+\begin_inset Formula $A,B$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+Practical implementation
+\end_layout
+
+\begin_layout Standard
+If the architecture was made by the method defined before, it would require
+ two separate neural networks, one for predicting 
+\begin_inset Formula $A,B$
+\end_inset
+
+ and one for 
+\begin_inset Formula $a$
+\end_inset
+
+.
+ This would be errenous in practice as two complete neural networks would
+ have to be trained separately.
+ This approach is redundant and can lead to information being lost and increased
+ computation times.
+ In practice it's beneficial to have a single neural network that trains,
+ and can be able to predict 3 target variables in a single pass.
+ This is also a good approach in the sense that there are dependencies between
+ the variables: 
+\begin_inset Formula $A\rightarrowtriangle B;\:A\rightarrowtriangle a;\:B\rightarrowtriangle a;\:x(A,B)\rightarrowtriangle a$
+\end_inset
+
+.
+ These dependencies can be brought into the same neural network using the
+ architectural design below:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename graphs/ann_practical.png
+	width 10cm
+	height 10cm
+	keepAspectRatio
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where each softmax node serves as a prediction thereby defining 
+\begin_inset Formula $A\stackrel{a}{\rightarrow}B$
+\end_inset
+
+.
+ This architecture encompasses every dependency between the softmax units
+ under the same scope while being able to provide every prediction.
+ Deciding if the input unit 
+\begin_inset Formula $x(A,B)$
+\end_inset
+
+ can be left out of the network is up to experimentation in the following
+ sections.
 \end_layout
 
 \end_body
