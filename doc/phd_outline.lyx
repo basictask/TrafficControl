@@ -212,6 +212,22 @@ Cost of infrastructure
 
 \begin_layout Enumerate
 Livability by humans (number of lanes, connection density)
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Part
+Research Background
+\end_layout
+
+\begin_layout Section
+City Design
+\end_layout
+
+\begin_layout Section
+Deep learning in Infrastructure organization
 \end_layout
 
 \begin_layout Standard
@@ -252,7 +268,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename simple_city.png
+	filename images/simple_graph.png
 	width 8cm
 	height 8cm
 	keepAspectRatio
@@ -304,7 +320,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename simple_city_road.png
+	filename images/simple.png
 	width 8cm
 	height 8cm
 	keepAspectRatio
@@ -389,7 +405,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename bakats_full_process.png
+	filename images/full_pipeline.png
 	lyxscale 50
 	width 10cm
 	height 10cm
@@ -1244,7 +1260,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename Exponential_radius.png
+	filename images/simple_with_circle.png
 	lyxscale 50
 	width 8cm
 	height 8cm
@@ -1484,7 +1500,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename junction-twoway-intersection.png
+	filename images/junction_twoway-intersection.png
 	lyxscale 30
 	width 8cm
 	height 8cm
@@ -1524,7 +1540,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename junction-roundabout.png
+	filename images/junction_roundabout.png
 	lyxscale 30
 	width 8cm
 	height 8cm
@@ -1564,7 +1580,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename junction-trafficlight.png
+	filename images/junction_trafficlight.png
 	lyxscale 30
 	width 8cm
 	height 8cm
@@ -1604,7 +1620,7 @@ As a graph node must be at all times assigned to a type of junction, and
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Caption Standard
@@ -1706,6 +1722,7 @@ The modeling process
 \end_layout
 
 \begin_layout Plain Layout
+\paragraph_spacing single
 Input: a state vector 
 \begin_inset Formula $x$
 \end_inset
@@ -1722,6 +1739,7 @@ Input: a state vector
 \end_layout
 
 \begin_layout Plain Layout
+\paragraph_spacing single
 Output: the road configuration which is optimal for travel time, cost and
  livability.
  
