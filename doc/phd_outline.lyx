@@ -246,9 +246,44 @@ Constructing a city
 \end_layout
 
 \begin_layout Standard
-The developed software will provide an interface where the user can make
- a graph, describing the intersections (nodes) and roads (edges) of the
- city in question.
+Everything starts with a city that the agent will have to optimize the structure
+ of.
+ At this point the city is best described by a graph.
+ Graphs are high-level descriptors of connections between nodes.
+ This gives an easy to use but highly customizable method to define a city
+ to optimize.
+ To define a city using the graph there are two things needed to be defined:
+ 
+\end_layout
+
+\begin_layout Enumerate
+List of nodes of the graph with coordinates: 
+\begin_inset Formula $N(x,y)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+List of connections between the nodes: 
+\begin_inset Formula $N_{1}\rightarrow N_{2}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Together they are called a 
+\emph on
+construction protocol
+\emph default
+ from here on.
+\end_layout
+
+\begin_layout Standard
+The developed software product will provide an interface where the user
+ can make a graph, describing the intersections (nodes) and roads (edges)
+ of the city in question.
  This for example can be done in GeoGebra and exported into a construction
  protocol in order to work as an input for the model.
  Below is an example simple city constructed:
@@ -269,8 +304,9 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename images/simple_graph.png
-	width 8cm
-	height 8cm
+	lyxscale 50
+	width 10cm
+	height 10cm
 	keepAspectRatio
 
 \end_inset
@@ -491,6 +527,18 @@ Using these variables and the positions of other vehicles it is possible
  safe following time, comfortable deceleration and so on.
  This can be a fairly good approximation of a real world driver's parameters.
  
+\end_layout
+
+\begin_layout Standard
+The simulation of the drivers' behavior is highly dependant on time, as
+ they are regulated by differential equations that are implemented using
+ computer code.
+ Each time the agent will exacute a training iteration, it will have to
+ run a simulation.
+ However, the simulation is not possible to run so many times in real-time.
+ The game-time will have to be implemented using discrete time steps, that
+ can be sped up to arbitrary speed.
+  
 \end_layout
 
 \begin_layout Section
@@ -1252,7 +1300,7 @@ ons with all other intersections.
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -1262,8 +1310,8 @@ status collapsed
 \begin_inset Graphics
 	filename images/simple_with_circle.png
 	lyxscale 50
-	width 8cm
-	height 8cm
+	width 10cm
+	height 10cm
 	keepAspectRatio
 
 \end_inset
