@@ -226,6 +226,207 @@ Research Background
 City Design
 \end_layout
 
+\begin_layout Subsubsection*
+A brief history of the modern day street
+\end_layout
+
+\begin_layout Standard
+The shape and fabric of cities is the result of hundreds or thousands of
+ years of development, transformation and reshaping.
+ Many geographical and historical events play a role in determining how
+ a city's transportation infrastructure is designed.
+ The industrial revolutions have been de most markant inductors of change
+ in most countries as they have led to the transformation of the walking-centere
+d traffic.
+ Around a hundred years ago in the 1920s cars have begun to appear in the
+ cities in greater and greater numbers.
+ At first it was a new and expensive technology, hence it was mostly the
+ wealthy class that owned them.
+ At this point in time traffic rules were essentially nonexistent, so drivers
+ could drive however they pleased.
+ This quickly led to a large number of traffic related incidents.
+ This was a massively bad PR for the auto industry, so they started influencing
+ city design using their political and economical capital 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "marshall1996injuries"
+literal "false"
+
+\end_inset
+
+.
+ In school the children started to receive education about having to look
+ both ways before crossing the road 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "norton2011fighting"
+literal "false"
+
+\end_inset
+
+, because they are the ones that don't belong on the road and not the other
+ way around.
+ According to Peter Norton 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "norton2007street"
+literal "false"
+
+\end_inset
+
+, the key turning point came in 1923, when the citizens of Cincinatti had
+ to vote on a referendum that was planning to limit the maximum driving
+ speed to 25 mph.
+ The passing of this bill would have meant that car dealerships would have
+ a very difficult jobs in selling their cars and essentially experience
+ a drop in revenue, business and political influence.
+ The representatives of the car dealers have did everything in their power
+ to stop the referendum like billboards, flyers, public advertisement and
+ even paying people to vote 
+\emph on
+no
+\emph default
+ on the ballot.
+ Eventually the voting has turned in favor of the auto industry, and they
+ gained political and economical influence over the course of the years.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+The current state of city design
+\end_layout
+
+\begin_layout Standard
+Ever since, car dependent infrastructure and lifestyle is overall in the
+ USA.
+ Owning a private vehicle has become a minimum requirement to take part
+ in society as the sprawling has led to a run-down public transit and railway
+ ifrastructure.
+ As of the current state, the automobile is dominating the transport in
+ the USA and hence becoming one of the most important determinants of the
+ American lifestyle
+\begin_inset CommandInset citation
+LatexCommand cite
+key "pucher1996united"
+literal "false"
+
+\end_inset
+
+.
+ This can be attributed to the way cities and residential buildings are
+ designed.
+ A typical American city has overwhelmingly two types of residential buildings:
+ skyscrapers and high-rise buildings downtown and low-density suburban sprawl
+ around it.
+ What's missing is a tradeoff between the two: mid-density, mixed-use housing
+ that can at the same time house a sufficient amount of people in a relatively
+ small area, but at the same time is relatively cheap to build in comparison
+ with skyscrapers.
+ This mid-density residential housing planning would be the key guarantee
+ to design walkable neighborhoods in the United States, however it's missing.
+ Of course, there are some areas where this type of architecture can be
+ found but this is not the norm, it's the exception.
+ This is referred to as the missing middle problem 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "parolek2020missing"
+literal "false"
+
+\end_inset
+
+.
+ This is party because zoning laws in the USA don't make it possible to
+ build this type of building.
+ 
+\end_layout
+
+\begin_layout Standard
+From the way the cities are built comes car dependency as a consequence.
+ However this has also led to public transit being under-developed: the
+ housing density in the suburbs doesn't reach the threshold to make it worth
+ making it being part of a bus or train route.
+ No matter where the city puts the bus stop, the time taken to get there
+ on foot in the area is too much for people not living near it.
+ Putting bus stops overall would require too much public transit infrastructure
+ that would have to be subsidized from taxpayer money and would result in
+ near-empty buses.
+ The optimal scenario is when a transit route can reach just enough people
+ so that the maintenance and operation can be financed from ticket fares
+ and minimal amount of subsidies.
+ This is called the critical density.
+ If there is a critical density reached and a single transit stop can be
+ serve enough people, which will make it worth in fare revenue.
+ It's also rare to find dedicated bus and cycling lanes in the USA.
+ Buses are generally stuck in traffic with the cars in rush hour, which
+ makes it even less inviting for passengers.
+ It's worthwhile to note here that adding lanes to an already existing road
+ does not solve traffic, so it's not a solution to just make roads wide
+ enough so that buses don't have to wait in line together with motor vehicles.
+ As an example consider the recent expansion to the I-10 highway south of
+ Houston known as the Katy Freeway.
+ Together with a recent expansion, it's now at 26 lanes at its widest part
+ but traffic jams are a regular occurence.
+ Adding lanes also reduces the safety of the road, as found by 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "milton1998relationship"
+literal "false"
+
+\end_inset
+
+ who were analyzing the relationship between the road geometry and safety,
+ and also 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "abdel2000modeling"
+literal "false"
+
+\end_inset
+
+, who found a positive correlation in the numbers of crashes and the number
+ of lanes in urban highway road intersections.
+ Dedicated bike lanes are also missing from the infrastructure.
+ The only bike lanes one can find are painted bicycle gutters without any
+ separation from high-speed motor traffic that makes it very dangerous to
+ ride a bicycle.
+ This results in even more unequality in society.
+ 
+\end_layout
+
+\begin_layout Standard
+Apart from the reasons mentioned before, car dependency has another different
+ aspect, 
+\begin_inset Formula $CO_{2}$
+\end_inset
+
+ emissions.
+ A study has found that despite being 5% of the total population, the United
+ States is responsible for 45% of all transportation 
+\begin_inset Formula $CO_{2}$
+\end_inset
+
+ exhalation 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "decicco2006global"
+literal "false"
+
+\end_inset
+
+.
+ A different work states that the most transport emissions could be reduced
+ by converting low-density housing to mid-density 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gately2015cities"
+literal "false"
+
+\end_inset
+
+.
+ Even more than converting mid-density to high-density.
+\end_layout
+
 \begin_layout Section
 Deep learning in Infrastructure organization
 \end_layout
@@ -246,9 +447,44 @@ Constructing a city
 \end_layout
 
 \begin_layout Standard
-The developed software will provide an interface where the user can make
- a graph, describing the intersections (nodes) and roads (edges) of the
- city in question.
+Everything starts with a city that the agent will have to optimize the structure
+ of.
+ At this point the city is best described by a graph.
+ Graphs are high-level descriptors of connections between nodes.
+ This gives an easy to use but highly customizable method to define a city
+ to optimize.
+ To define a city using the graph there are two things needed to be defined:
+ 
+\end_layout
+
+\begin_layout Enumerate
+List of nodes of the graph with coordinates: 
+\begin_inset Formula $N(x,y)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+List of connections between the nodes: 
+\begin_inset Formula $N_{1}\rightarrow N_{2}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Together they are called a 
+\emph on
+construction protocol
+\emph default
+ from here on.
+\end_layout
+
+\begin_layout Standard
+The developed software product will provide an interface where the user
+ can make a graph, describing the intersections (nodes) and roads (edges)
+ of the city in question.
  This for example can be done in GeoGebra and exported into a construction
  protocol in order to work as an input for the model.
  Below is an example simple city constructed:
@@ -269,8 +505,9 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename images/simple_graph.png
-	width 8cm
-	height 8cm
+	lyxscale 50
+	width 10cm
+	height 10cm
 	keepAspectRatio
 
 \end_inset
@@ -491,6 +728,18 @@ Using these variables and the positions of other vehicles it is possible
  safe following time, comfortable deceleration and so on.
  This can be a fairly good approximation of a real world driver's parameters.
  
+\end_layout
+
+\begin_layout Standard
+The simulation of the drivers' behavior is highly dependant on time, as
+ they are regulated by differential equations that are implemented using
+ computer code.
+ Each time the agent will exacute a training iteration, it will have to
+ run a simulation.
+ However, the simulation is not possible to run so many times in real-time.
+ The game-time will have to be implemented using discrete time steps, that
+ can be sped up to arbitrary speed.
+  
 \end_layout
 
 \begin_layout Section
@@ -1252,7 +1501,7 @@ ons with all other intersections.
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -1262,8 +1511,8 @@ status collapsed
 \begin_inset Graphics
 	filename images/simple_with_circle.png
 	lyxscale 50
-	width 8cm
-	height 8cm
+	width 10cm
+	height 10cm
 	keepAspectRatio
 
 \end_inset
@@ -2348,6 +2597,18 @@ Where each softmax node serves as a prediction thereby defining
 
  can be left out of the network is up to experimentation in the following
  sections.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintCited"
+bibfiles "references"
+options "plain"
+
+\end_inset
+
+
 \end_layout
 
 \end_body
