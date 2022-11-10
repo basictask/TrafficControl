@@ -226,6 +226,7 @@ Research Background
 City Design
 \end_layout
 
+<<<<<<< HEAD
 \begin_layout Subsubsection*
 A brief history of the modern day street
 \end_layout
@@ -394,6 +395,8 @@ literal "false"
  Even more than converting mid-density to high-density.
 \end_layout
 
+=======
+>>>>>>> 86edebecd86a9d824dc6d262294c90c4d70ee29a
 \begin_layout Section
 Deep learning in Infrastructure organization
 \end_layout
