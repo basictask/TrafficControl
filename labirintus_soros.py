@@ -22,11 +22,11 @@ def get_df():
     for col in df.columns:
         df[col].values[:] = ""
         
-    df.iloc[4::4, :] = '-'
-    df.iloc[:, 9::9] = '|'
+    df.iloc[4::4, :] = '------'
+    df.iloc[:, 9::9] = '||||||'
     
-    df.iloc[0, :] = '-'
-    df.iloc[:, 0] = '|'
+    df.iloc[0, :] = '------'
+    df.iloc[:, 0] = '||||||'
     
     
     # oszlop ritkitas

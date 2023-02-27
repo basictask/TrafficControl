@@ -9,7 +9,7 @@ Simple intersection: type 1 junction
 
 # Imports
 import os
-os.chdir('C:\\Users\\daniel_kuknyo\\Documents\\ELTE\\trafficControl')
+os.chdir('/home/daniel/Documents/ELTE/trafficControl')
 
 from trafficSimulator import *
 from city_constructor import *

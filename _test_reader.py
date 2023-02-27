@@ -7,13 +7,10 @@ There are predefined cities and entry points added as comments.
 """
 
 # Imports
-import os
-
-os.chdir('/home/daniel/Documents/ELTE/trafficControl')
-
 from trafficSimulator import *
 from city_constructor import *
-
+import os
+os.chdir('/home/daniel/Documents/ELTE/trafficControl')
 test_add = False  # Modifying this to True will result in testing the add/remove functions of the reader class
 
 # %% Set up the reader from a .html GeoGebra construction protocol
@@ -34,13 +31,13 @@ steps_per_update = 5  # How many steps the game takes in the interval of one fra
 
 r = reader(filepath, entry_points, vrate, paths_to_gen, path_dist)
 
-if (not test_add):
+if not test_add:
     roads, vehicle_mtx = r.get_matrices()
     start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update)
 
 # %% Tessting add function
 
-if (test_add):
+if test_add:
     r.add_segment('E', 'G')
     r.add_segment('D', 'H')
     r.add_segment('H', 'D')
@@ -53,11 +50,9 @@ if (test_add):
     # start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update)
 
     # %% Testing remove function
-
     r.remove_segment('B', 'H')
     r.remove_segment('H', 'B')
     r.remove_segment('F', 'B')
-
     roads, vehicle_mtx = r.get_matrices()
 
     # %%
