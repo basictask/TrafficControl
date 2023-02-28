@@ -13,7 +13,6 @@ The project uses the TrafficSimulator application of BilHim for the base traffic
 """
 
 #%% Import libraries
-import numpy as np
 import sys
 sys.path.append('C:/Users/Daniel Kuknyo/Downloads/TrafficControlRL/trafficSimulator-src/')
 from trafficSimulator import *
@@ -23,9 +22,9 @@ from trafficSimulator import *
 sim = Simulation()
 
 # Driver parameters
-n = 15 # Number of drivers
-a = 2 # Maximum acceleration
-b = 20 # Comfortable deceleration
+n = 15  # Number of drivers
+a = 2  # Maximum acceleration
+b = 20  # Comfortable deceleration
 c = 5 
 r = 10
 l = 300
@@ -42,7 +41,6 @@ sim.create_roads([
     ((0, 178), (300, 178)),
     ((300, 182), (0, 182)),
     ((160, 102), (155, 180))
-    
 ])
 
 # Add vehicle generator

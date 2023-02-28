@@ -3,3 +3,5 @@ trafficSimulator\__pycache__
 literature
 *.hidden
 *__pycache__
+*.iml
+.idea
