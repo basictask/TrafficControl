@@ -5,3 +5,6 @@ literature
 *__pycache__
 *.iml
 .idea
+*.emergency
+/doc/outline.pdf
+/doc/images/simple_nearestneighbor.png

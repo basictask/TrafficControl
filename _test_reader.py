@@ -11,7 +11,7 @@ from trafficSimulator import *
 from city_constructor import *
 import os
 os.chdir('/home/daniel/Documents/ELTE/trafficControl')
-test_add = True  # Modifying this to True will result in testing the add/remove functions of the reader class
+test_add = False  # Modifying this to True will result in testing the add/remove functions of the reader class
 
 # %% Set up the reader from a .html GeoGebra construction protocol
 
@@ -29,7 +29,7 @@ paths_to_gen = 10  # How many paths to generate
 path_dist = 'normal'  # One of 'normal', 'uniform'
 steps_per_update = 5  # How many steps the game takes in the interval of one frame update
 
-r = Reader(filepath, entry_points, vrate, paths_to_gen, path_dist)
+r = Reader(filepath, entry_points, vrate, paths_to_gen, path_dist)  # Construct the Reader object to generate the vehicle matrices
 
 if not test_add:
     roads, vehicle_mtx = r.get_matrices()
@@ -57,3 +57,5 @@ if test_add:
 
     # %%
     start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update)
+
+#%%

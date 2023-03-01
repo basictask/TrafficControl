@@ -3,8 +3,20 @@ from copy import deepcopy
 from .vehicle_generator import VehicleGenerator
 from .traffic_signal import TrafficSignal
 
+
 class Simulation:
-    def __init__(self, config={}):
+    def __init__(self, config=None):
+        if config is None:
+            config = {}
+
+        # Inner params
+        self.t = None
+        self.dt = None
+        self.roads = None
+        self.generators = None
+        self.frame_count = None
+        self.traffic_signals = None
+
         # Set default configuration
         self.set_default_config()
 
@@ -13,10 +25,10 @@ class Simulation:
             setattr(self, attr, val)
 
     def set_default_config(self):
-        self.t = 0.0            # Time keeping
-        self.frame_count = 0    # Frame count keeping
-        self.dt = 1/60          # Simulation time step
-        self.roads = []         # Array to store roads
+        self.t = 0.0  # Time keeping
+        self.frame_count = 0  # Frame count keeping
+        self.dt = 1 / 60  # Simulation time step
+        self.roads = []  # Array to store roads
         self.generators = []
         self.traffic_signals = []
 
@@ -29,12 +41,16 @@ class Simulation:
         for road in road_list:
             self.create_road(*road)
 
-    def create_gen(self, config={}):
+    def create_gen(self, config=None):
+        if config is None:
+            config = {}
         gen = VehicleGenerator(self, config)
         self.generators.append(gen)
         return gen
 
-    def create_signal(self, roads, config={}):
+    def create_signal(self, roads, config=None):
+        if config is None:
+            config = {}
         roads = [[self.roads[i] for i in road_group] for road_group in roads]
         sig = TrafficSignal(roads, config)
         self.traffic_signals.append(sig)
@@ -55,8 +71,9 @@ class Simulation:
         # Check roads for out of bounds vehicle
         for road in self.roads:
             # If road has no vehicles, continue
-            if len(road.vehicles) == 0: continue
-            # If not
+            if len(road.vehicles) == 0:
+                continue
+            # If road has vehicles
             vehicle = road.vehicles[0]
             # If first vehicle is out of road bounds
             if vehicle.x >= road.length:
@@ -71,11 +88,10 @@ class Simulation:
                     next_road_index = vehicle.path[vehicle.current_road_index]
                     self.roads[next_road_index].vehicles.append(new_vehicle)
                 # In all cases, remove it from its road
-                road.vehicles.popleft() 
+                road.vehicles.popleft()
         # Increment time
         self.t += self.dt
         self.frame_count += 1
-
 
     def run(self, steps):
         for _ in range(steps):

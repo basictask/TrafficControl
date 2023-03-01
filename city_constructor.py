@@ -21,25 +21,33 @@ import numpy as np
 import pandas as pd
 
 
-# TODO: add_point, add_segment, redo_config
+# TODO: add_point, add_segment
 
 # %% Class definition
 
 
 class Reader:
-    def __init__(self, filepath, points, vehicle_rate, pathnum, distribution):
+    def __init__(self, filepath: str, entry_points: list, vrate: int, pathnum: int, path_dist: str):
+        """
+        Constructor class for the Reader class
+        :param filepath: str that points to {./folder/city_name}.html
+        :param entry_points: points
+        :param vrate: rate of vehicles to generate
+        :param pathnum: number of individual paths a vehicle can take
+        :param path_dist: distibution of paths between the total
+        """
         # Error checking
-        if distribution not in ['normal', 'uniform']:
-            raise Exception('Invalid parameter for path distribution: ' + distribution)
+        if path_dist not in ['normal', 'uniform']:
+            raise Exception('Invalid parameter for path distribution: ' + path_dist)
         if not os.path.exists(filepath):
             raise Exception('Input file not found: ' + filepath)
 
         # Params
         self.pathnum = pathnum
         self.filepath = filepath
-        self.vrate = vehicle_rate
-        self.entry_points = points
-        self.path_dist = distribution
+        self.vrate = vrate
+        self.entry_points = entry_points
+        self.path_dist = path_dist
 
         # Set up inner params
         self.locs = None
@@ -52,18 +60,29 @@ class Reader:
         self.path_codes = None
         self.vehicle_mtx = None
         self.segment_map = None
-        self.read()  # Read the file
-        self.redo_config()  # Re-generate all the necessary configurations
 
-    def redo_config(self):
-        # Regenerate all the necessary configurations
+        # Finalize variables
+        self.read()
+        self.redo_config()
+
+    def redo_config(self) -> None:
+        """
+        Regenerate all the necessary configurations
+        This is the base structure to set all the inner variables
+        :return: None
+        """
         self.gen_road_mtx()  # Create a matrix of all the roads (locs)
         self.gen_path_graph()  # Construct a graph of all nodes
         self.gen_paths()  # Find possible paths in the graph
         self.gen_vehicle_mtx()  # Create the matrix of the paths
 
-    def assemble_segments(self, df_segments, add_reversed):
-        # Assemble into segment map
+    def assemble_segments(self, df_segments: pd.DataFrame, add_reversed: bool) -> None:
+        """
+        Regenerate all the necessary configurations
+        :param df_segments: pandas DataFrame containing all the segments for any two nodes N1 --> N2
+        :param add_reversed: create an one-way N1 ---> N2 or two-way N1 <--> N2 road
+        :return:
+        """
         if add_reversed:  # If this is turned on all added streets will be bidirectional
             forward_segm = list(df_segments['Definition'])
             reverse_segm = [(x[1], x[0]) for x in df_segments['Definition']]  # Reverse all connections
@@ -76,8 +95,11 @@ class Reader:
         self.segment_map = segment_map
         self.segments = df_segments
 
-    def read(self):
-        # Read the file
+    def read(self) -> None:
+        """
+        Reads a Geogebra construction protocol that contains information about the coordinates of the nodes and the connections between them
+        :return:
+        """
         df = pd.read_html(self.filepath)[0]
         df.set_index('Name', drop=True, inplace=True)
         df.sort_values(by=['Name'], inplace=True)
@@ -113,13 +135,13 @@ class Reader:
         :return: boolean: False --> invalid segment, True --> valid segment
         """
         caller_fn = inspect.stack()[1].function
-        if start == end:
+        if start == end:  # Start and end node can't be the same
             return False
-        elif start not in self.points.keys() or end not in self.points.keys():
+        elif start not in self.points.keys() or end not in self.points.keys():  # Start and end don't exist
             return False
-        elif caller_fn == 'add_segment' and (start, end) in set(self.segments['Definition']):
+        elif caller_fn == 'add_segment' and (start, end) in set(self.segments['Definition']):  # Segment already exists: caller is add_segment function 
             return False
-        elif caller_fn == 'remove_segment' and (start, end) not in set(self.segments['Definition']):
+        elif caller_fn == 'remove_segment' and (start, end) not in set(self.segments['Definition']):  # Caller is remove_segment function but segment doesn't exist
             return False
         else:
             return True
@@ -318,11 +340,11 @@ if __name__ == '__main__':
     CITIES_FOLDER = './cities/'
     filename = 'simple.html'
     city = CITIES_FOLDER + filename
-    entry_points = ['A', 'C', 'E', 'G']
-    vrate = 60
+    vehicles_start_on = ['A', 'C', 'E', 'G']
+    vehicles_rate = 60
+    paths_distribution = 'uniform'
     paths_to_gen = 6
-    path_dist = 'uniform'
 
     # Construct reader
-    r = Reader(city, entry_points, vrate, paths_to_gen, path_dist)
+    r = Reader(city, vehicles_start_on, vehicles_rate, paths_to_gen, paths_distribution)
     roads, vehicle_mtx = r.get_matrices()
