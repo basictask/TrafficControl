@@ -19,7 +19,7 @@ import re
 import inspect
 import numpy as np
 import pandas as pd
-
+from suppl import *
 
 # TODO: add_point, add_segment
 
@@ -37,17 +37,17 @@ class Reader:
         :param path_dist: distibution of paths between the total
         """
         # Error checking
-        if path_dist not in ['normal', 'uniform']:
-            raise Exception('Invalid parameter for path distribution: ' + path_dist)
         if not os.path.exists(filepath):
             raise Exception('Input file not found: ' + filepath)
+        if path_dist not in ['normal', 'uniform']:  # Only valid values for distributions. Might add some later
+            raise Exception('Invalid parameter for path distribution: ' + path_dist)
 
         # Params
+        self.vrate = vrate
         self.pathnum = pathnum
         self.filepath = filepath
-        self.vrate = vrate
-        self.entry_points = entry_points
         self.path_dist = path_dist
+        self.entry_points = [letter_to_number(x) for x in entry_points]  # Convert letters to numbers on entry points
 
         # Set up inner params
         self.locs = None
@@ -114,20 +114,19 @@ class Reader:
         df_points['Value'] = [re.findall(r'[\d.]+', x) for x in df_points['Value']]  # Find coordinates
         df_points['Value'] = [[float(x) for x in lst] for lst in df_points['Value']]  # Convert coords to float
         df_points['Value'] = [tuple(x) for x in df_points['Value']]
-        locations = {x: y for x, y in zip(list(df_points.index), df_points['Value'])}
+        points = {letter_to_number(x): y for x, y in zip(list(df_points.index), df_points['Value'])}
 
         # Process segments
         df_segments['Definition'] = [re.findall(r'(?<=\()[^)]*(?=\))', x)[0] for x in df_segments['Definition']]
-        df_segments['Definition'] = [x.split(' ') for x in df_segments['Definition']]
-        for i in range(len(df_segments)):
-            df_segments['Definition'][i][0] = df_segments['Definition'][i][0][:-1]
+        df_segments['Definition'] = [re.findall(r'[A-Z]\d?', x) for x in df_segments['Definition']]
+        df_segments['Definition'] = [[letter_to_number(x) for x in lst] for lst in df_segments['Definition']]  # Convert the letters to numbers
         df_segments['Definition'] = [tuple(x) for x in df_segments['Definition']]
         df_segments.drop('Value', axis=1, inplace=True)
 
-        self.points = locations
+        self.points = points
         self.assemble_segments(df_segments, add_reversed=True)  # Create the segment map and list segments
 
-    def check_valid_segment(self, start: str, end: str) -> bool:
+    def check_valid_segment(self, start: int, end: int) -> bool:
         """
         Checks if a segment is valid in order to remove it or add it
         :param start: Node where the beginning of the road is
@@ -146,7 +145,7 @@ class Reader:
         else:
             return True
 
-    def add_segment(self, start: str, end: str) -> int:
+    def add_segment(self, start: int, end: int) -> int:
         """
         Adds a segment to the matrix between existing points
         Invalid cases --> negative reward
@@ -162,7 +161,7 @@ class Reader:
         else:
             return 0
 
-    def remove_segment(self, start: str, end: str) -> int:
+    def remove_segment(self, start: int, end: int) -> int:
         """
         Removes a segment specified by start and end
         :param start: Node where the beginning of the road is
@@ -176,7 +175,7 @@ class Reader:
             while df_segments['Definition'][i] != (start, end):
                 i += 1
             if i == len(df_segments):
-                raise Exception('Cannot find segment: (' + start + ', ' + end + ')')
+                raise Exception('Cannot find segment: (' + str(start) + ', ' + str(end) + ')')
 
             df_segments.drop(i, axis=0, inplace=True)  # Remove element with the marked index
             df_segments.index = np.arange(len(df_segments))  # Reset indices
@@ -185,6 +184,15 @@ class Reader:
             return 1
         else:
             return 0
+
+    def add_point(self, location: tuple) -> None:
+        """
+        Adds a point to the locations. No new segment gets added.
+        :param location: (x, y) coordinate tuple of the location
+        :return: None --> only adds to the inner variables of the class
+        """
+        # Find the name for the new point
+        # TODO: implement --> find the naming convention e.g. numbers
 
     def gen_road_mtx(self) -> None:
         """
@@ -231,18 +239,6 @@ class Reader:
                 paths.extend(self.dfs(g, t, seen[:], t_path))
         return paths
 
-    @staticmethod
-    def drop_empty_keys(dct: dict) -> dict:
-        """
-        Drops the empty keys from a given dict and returns the dict itself
-        :param dct: The dict to drop from
-        :return: dict: The dict with the empty keys removed
-        """
-        for v in list(dct.keys()):
-            if len(dct[v]) == 0:
-                dct.pop(v, None)
-        return dct
-
     def gen_paths(self) -> None:
         """
         Generates all the paths between entry points
@@ -257,7 +253,7 @@ class Reader:
                 if path[len(path) - 1] in self.entry_points and path[len(path) - 1] != v:  # If the last node is a valid entry point
                     paths[v].append(path)  # Append to the path
 
-        paths = self.drop_empty_keys(paths)
+        paths = drop_empty_keys(paths)
 
         path_codes = {x: [] for x in list(self.points.keys())}
         paths_dual = {x: [] for x in list(self.points.keys())}
@@ -276,8 +272,8 @@ class Reader:
             paths_dual[v] = dualnode
             path_codes[v] = c_dualnode
 
-        paths_dual = self.drop_empty_keys(paths_dual)
-        path_codes = self.drop_empty_keys(path_codes)
+        paths_dual = drop_empty_keys(paths_dual)
+        path_codes = drop_empty_keys(path_codes)
 
         path_stack = []
         for v in path_codes.keys():
@@ -331,11 +327,10 @@ class Reader:
 if __name__ == '__main__':
     """
     This is a short demonstration of how a Reader object can be constructed and used to display and emulate a city
-    
-    @param city: the path to the html file containing the construction protocol
-    @param entry_points: nodes where a vehicle can spawn
-    @param vrate: the speed of spawning vehicles
-    @param path_dist: the distribution of vehicles
+    :param city: the path to the html file containing the construction protocol
+    :param entry_points: nodes where a vehicle can spawn
+    :param vrate: the speed of spawning vehicles
+    :param path_dist: the distribution of vehicles
     """
     CITIES_FOLDER = './cities/'
     filename = 'simple.html'
