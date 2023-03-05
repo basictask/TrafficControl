@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 from suppl import *
 
-# TODO: add_point, add_segment
+# TODO: add_road, remove_road, add_lane, remove_lane, add_roundabout, add_trafficlight, add_righthand
 
 # %% Class definition
 
@@ -29,7 +29,7 @@ from suppl import *
 class Reader:
     def __init__(self, filepath: str, entry_points: list, vrate: int, pathnum: int, path_dist: str):
         """
-        Constructor class for the Reader class
+        Constructor class for the Reader object
         :param filepath: str that points to {./folder/city_name}.html
         :param entry_points: points
         :param vrate: rate of vehicles to generate
@@ -55,6 +55,7 @@ class Reader:
         self.paths = None
         self.points = None
         self.segments = None
+        self.junctions = None
         self.paths_dual = None
         self.path_stack = None
         self.path_codes = None
@@ -78,7 +79,7 @@ class Reader:
 
     def assemble_segments(self, df_segments: pd.DataFrame, add_reversed: bool) -> None:
         """
-        Regenerate all the necessary configurations
+        Create all the segments from df_segments
         :param df_segments: pandas DataFrame containing all the segments for any two nodes N1 --> N2
         :param add_reversed: create an one-way N1 ---> N2 or two-way N1 <--> N2 road
         :return:
@@ -98,7 +99,7 @@ class Reader:
     def read(self) -> None:
         """
         Reads a Geogebra construction protocol that contains information about the coordinates of the nodes and the connections between them
-        :return:
+        :return: None
         """
         df = pd.read_html(self.filepath)[0]
         df.set_index('Name', drop=True, inplace=True)
@@ -112,18 +113,17 @@ class Reader:
         # Process points
         df_points.index = [x.split(' ')[1] for x in list(df_points.index)]  # Get only letter
         df_points['Value'] = [re.findall(r'[\d.]+', x) for x in df_points['Value']]  # Find coordinates
-        df_points['Value'] = [[float(x) for x in lst] for lst in df_points['Value']]  # Convert coords to float
-        df_points['Value'] = [tuple(x) for x in df_points['Value']]
+        df_points['Value'] = [tuple([float(x) for x in lst]) for lst in df_points['Value']]  # Convert coords to float
         points = {letter_to_number(x): y for x, y in zip(list(df_points.index), df_points['Value'])}
 
         # Process segments
         df_segments['Definition'] = [re.findall(r'(?<=\()[^)]*(?=\))', x)[0] for x in df_segments['Definition']]
         df_segments['Definition'] = [re.findall(r'[A-Z]\d?', x) for x in df_segments['Definition']]
-        df_segments['Definition'] = [[letter_to_number(x) for x in lst] for lst in df_segments['Definition']]  # Convert the letters to numbers
-        df_segments['Definition'] = [tuple(x) for x in df_segments['Definition']]
+        df_segments['Definition'] = [tuple([letter_to_number(x) for x in lst]) for lst in df_segments['Definition']]  # Convert the letters to numbers
         df_segments.drop('Value', axis=1, inplace=True)
 
-        self.points = points
+        self.points = points  # This member holds the junctions and buffer points
+        self.junctions = points  # Assign the points to the junctions member --> reference to points that are not possible to remove
         self.assemble_segments(df_segments, add_reversed=True)  # Create the segment map and list segments
 
     def check_valid_segment(self, start: int, end: int) -> bool:
@@ -136,18 +136,18 @@ class Reader:
         caller_fn = inspect.stack()[1].function
         if start == end:  # Start and end node can't be the same
             return False
-        elif start not in self.points.keys() or end not in self.points.keys():  # Start and end don't exist
+        if start not in self.points.keys() or end not in self.points.keys():  # Start and end don't exist
             return False
-        elif caller_fn == 'add_segment' and (start, end) in set(self.segments['Definition']):  # Segment already exists: caller is add_segment function 
+        if caller_fn == 'add_segment' and (start, end) in set(self.segments['Definition']):  # Segment already exists: caller is add_segment function
             return False
         elif caller_fn == 'remove_segment' and (start, end) not in set(self.segments['Definition']):  # Caller is remove_segment function but segment doesn't exist
             return False
-        else:
-            return True
+        return True
 
-    def add_segment(self, start: int, end: int) -> int:
+    def add_segment(self, start: int, end: int) -> bool:
         """
-        Adds a segment to the matrix between existing points
+        Adds a segment to the matrix between two existing points (start, end)
+        Where start, end is of (x,y)
         Invalid cases --> negative reward
         :param start: Node where the beginning of the road is
         :param end: Node where the end of the road is
@@ -157,11 +157,10 @@ class Reader:
             df_segments = pd.concat([self.segments, pd.DataFrame({'Definition': [(start, end)]})], ignore_index=True, axis=0)
             self.assemble_segments(df_segments, add_reversed=False)
             self.redo_config()
-            return 1
-        else:
-            return 0
+            return True
+        return False
 
-    def remove_segment(self, start: int, end: int) -> int:
+    def remove_segment(self, start: int, end: int) -> bool:
         """
         Removes a segment specified by start and end
         :param start: Node where the beginning of the road is
@@ -181,22 +180,58 @@ class Reader:
             df_segments.index = np.arange(len(df_segments))  # Reset indices
             self.assemble_segments(df_segments, add_reversed=False)
             self.redo_config()  # Reset the environment
-            return 1
-        else:
-            return 0
+            return True
+        return False
+
+    def add_road(self, start: int, end: int) -> bool:
+        """
+        A road is a segment both ways defined as: A <---> B e.g a bidirectional edge on the graph
+        :param start: Index of the starting graph node
+        :param end: Index of the ending graph node
+        :return:
+        """
+        # Check if a road can be constructed in both ways
+        if self.check_valid_segment(start, end) and self.check_valid_segment(end, start):
+            self.add_segment(start, end)
+            self.add_segment(end, start)
+            return True
+        return False
+
+    def remove_road(self, start: int, end: int) -> bool:
+        """
+        A road is a segment both ways defined as: A <---> B e.g a bidirectional edge on the graph
+        We can only remove a road if a bidirectional
+        :param start:
+        :param end:
+        :return:
+        """
+        if self.check_valid_segment(start, end) and self.check_valid_segment(end, start):
+            self.remove_segment(start, end)
+            self.remove_segment(end, start)
+            return True
+        return False
 
     def add_point(self, location: tuple) -> None:
         """
         Adds a point to the locations. No new segment gets added.
+        This is an internal method only.
         :param location: (x, y) coordinate tuple of the location
         :return: None --> only adds to the inner variables of the class
         """
         # Find the name for the new point
-        # TODO: implement --> find the naming convention e.g. numbers
+        current_points = sorted(list(self.points.keys()))
+        # Iterate over the points and find the next free slot
+        # E.g. [0, 2, 3] --> 1 or [0, 1, 2] --> 3
+        i = 0
+        while i < len(current_points):
+            if i != current_points[i]:
+                break
+        self.points[i] = location  # Assign tuple to point location
 
     def gen_road_mtx(self) -> None:
         """
         Creates the matrix that is used to generate the roads
+        Example locs: [((100.0, 100.0), (250.0, 100.0)), ((100.0, 300.0), (250.0, 300.0))]
         :return: None
         """
         lst = []
@@ -207,7 +242,8 @@ class Reader:
     def gen_path_graph(self) -> None:
         """
         Creates a graph of all the nodes that can be reached from a specific node
-        :return:
+        Example graph: {0: [1], 1: [4, 0], 2: [3], 3: [4, 2], 4: [5, 7, 8, 3, 1], 5: [6, 4], 6: [5], 7: [9, 4, 8], 8: [7, 4], 9: [7]}
+        :return: None
         """
         graph = {x: [] for x in list(self.points.keys())}
         for x in self.segments['Definition']:
@@ -218,6 +254,7 @@ class Reader:
     def dfs(self, g, v, seen=None, path=None) -> list:
         """
         Recursive depth seearch in a graph to determine paths between nodes
+        Example paths: {0: [(0, 1, 4), (0, 1, 4, 5, 6), (0, 1, 4, 3, 2)], 1: [], 2: [(2, 3, 4), (2, 3, 4, 5, 6), (2, 3, 4, 1, 0)]}
         :param g: graph: a dict of nodes where {A: [B,C,D]} contains the nodes reachable from node A
         :param v: current node: A
         :param seen: A list of all nodes visited previously
@@ -229,9 +266,8 @@ class Reader:
         if path is None:
             path = [v]
 
-        seen.append(v)
-
         paths = []
+        seen.append(v)
         for t in g[v]:
             if t not in seen:
                 t_path = path + [t]
@@ -242,8 +278,13 @@ class Reader:
     def gen_paths(self) -> None:
         """
         Generates all the paths between entry points
-        This is to determine all the possible paths that cars can take.
+        This is to determine all the possible paths that cars can take
         The different paths will be chosen from here
+        The following data structures are generated here:
+        Example path_stack: [[0, 3], [0, 3, 4, 9], [0, 3, 12, 11], [1, 2], [1, 2, 4, 9], [1, 2, 13, 10]]
+        Example path_codes: {0: [[0, 3], [0, 3, 4, 9], [0, 3, 12, 11]], 2: [[1, 2], [1, 2, 4, 9], [1, 2, 13, 10]]}
+        Example paths_dual: {0: [[(0, 1), (1, 4)], [(0, 1), (1, 4), (4, 5), (5, 6)], [(0, 1), (1, 4), (4, 3), (3, 2)]]}
+        Example paths: {0: [(0, 1, 4), (0, 1, 4, 5, 6), (0, 1, 4, 3, 2)], 2: [(2, 3, 4), (2, 3, 4, 5, 6), (2, 3, 4, 1, 0)]}
         :return: None
         """
         paths = {x: [] for x in list(self.points.keys())}
@@ -254,9 +295,9 @@ class Reader:
                     paths[v].append(path)  # Append to the path
 
         paths = drop_empty_keys(paths)
-
         path_codes = {x: [] for x in list(self.points.keys())}
         paths_dual = {x: [] for x in list(self.points.keys())}
+
         for v in paths.keys():
             dualnode = []
             c_dualnode = []
@@ -293,6 +334,7 @@ class Reader:
         """
         Creates the dict that is used to create the vehicle generators
         The vehicle matrix is saved in the vehicle_mtx inner data field
+        Example vehicle_rate: {'vehicle_rate': 60, 'vehicles': [[1, {'path': [0, 3, 12, 11]}], [1, {'path': [13, 10]}]}
         :return: None
         """
         gen = {'vehicle_rate': self.vrate}
@@ -332,12 +374,12 @@ if __name__ == '__main__':
     :param vrate: the speed of spawning vehicles
     :param path_dist: the distribution of vehicles
     """
-    CITIES_FOLDER = './cities/'
+    cities_folder = './cities/'
     filename = 'simple.html'
-    city = CITIES_FOLDER + filename
+    city = cities_folder + filename
     vehicles_start_on = ['A', 'C', 'E', 'G']
-    vehicles_rate = 60
     paths_distribution = 'uniform'
+    vehicles_rate = 60
     paths_to_gen = 6
 
     # Construct reader

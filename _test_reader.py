@@ -10,6 +10,7 @@ There are predefined cities and entry points added as comments.
 from trafficSimulator import *
 from city_constructor import *
 from suppl import *
+
 import os
 os.chdir('/home/daniel/Documents/ELTE/trafficControl')
 TEST_ADD = True  # Modifying this to True will result in testing the add/remove functions of the reader class
@@ -43,24 +44,25 @@ This is a necessary step for visualization as the RL environment will refer to i
 """
 
 if TEST_ADD:
-    r.add_segment(letter_to_number('E'), letter_to_number('G'))
-    r.add_segment(letter_to_number('D'), letter_to_number('H'))
-    r.add_segment(letter_to_number('H'), letter_to_number('D'))
-    r.add_segment(letter_to_number('G'), letter_to_number('H'))
-    r.add_segment(letter_to_number('H'), letter_to_number('G'))
-    r.add_segment(letter_to_number('F'), letter_to_number('H'))
-    r.add_segment(letter_to_number('H'), letter_to_number('F'))
+    # In this case we are testing the add and remove functions
+    r.add_segment(letter_to_number('E'), letter_to_number('Q'))
+    r.add_segment(letter_to_number('E'), letter_to_number('L'))
+    r.add_segment(letter_to_number('M'), letter_to_number('T'))
+    r.add_segment(letter_to_number('T'), letter_to_number('M'))
 
-    # roads, vehicle_mtx = r.get_matrices()
-    # start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update)
+    r.remove_segment(letter_to_number('G'), letter_to_number('F'))
+    r.remove_segment(letter_to_number('F'), letter_to_number('G'))
+    r.remove_segment(letter_to_number('G'), letter_to_number('D'))
+    r.remove_segment(letter_to_number('D'), letter_to_number('G'))
+    r.remove_segment(letter_to_number('D'), letter_to_number('C'))
+    r.remove_segment(letter_to_number('C'), letter_to_number('F'))
 
-    # %% Testing remove function
-    r.remove_segment(letter_to_number('B'), letter_to_number('H'))
-    r.remove_segment(letter_to_number('H'), letter_to_number('B'))
-    r.remove_segment(letter_to_number('F'), letter_to_number('B'))
+    r.add_road(letter_to_number('I'), letter_to_number('F'))
+    r.add_road(letter_to_number('B'), letter_to_number('G'))
+
+    r.remove_road(letter_to_number('I'), letter_to_number('J'))
+    r.remove_road(letter_to_number('B'), letter_to_number('I'))
+
     roads, vehicle_mtx = r.get_matrices()
-
-    # %%
+    # print(roads, '\n\n', vehicle_mtx)  # Debugging
     start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update)
-
-#%%
