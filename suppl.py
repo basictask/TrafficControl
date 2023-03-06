@@ -49,3 +49,15 @@ def drop_empty_keys(dct: dict) -> dict:
         if len(dct[v]) == 0:
             dct.pop(v, None)
     return dct
+
+
+def calc_intermediate_point(p1: tuple, p2: tuple, r: float) -> tuple:
+    """
+    Calculates the intermediate point on the segment between two given points of (x,y) tuples
+    E.g. A ---> C ---> B for r=2, C is 1/2 of the way between A and B. For r=3 C is 1/3 of the way between A and B
+    :param p1: (x, y) tuple that represents point A
+    :param p2: (x, y) tuple that represents point B
+    :param r: ratio that defines where on the segment is point C
+    :return: (x, y) tuple that defines point C
+    """
+    return (p1[0] + p2[0]) / r, (p1[1] + p2[1]) / r

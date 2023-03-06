@@ -21,8 +21,6 @@ import numpy as np
 import pandas as pd
 from suppl import *
 
-# TODO: add_road, remove_road, add_lane, remove_lane, add_roundabout, add_trafficlight, add_righthand
-
 # %% Class definition
 
 

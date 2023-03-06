@@ -8,3 +8,4 @@ literature
 *.emergency
 /doc/outline.pdf
 /doc/images/simple_nearestneighbor.png
+/scratchpad.py
