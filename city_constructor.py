@@ -20,12 +20,13 @@ import inspect
 import numpy as np
 import pandas as pd
 from suppl import *
+from exceptions import *
 
 # %% Class definition
 
 
 class Reader:
-    def __init__(self, filepath: str, entry_points: list, vrate: int, pathnum: int, path_dist: str):
+    def __init__(self, filepath: str, entry_points: list, vrate: int, pathnum: int, path_dist: str, max_lanes: int = 3):
         """
         Constructor class for the Reader object
         :param filepath: str that points to {./folder/city_name}.html
@@ -36,16 +37,17 @@ class Reader:
         """
         # Error checking
         if not os.path.exists(filepath):
-            raise Exception('Input file not found: ' + filepath)
+            raise FileNotFoundError('Input file not found: {}'.format(filepath))
         if path_dist not in ['normal', 'uniform']:  # Only valid values for distributions. Might add some later
-            raise Exception('Invalid parameter for path distribution: ' + path_dist)
+            raise ValueError('Invalid parameter for path distribution: '.format(path_dist))
 
         # Params
         self.vrate = vrate
         self.pathnum = pathnum
         self.filepath = filepath
         self.path_dist = path_dist
-        self.entry_points = [letter_to_number(x) for x in entry_points]  # Convert letters to numbers on entry points
+        self.max_lanes = max_lanes
+        self.entry_points = letter_to_number_lst(entry_points)  # Convert letters to numbers on entry points
 
         # Set up inner params
         self.locs = None
@@ -80,13 +82,13 @@ class Reader:
         Create all the segments from df_segments
         :param df_segments: pandas DataFrame containing all the segments for any two nodes N1 --> N2
         :param add_reversed: create an one-way N1 ---> N2 or two-way N1 <--> N2 road
-        :return:
+        :return: None
         """
-        if add_reversed:  # If this is turned on all added streets will be bidirectional
+        if add_reversed:  # If this is turned on all added streets will be bidirectional. Note: Ususally true only when called from self.read()
             forward_segm = list(df_segments['Definition'])
-            reverse_segm = [(x[1], x[0]) for x in df_segments['Definition']]  # Reverse all connections
-            forward_segm.extend(reverse_segm)
-            df_segments = pd.DataFrame({'Definition': forward_segm}, index=range(len(forward_segm)))
+            reverse_segm = [x[::-1] for x in df_segments['Definition'] if x[::-1] not in forward_segm]  # Reverse connections that don't have reversed present already
+            df_reverse = pd.DataFrame({'Definition': reverse_segm, 'N_lanes': np.ones(len(reverse_segm), dtype=int)})  # Create new DataFrame with the reversed segments
+            df_segments = pd.concat([df_segments, df_reverse], axis=0, ignore_index=True, sort=False)  # Concat reversed segments to original DataFrame
 
         df_segments.sort_values('Definition', ignore_index=True)
         segment_map = {x: y for x, y in zip(df_segments['Definition'], list(df_segments.index))}
@@ -97,6 +99,8 @@ class Reader:
     def read(self) -> None:
         """
         Reads a Geogebra construction protocol that contains information about the coordinates of the nodes and the connections between them
+        Example points: {0: (100.0, 100.0), 1: (250.0, 100.0), 2: (100.0, 300.0), 3: (250.0, 300.0)}
+        Example df_segments: Columns=['Definition', 'N_lanes'], Definition: (start, end), N_lanes: number of lanes going from start --> end
         :return: None
         """
         df = pd.read_html(self.filepath)[0]
@@ -112,17 +116,29 @@ class Reader:
         df_points.index = [x.split(' ')[1] for x in list(df_points.index)]  # Get only letter
         df_points['Value'] = [re.findall(r'[\d.]+', x) for x in df_points['Value']]  # Find coordinates
         df_points['Value'] = [tuple([float(x) for x in lst]) for lst in df_points['Value']]  # Convert coords to float
-        points = {letter_to_number(x): y for x, y in zip(list(df_points.index), df_points['Value'])}
+        points = {letter_to_number(x): y for x, y in zip(list(df_points.index), df_points['Value'])}  # {ID: (x, y), ...}
 
         # Process segments
-        df_segments['Definition'] = [re.findall(r'(?<=\()[^)]*(?=\))', x)[0] for x in df_segments['Definition']]
-        df_segments['Definition'] = [re.findall(r'[A-Z]\d?', x) for x in df_segments['Definition']]
-        df_segments['Definition'] = [tuple([letter_to_number(x) for x in lst]) for lst in df_segments['Definition']]  # Convert the letters to numbers
+        df_segments['Definition'] = [re.findall(r'(?<=\()[^)]*(?=\))', x)[0] for x in df_segments['Definition']]  # Remove everything but the content in the parentheses
+        df_segments['Definition'] = [re.findall(r'[A-Z]\d?', x) for x in df_segments['Definition']]  # Find the letters in the string
+        df_segments['Definition'] = [tuple(letter_to_number_lst(lst)) for lst in df_segments['Definition']]  # Convert the letters to numbers
         df_segments.drop('Value', axis=1, inplace=True)
+        df_segments['N_lanes'] = 1  # Assign 1 lane to each road in the starting configuration
 
         self.points = points  # This member holds the junctions and buffer points
         self.junctions = points  # Assign the points to the junctions member --> reference to points that are not possible to remove
         self.assemble_segments(df_segments, add_reversed=True)  # Create the segment map and list segments
+
+    def get_n_lanes(self, start: int, end: int) -> int:
+        """
+        :param start: Where the beginning of the lane is
+        :param end: Where the end of the lane is
+        :return: Number of lanes currently going from (start --> end)
+        """
+        try:
+            return int(self.segments.loc[self.segments['Definition'] == (start, end), 'N_lanes'])  # Number of lanes
+        except TypeError:
+            return 0  # In case the segment is not stored in the segments DataFrame
 
     def check_valid_segment(self, start: int, end: int) -> bool:
         """
@@ -136,9 +152,9 @@ class Reader:
             return False
         if start not in self.points.keys() or end not in self.points.keys():  # Start and end don't exist
             return False
-        if caller_fn == 'add_segment' and (start, end) in set(self.segments['Definition']):  # Segment already exists: caller is add_segment function
+        if caller_fn == 'add_segment' and self.get_n_lanes(start, end) == self.max_lanes:  # Road has reached maximum capacity
             return False
-        elif caller_fn == 'remove_segment' and (start, end) not in set(self.segments['Definition']):  # Caller is remove_segment function but segment doesn't exist
+        elif caller_fn == 'remove_segment' and self.get_n_lanes(start, end) == 0:  # Caller is remove_segment function but there's no segment to remove
             return False
         return True
 
@@ -152,7 +168,21 @@ class Reader:
         :return: int
         """
         if self.check_valid_segment(start, end):
-            df_segments = pd.concat([self.segments, pd.DataFrame({'Definition': [(start, end)]})], ignore_index=True, axis=0)
+            num_lanes = self.get_n_lanes(start, end)
+            if num_lanes == 0:  # Only one lane --> add as a new lane
+                df_segments = pd.concat([self.segments, pd.DataFrame({'Definition': [(start, end)], 'N_lanes': [1]})], ignore_index=True, axis=0)
+            else:
+                midpoint = 1 / (num_lanes + 1)  # Calculate where between A and B the buffer point is: A ---x---> B
+                coord_start = self.junctions[start]  # Get the (x, y) location of the starting point
+                coord_end = self.junctions[end]  # Get the (x, y) location of the ending point
+                buffer_point = calc_intermediate_point(coord_start, coord_end, midpoint)
+                buffer_point_id = self.add_point(buffer_point)
+                # Add the buffer point to the total points
+                df_segments = pd.concat([self.segments, pd.DataFrame({'Definition': [(start, buffer_point_id),
+                                                                                     (buffer_point_id, end)],
+                                                                      'N_lanes': [1, 1]})], ignore_index=True, axis=0)
+                df_segments.loc[df_segments['Definition'] == (start, end), 'N_lanes'] += 1
+
             self.assemble_segments(df_segments, add_reversed=False)
             self.redo_config()
             return True
@@ -160,19 +190,26 @@ class Reader:
 
     def remove_segment(self, start: int, end: int) -> bool:
         """
-        Removes a segment specified by start and end
+        Removes a segment specified by (start, end)
         :param start: Node where the beginning of the road is
         :param end: Node where the end of the road is
         :return: int
         """
         if self.check_valid_segment(start, end):  # The entered points are valid
             df_segments = self.segments
+            # There's only one lane going A --> B
+            if self.get_n_lanes(start, end) == 1:
+                i = df_segments.loc[df_segments['Definition'] == (start, end), :].index  # Index object of segment definition
+            # More lanes going A --> B ==> Find midpoint
+            else:
+                midpoint = 1 / (self.get_n_lanes(start, end))  # Calculate where between A and B the buffer point is: A ---x---> B
+                buffer_point = calc_intermediate_point(self.junctions[start], self.junctions[end], midpoint)  # Find the point that's between start and end
+                buffer_point_id = find_key_to_value(self.points, buffer_point)  # Find the ID of the buffer point
+                del self.points[buffer_point_id]  # Remove the buffer point from the points dict
+                i = df_segments.loc[[buffer_point_id in x for x in df_segments['Definition']], :].index  # Remove all segments that contain the buffer point ID
 
-            i = 0
-            while df_segments['Definition'][i] != (start, end):
-                i += 1
-            if i == len(df_segments):
-                raise Exception('Cannot find segment: (' + str(start) + ', ' + str(end) + ')')
+            if len(i) == 0:  # There's no match (this should not be possible)
+                raise SegmentRemovalError('Cannot find segment: ({}, {})'.format(start, end))
 
             df_segments.drop(i, axis=0, inplace=True)  # Remove element with the marked index
             df_segments.index = np.arange(len(df_segments))  # Reset indices
@@ -209,22 +246,23 @@ class Reader:
             return True
         return False
 
-    def add_point(self, location: tuple) -> None:
+    def add_point(self, location: tuple) -> int:
         """
         Adds a point to the locations. No new segment gets added.
         This is an internal method only.
+        Example for a list of point IDs: [0, 2, 3] ==> 1 or [0, 1, 2] ==> 3
         :param location: (x, y) coordinate tuple of the location
-        :return: None --> only adds to the inner variables of the class
+        :return: The identifier of the point (serves as key in the points dict)
         """
         # Find the name for the new point
         current_points = sorted(list(self.points.keys()))
-        # Iterate over the points and find the next free slot
-        # E.g. [0, 2, 3] --> 1 or [0, 1, 2] --> 3
         i = 0
-        while i < len(current_points):
-            if i != current_points[i]:
+        while i < len(current_points):  # Iterate over the points and find the next free slot
+            if i != current_points[i]:  # There's a break in the assignment e.g. point was removed
                 break
+            i += 1
         self.points[i] = location  # Assign tuple to point location
+        return i  # Return the index of the newly created point
 
     def gen_road_mtx(self) -> None:
         """
@@ -246,7 +284,6 @@ class Reader:
         graph = {x: [] for x in list(self.points.keys())}
         for x in self.segments['Definition']:
             graph[x[0]].append(x[1])
-            # graph[x[1]].append(x[0]) # Only needed for explicit adding
         self.graph = graph
 
     def dfs(self, g, v, seen=None, path=None) -> list:
@@ -356,7 +393,7 @@ class Reader:
     def get_matrices(self):
         """
         Return the assembled matrices
-        :return: The locations of the nodes (city junctions) as [x,y] coordinates and the matrix that contains the paths
+        :return: The locations of the nodes (city junctions) as [x,y] coordinates; The matrix that contains the paths
         """
         return self.locs, self.vehicle_mtx
 

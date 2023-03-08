@@ -7,13 +7,9 @@ There are predefined cities and entry points added as comments.
 """
 
 # Imports
-from trafficSimulator import *
 from city_constructor import *
-from suppl import *
-
 import os
 os.chdir('/home/daniel/Documents/ELTE/trafficControl')
-TEST_ADD = True  # Modifying this to True will result in testing the add/remove functions of the reader class
 
 # %% Set up the reader from a .html GeoGebra construction protocol
 
@@ -26,14 +22,16 @@ filepath = 'cities/bakats.html'
 # entry_points = ['A','D','F','H','J'] # Star city
 entry_points = ['A', 'M', 'E', 'K', 'J', 'I', 'B', 'F', 'C', 'D', 'T']  # Bakats area
 
+test_add = True  # Modifying this to True will result in testing the add/remove functions of the reader class
 vrate = 60  # Rate of vehicles coming in from each entry point
 paths_to_gen = 10  # How many paths to generate
 path_dist = 'normal'  # One of 'normal', 'uniform'
 steps_per_update = 5  # How many steps the game takes in the interval of one frame update
+max_lanes = 3  # How many lanes are allowd going from A --> B (1-directional definition)
 
-r = Reader(filepath, entry_points, vrate, paths_to_gen, path_dist)  # Construct the Reader object to generate the vehicle matrices
+r = Reader(filepath, entry_points, vrate, paths_to_gen, path_dist, max_lanes)  # Construct the Reader object to generate the vehicle matrices
 
-if not TEST_ADD:
+if not test_add:
     roads, vehicle_mtx = r.get_matrices()
     start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update)
 
@@ -43,26 +41,47 @@ Note: This time we are using the letter_to_number function to define a node in t
 This is a necessary step for visualization as the RL environment will refer to it in numeric form
 """
 
-if TEST_ADD:
-    # In this case we are testing the add and remove functions
-    r.add_segment(letter_to_number('E'), letter_to_number('Q'))
-    r.add_segment(letter_to_number('E'), letter_to_number('L'))
-    r.add_segment(letter_to_number('M'), letter_to_number('T'))
-    r.add_segment(letter_to_number('T'), letter_to_number('M'))
+if test_add:
+    # Testing the add_segment method
+    r.add_segment(l2n('E'), l2n('Q'))
+    r.add_segment(l2n('E'), l2n('L'))
+    r.add_segment(l2n('M'), l2n('T'))
+    r.add_segment(l2n('T'), l2n('M'))
+    print('Adding done...')
 
-    r.remove_segment(letter_to_number('G'), letter_to_number('F'))
-    r.remove_segment(letter_to_number('F'), letter_to_number('G'))
-    r.remove_segment(letter_to_number('G'), letter_to_number('D'))
-    r.remove_segment(letter_to_number('D'), letter_to_number('G'))
-    r.remove_segment(letter_to_number('D'), letter_to_number('C'))
-    r.remove_segment(letter_to_number('C'), letter_to_number('F'))
+    # Testing the remove_segment method
+    r.remove_segment(l2n('G'), l2n('F'))
+    r.remove_segment(l2n('F'), l2n('G'))
+    r.remove_segment(l2n('G'), l2n('D'))
+    r.remove_segment(l2n('D'), l2n('G'))
+    r.remove_segment(l2n('D'), l2n('C'))
+    r.remove_segment(l2n('C'), l2n('F'))
+    print('Removing done...')
 
-    r.add_road(letter_to_number('I'), letter_to_number('F'))
-    r.add_road(letter_to_number('B'), letter_to_number('G'))
+    # Testing the add_road method
+    r.add_road(l2n('I'), l2n('F'))
+    r.add_road(l2n('B'), l2n('G'))
+    print('Adding on starting graph done...')
 
-    r.remove_road(letter_to_number('I'), letter_to_number('J'))
-    r.remove_road(letter_to_number('B'), letter_to_number('I'))
+    # Testing the remove_road method
+    r.remove_road(l2n('I'), l2n('J'))
+    r.remove_road(l2n('B'), l2n('I'))
+    print('Removing on starting graph done...')
+
+    # Testing the add_segment on segments that currently have lanes
+    r.add_segment(l2n('E'), l2n('M'))  # (E, M) already should have a lane at this point
+    r.add_segment(l2n('E'), l2n('M'))
+    r.add_segment(l2n('E'), l2n('L'))
+    r.add_segment(l2n('M'), l2n('T'))
+    print('Adding multiple lanes done...')
+
+    # Testing the remove_segment on segments that already have lanes
+    r.remove_segment(l2n('E'), l2n('L'))
+
+    # try:
+    #     r.remove_segment(l2n('E'), l2n('L'))
+    # except SegmentRemovalError:
+    #     print("Segment removal overflow (correct behavior)")
 
     roads, vehicle_mtx = r.get_matrices()
-    # print(roads, '\n\n', vehicle_mtx)  # Debugging
     start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update)

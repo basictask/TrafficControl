@@ -3,6 +3,7 @@ Supplementary methods for the Reader class and others
 These methods don't belong to any specific class operation and may be used across the entire project
 @author: daniel kuknyo
 """
+from exceptions import *
 
 
 def start_sim(roads: list, vehicle_mtx: dict, offset: tuple, steps_per_update: int) -> None:
@@ -39,6 +40,24 @@ def letter_to_number(letter: str) -> int:
         return int(letter[1:]) * 26 + ord(letter[0]) - ord('A')
 
 
+def l2n(x: str) -> int:
+    """
+    This is an alias for letter_to_numer
+    :param x: String representing a single character starting from 'A' = 0
+    :return: integer representing a single character
+    """
+    return letter_to_number(x)
+
+
+def letter_to_number_lst(lst: list) -> list:
+    """
+    Converts a list of letters to numbers
+    :param lst: list full of capital letters that refer to nodes e.g.: ['A', 'B', 'C', 'D', 'E', 'F']
+    :return: list of converted numbers to letters e.g.: [0, 1, 2, 3, 4, 5]
+    """
+    return list(map(letter_to_number, lst))  # Do conversion and return
+
+
 def drop_empty_keys(dct: dict) -> dict:
     """
     Drops the empty keys from a given dict and returns the dict itself
@@ -51,6 +70,17 @@ def drop_empty_keys(dct: dict) -> dict:
     return dct
 
 
+def find_key_to_value(dct: dict, val):
+    """
+    Returns the key that belongs to a given value in a dictionary
+    Note: value van be of any type. Return type is of same type that the keys are stored as
+    :param dct: The dictionary to be traversed
+    :param val: The value to be looked for
+    :return: The key belonging to the value
+    """
+    return list(dct.keys())[list(dct.values()).index(val)]
+
+
 def calc_intermediate_point(p1: tuple, p2: tuple, r: float) -> tuple:
     """
     Calculates the intermediate point on the segment between two given points of (x,y) tuples
@@ -60,4 +90,9 @@ def calc_intermediate_point(p1: tuple, p2: tuple, r: float) -> tuple:
     :param r: ratio that defines where on the segment is point C
     :return: (x, y) tuple that defines point C
     """
-    return (p1[0] + p2[0]) / r, (p1[1] + p2[1]) / r
+    if r <= 0 or 1 <= r:  # Test for illegal midpoint values
+        raise IllegalMidPointError("Midpoint is out of the 0...1 range: {:.2f}".format(r))
+    # (x1 + k / n * (x2 - x1), y1 + k / n * (y2 - y1))
+    x1, y1 = p1
+    x2, y2 = p2
+    return x1 + r * (x2 - x1), y1 + r * (y2 - y1)
