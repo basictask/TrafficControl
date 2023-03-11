@@ -28,7 +28,7 @@ def start_sim(roads: list, vehicle_mtx: dict, offset: tuple, steps_per_update: i
     if show_win:
         win = Window(sim, steps_per_update, n_steps)
         win.offset = offset  # (x, y) tuple
-        win.run(steps_per_update)
+        win.run()
     # Only simulate, don't display. ==> For the RL environment only
     else:
         sim.run(n_steps)

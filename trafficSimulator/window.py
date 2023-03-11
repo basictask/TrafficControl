@@ -103,12 +103,12 @@ class Window:
         # Exit after the loop is done
         pygame.quit()
 
-    def run(self, steps_per_update=1):
+    def run(self):
         """
         Runs the simulation by updating in every loop.
         """
         def loop(sim):
-            sim.run(steps_per_update)
+            sim.run(self.steps_per_update)
         self.loop(loop)
 
     def convert(self, x, y=None):

@@ -1,4 +1,3 @@
-import numpy as np
 from trafficSimulator import *
 
 sim = Simulation()
@@ -8,6 +7,8 @@ n = 15
 a = 2
 b = 12
 l = 300
+n_steps = 0
+steps_per_update = 10
 
 # Nodes
 WEST_RIGHT_START = (-b-l, a)
@@ -115,11 +116,11 @@ sim.create_gen({
         [3, {'path': [3, 11, 5]}],
         [1, {'path': [3, *road(12+6*n), 4]}],
         [1, {'path': [3, *road(12+7*n), 6]}]
-    ]})
+    ]}
+)
 
 sim.create_signal([[0, 2], [1, 3]])
 
-# Start simulation
-win = Window(sim)
+win = Window(sim, steps_per_update, n_steps)
 win.zoom = 10
-win.run(steps_per_update=10)
+win.run()

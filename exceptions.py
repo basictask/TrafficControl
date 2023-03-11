@@ -22,3 +22,10 @@ class IllegalMidPointError(Exception):
     In case midpoint is not in the 0...1 range (exclusive)
     """
     pass
+
+
+class TooManyPathsError(Exception):
+    """
+    In case there are too many paths needed to be generated in the matrix assembler
+    """
+    pass

@@ -32,12 +32,13 @@ class Road:
 
     def update(self, dt):
         n = len(self.vehicles)
+        vehicles_distance = 0
         if n > 0:
-            self.vehicles[0].update(None, dt)  # Update first vehicle
+            vehicles_distance += self.vehicles[0].update(None, dt)  # Update first vehicle
 
             for i in range(1, n):  # Update other vehicles
                 lead = self.vehicles[i-1]
-                self.vehicles[i].update(lead, dt)
+                vehicles_distance += self.vehicles[i].update(lead, dt)
 
             # Check for traffic signal
             if self.traffic_signal_state:  # If traffic signal is green or doesn't exist then let vehicles pass
@@ -53,3 +54,5 @@ class Road:
                 vehicle_stop_far = self.vehicles[0].x <= self.length - self.traffic_signal.stop_distance / 2
                 if vehicle_stop_close and vehicle_stop_far:
                     self.vehicles[0].stop()
+
+        return vehicles_distance  # ITT TARTOK A RETURN-T KIVINNI A SIM-IG

@@ -12,13 +12,10 @@ The project uses the TrafficSimulator application of BilHim for the base traffic
 @author: Daniel Kuknyo
 """
 
-#%% Import libraries
+from trafficSimulator import *
 import sys
 sys.path.append('C:/Users/Daniel Kuknyo/Downloads/TrafficControlRL/trafficSimulator-src/')
-from trafficSimulator import *
 
-
-#%% Set up the simulation
 sim = Simulation()
 
 # Driver parameters
@@ -28,6 +25,8 @@ b = 20  # Comfortable deceleration
 c = 5 
 r = 10
 l = 300
+n_steps = 0
+steps_per_update = 5
 
 # Add roads to the simulation
 sim.create_roads([
@@ -56,6 +55,6 @@ sim.create_gen({
 })
 
 # Start simulation
-win = Window(sim)
+win = Window(sim, steps_per_update, n_steps)
 win.offset = (-150, -110)
-win.run(steps_per_update=5)
+win.run()

@@ -21,6 +21,7 @@ class Simulation:
         self.t = 0.0  # Time keeping
         self.dt = 1 / 60  # Simulation time step
         self.frame_count = 0  # Frame count keeping
+        self.total_vehicles_distance = 0
 
         # Arrays to store roads, generators and traffic signals
         self.roads = []

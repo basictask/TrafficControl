@@ -24,7 +24,7 @@ entry_points = ['A', 'M', 'E', 'K', 'J', 'I', 'B', 'F', 'C', 'D', 'T']  # Bakats
 
 vrate = 60  # Rate of vehicles coming in from each entry point
 max_lanes = 3  # How many lanes are allowd going from A --> B (1-directional definition)
-n_steps = 1000  # How many steps to simulate (in case there's no Sim window)
+n_steps = 0  # How many steps to simulate (in case there's no Sim window)
 show_win = True  # True if the Simulation window shall be displayed
 test_add = True  # Modifying this to True will result in testing the add/remove functions of the reader class
 paths_to_gen = 10  # How many paths to generate

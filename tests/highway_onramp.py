@@ -5,6 +5,8 @@ sim = Simulation()
 
 # Curve resolution
 n = 15
+n_steps = 0
+steps_per_update = 5
 
 # Add multiple roads
 sim.create_roads([
@@ -37,7 +39,7 @@ sim.create_gen({
 
 
 # Start simulation
-win = Window(sim)
+win = Window(sim, steps_per_update, n_steps)
 win.offset = (-145, -95)
 win.zoom = 8
-win.run(steps_per_update=5)
+win.run()

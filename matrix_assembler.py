@@ -183,7 +183,7 @@ class Assembler:
                 path_stack.append(x)
 
         if self.pathnum > len(path_stack):
-            raise Exception('The number of paths input is larger than the number of all paths.')
+            raise TooManyPathsError('The number of paths input is larger than the number of all paths.')
 
         self.path_stack = path_stack
         self.path_codes = path_codes

@@ -11,6 +11,8 @@ c = 20
 d = 5
 e = 80
 f = 40
+n_steps = 0
+steps_per_update = 5
 
 SOUTH_RIGHT = (a, b)
 SOUTH_LEFT = (-a, b)
@@ -144,6 +146,6 @@ sim.create_gen({
 })
 
 # Start simulation
-win = Window(sim)
+win = Window(sim, steps_per_update, n_steps)
 win.zoom = 6
-win.run(steps_per_update=5)
+win.run()

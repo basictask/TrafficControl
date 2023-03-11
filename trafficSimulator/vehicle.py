@@ -28,12 +28,15 @@ class Vehicle:
 
     def update(self, lead, dt):
         # Update position and velocity
+        x_change = -1
         if self.v + self.a * dt < 0:
-            self.x -= 1 / 2 * self.v * self.v / self.a
+            x_change = 1 / 2 * self.v * self.v / self.a
+            self.x -= x_change
             self.v = 0
         else:
             self.v += self.a * dt
-            self.x += self.v * dt + self.a * dt * dt / 2
+            x_change = self.v * dt + self.a * dt * dt / 2
+            self.x += x_change
         
         # Update acceleration
         alpha = 0
@@ -46,7 +49,9 @@ class Vehicle:
 
         if self.stopped: 
             self.a = -self.b_max * self.v / self.v_max
-        
+
+        return x_change
+
     def stop(self):
         self.stopped = True
 
