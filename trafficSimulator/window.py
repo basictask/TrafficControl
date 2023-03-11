@@ -4,7 +4,7 @@ import numpy as np
 
 
 class Window:
-    def __init__(self, sim, config=None):
+    def __init__(self, sim, steps_per_update: int, n_steps: int, config=None):
         # Simulation to draw
         if config is None:
             config = {}
@@ -25,6 +25,9 @@ class Window:
         self.width = 1400
         self.height = 900
         self.bg_color = (50, 150, 50)
+        self.n_steps = n_steps
+        self.i_steps = 0
+        self.steps_per_update = steps_per_update
 
         self.fps = 60
         self.zoom = 5
@@ -94,6 +97,9 @@ class Window:
                         self.offset = ((x2 - x1) / self.zoom, (y2 - y1) / self.zoom)
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.mouse_down = False
+            self.i_steps += self.steps_per_update
+            if self.i_steps >= self.n_steps > 0:
+                running = False
         # Exit after the loop is done
         pygame.quit()
 
@@ -169,15 +175,12 @@ class Window:
         """
         x, y = pos
         w, h = size
-
         if angle:
             cos, sin = np.cos(angle), np.sin(angle)
-
         if centered:
             vertices = self.convert([self.vertex(e1, e2, x, y, w, h, cos, sin) for e1, e2 in [(-1, -1), (-1, 1), (1, 1), (1, -1)]])
         else:
             vertices = self.convert([self.vertex(e1, e2, x, y, w, h, cos, sin) for e1, e2 in [(0, -1), (0, 1), (2, 1), (2, -1)]])
-
         self.polygon(vertices, color, filled=filled)
 
     def rotated_rect(self, pos, size, angle=None, cos=None, sin=None, centered=True, color=(0, 0, 255)):
@@ -186,14 +189,12 @@ class Window:
     def arrow(self, pos, size, angle=None, cos=None, sin=None, color=(150, 150, 190)):
         if angle:
             cos, sin = np.cos(angle), np.sin(angle)
-
         self.rotated_box(pos, size, cos=(cos - sin) / np.sqrt(2), sin=(cos + sin) / np.sqrt(2), color=color, centered=False)
         self.rotated_box(pos, size, cos=(cos + sin) / np.sqrt(2), sin=(sin - cos) / np.sqrt(2), color=color, centered=False)
 
     def draw_axes(self, color=(100, 100, 100)):
         x_start, y_start = self.inverse_convert(0, 0)
         x_end, y_end = self.inverse_convert(self.width, self.height)
-
         self.line(self.convert((0, y_start)), self.convert((0, y_end)), color)
         self.line(self.convert((x_start, 0)), self.convert((x_end, 0)), color)
 
@@ -203,8 +204,8 @@ class Window:
 
         n_x = int(x_start / unit)
         n_y = int(y_start / unit)
-        m_x = int(x_end / unit)+1
-        m_y = int(y_end / unit)+1
+        m_x = int(x_end / unit) + 1
+        m_y = int(y_end / unit) + 1
 
         for i in range(n_x, m_x):
             self.line(self.convert((unit * i, y_start)), self.convert((unit * i, y_end)), color)
@@ -225,10 +226,8 @@ class Window:
     def draw_vehicle(self, vehicle, road):
         l, h = vehicle.l,  2
         sin, cos = road.angle_sin, road.angle_cos
-
         x = road.start[0] + cos * vehicle.x
         y = road.start[1] + sin * vehicle.x
-
         self.rotated_box((x, y), (l, h), cos=cos, sin=sin, centered=True)
 
     def draw_vehicles(self):
@@ -249,15 +248,15 @@ class Window:
     def draw_status(self):
         text_fps = self.text_font.render(f't={self.sim.t:.5}', False, (0, 0, 0))
         text_frc = self.text_font.render(f'n={self.sim.frame_count}', False, (0, 0, 0))
+        text_steps = self.text_font.render(f'steps={self.i_steps}', False, (0, 0, 0))
         self.screen.blit(text_fps, (0, 0))
         self.screen.blit(text_frc, (100, 0))
+        self.screen.blit(text_steps, (200, 0))
 
     def draw(self):
         # Fill background
         self.background(*self.bg_color)
-
         self.draw_roads()
         self.draw_vehicles()
         self.draw_signals()
-
         self.draw_status()  # Draw status info

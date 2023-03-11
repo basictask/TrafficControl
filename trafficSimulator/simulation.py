@@ -1,7 +1,7 @@
 from .road import Road
 from copy import deepcopy
-from .vehicle_generator import VehicleGenerator
 from .traffic_signal import TrafficSignal
+from .vehicle_generator import VehicleGenerator
 
 
 class Simulation:
