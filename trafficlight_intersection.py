@@ -11,7 +11,7 @@ l = 300
 
 # Nodes
 WEST_RIGHT_START = (-b-l, a)
-WEST_LEFT_START =	(-b-l, -a)
+WEST_LEFT_START = (-b-l, -a)
 
 SOUTH_RIGHT_START = (a, b+l)
 SOUTH_LEFT_START = (-a, b+l)
@@ -22,9 +22,8 @@ EAST_LEFT_START = (b+l, a)
 NORTH_RIGHT_START = (-a, -b-l)
 NORTH_LEFT_START = (a, -b-l)
 
-
 WEST_RIGHT = (-b, a)
-WEST_LEFT =	(-b, -a)
+WEST_LEFT = (-b, -a)
 
 SOUTH_RIGHT = (a, b)
 SOUTH_LEFT = (-a, b)
@@ -92,31 +91,33 @@ sim.create_roads([
     *NORTH_LEFT_TURN
 ])
 
-def road(a): return range(a, a+n)
+
+def road(rd):
+    return range(rd, rd + n)
+
 
 sim.create_gen({
-'vehicle_rate': 30,
-'vehicles':[
-    [3, {'path': [0, 8, 6]}],
-    [1, {'path': [0, *road(12), 5]}],
-    [1, {'path': [0, *road(12+n), 7]}],
+    'vehicle_rate': 30,
+    'vehicles': [
+        [3, {'path': [0, 8, 6]}],
+        [1, {'path': [0, *road(12), 5]}],
+        [1, {'path': [0, *road(12+n), 7]}],
 
-    [3, {'path': [1, 9, 7]}],
-    [1, {'path': [1, *road(12+2*n), 6]}],
-    [1, {'path': [1, *road(12+3*n), 4]}],
+        [3, {'path': [1, 9, 7]}],
+        [1, {'path': [1, *road(12+2*n), 6]}],
+        [1, {'path': [1, *road(12+3*n), 4]}],
 
 
-    [3, {'path': [2, 10, 4]}],
-    [1, {'path': [2, *road(12+4*n), 7]}],
-    [1, {'path': [2, *road(12+5*n), 5]}],
+        [3, {'path': [2, 10, 4]}],
+        [1, {'path': [2, *road(12+4*n), 7]}],
+        [1, {'path': [2, *road(12+5*n), 5]}],
 
-    [3, {'path': [3, 11, 5]}],
-    [1, {'path': [3, *road(12+6*n), 4]}],
-    [1, {'path': [3, *road(12+7*n), 6]}]
-]})
+        [3, {'path': [3, 11, 5]}],
+        [1, {'path': [3, *road(12+6*n), 4]}],
+        [1, {'path': [3, *road(12+7*n), 6]}]
+    ]})
 
 sim.create_signal([[0, 2], [1, 3]])
-
 
 # Start simulation
 win = Window(sim)

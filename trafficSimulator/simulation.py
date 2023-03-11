@@ -18,19 +18,18 @@ class Simulation:
         self.traffic_signals = None
 
         # Set default configuration
-        self.set_default_config()
+        self.t = 0.0  # Time keeping
+        self.dt = 1 / 60  # Simulation time step
+        self.frame_count = 0  # Frame count keeping
+
+        # Arrays to store roads, generators and traffic signals
+        self.roads = []
+        self.generators = []
+        self.traffic_signals = []
 
         # Update configuration
         for attr, val in config.items():
             setattr(self, attr, val)
-
-    def set_default_config(self):
-        self.t = 0.0  # Time keeping
-        self.frame_count = 0  # Frame count keeping
-        self.dt = 1 / 60  # Simulation time step
-        self.roads = []  # Array to store roads
-        self.generators = []
-        self.traffic_signals = []
 
     def create_road(self, start, end):
         road = Road(start, end)

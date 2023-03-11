@@ -21,14 +21,7 @@ class Window:
         self.mouse_down = None
         self.mouse_last = None
 
-        self.set_default_config()  # Set default configurations
-
-        # Update configurations
-        for attr, val in config.items():
-            setattr(self, attr, val)
-
-    def set_default_config(self):
-        """Set default configuration"""
+        # Set the default configuration
         self.width = 1400
         self.height = 900
         self.bg_color = (50, 150, 50)
@@ -39,6 +32,10 @@ class Window:
 
         self.mouse_last = (0, 0)
         self.mouse_down = False
+
+        # Update configurations
+        for attr, val in config.items():
+            setattr(self, attr, val)
 
     def loop(self, loop=None):
         """
@@ -167,7 +164,9 @@ class Window:
         return x + (e1 * w * cos + e2 * h * sin) / 2, y + (e1 * w * sin - e2 * h * cos) / 2
 
     def rotated_box(self, pos, size, angle=None, cos=None, sin=None, centered=True, color=(0, 0, 255), filled=True):
-        """Draws a rectangle center at *pos* with size *size* rotated anti-clockwise by *angle*."""
+        """
+        Draws a rectangle center at *pos* with size *size* rotated anti-clockwise by *angle*.
+        """
         x, y = pos
         w, h = size
 
@@ -250,7 +249,6 @@ class Window:
     def draw_status(self):
         text_fps = self.text_font.render(f't={self.sim.t:.5}', False, (0, 0, 0))
         text_frc = self.text_font.render(f'n={self.sim.frame_count}', False, (0, 0, 0))
-
         self.screen.blit(text_fps, (0, 0))
         self.screen.blit(text_frc, (100, 0))
 

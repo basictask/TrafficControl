@@ -110,13 +110,13 @@ class Reader:
             return False
         if start not in self.points.keys() or end not in self.points.keys():  # Start and end don't exist
             return False
-        if caller_fn == 'add_segment' and self.get_n_lanes(start, end) == self.max_lanes:  # Road has reached maximum capacity
+        if caller_fn == 'add_lane' and self.get_n_lanes(start, end) == self.max_lanes:  # Road has reached maximum capacity
             return False
-        elif caller_fn == 'remove_segment' and self.get_n_lanes(start, end) == 0:  # Caller is remove_segment function but there's no segment to remove
+        elif caller_fn == 'remove_lane' and self.get_n_lanes(start, end) == 0:  # Caller is remove_lane function but there's no segment to remove
             return False
         return True
 
-    def add_segment(self, start: int, end: int) -> bool:
+    def add_lane(self, start: int, end: int) -> bool:
         """
         Adds a segment to the matrix between two existing points (start, end)
         Where start, end is of (x,y)
@@ -144,7 +144,7 @@ class Reader:
             return True
         return False
 
-    def remove_segment(self, start: int, end: int) -> bool:
+    def remove_lane(self, start: int, end: int) -> bool:
         """
         Removes a segment specified by (start, end)
         :param start: Node where the beginning of the road is
@@ -184,8 +184,8 @@ class Reader:
         """
         # Check if a road can be constructed in both ways
         if self.check_valid_segment(start, end) and self.check_valid_segment(end, start):
-            self.add_segment(start, end)
-            self.add_segment(end, start)
+            self.add_lane(start, end)
+            self.add_lane(end, start)
             return True
         return False
 
@@ -198,8 +198,8 @@ class Reader:
         :return:
         """
         if self.check_valid_segment(start, end) and self.check_valid_segment(end, start):
-            self.remove_segment(start, end)
-            self.remove_segment(end, start)
+            self.remove_lane(start, end)
+            self.remove_lane(end, start)
             return True
         return False
 

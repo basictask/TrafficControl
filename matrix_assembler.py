@@ -1,3 +1,37 @@
+"""
+This is a supportive class that is used to construct the matrices from the segments DataFrame and the location of the points
+The class is used to generate two matrices:
+
+locs: stores the locations of the segments. For segment A --> B where each node is defined as (x, y) an entry in locs is ((x, y), (x, y))
+Example for locs
+    [
+        ((300, 98), (0, 98)),
+        ((0, 102), (300, 102)),
+        ((180, 60), (0, 60)),
+        ((220, 55), (180, 60)),
+        ((300, 30), (220, 55)),
+        ((180, 60), (160, 98)),
+        ((158, 130), (300, 130)),
+        ((0, 178), (300, 178)),
+        ((300, 182), (0, 182)),
+        ((160, 102), (155, 180))
+    ]
+
+vehicle_mtx: stores which path should we take. For each path the integer entries refer to which road should the vehicle take next.
+E.g. path [4,3,2] refers to locs[4] --> locs[3] --> locs[2] where each location defines an ((x, y), (x, y)) coordinate tuple pair.
+Example for vehicle_mtx:
+    {
+        'vehicle_rate': 60,
+        'vehicles': [
+            [1, {"path": [4, 3, 2]}],
+            [1, {"path": [0]}],
+            [1, {"path": [1]}],
+            [1, {"path": [6]}],
+            [1, {"path": [7]}]
+        ]
+    }
+"""
+
 import numpy as np
 import pandas as pd
 from suppl import *

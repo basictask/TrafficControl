@@ -22,12 +22,12 @@ filepath = 'cities/bakats.html'
 # entry_points = ['A','D','F','H','J'] # Star city
 entry_points = ['A', 'M', 'E', 'K', 'J', 'I', 'B', 'F', 'C', 'D', 'T']  # Bakats area
 
-test_add = True  # Modifying this to True will result in testing the add/remove functions of the reader class
 vrate = 60  # Rate of vehicles coming in from each entry point
+max_lanes = 3  # How many lanes are allowd going from A --> B (1-directional definition)
+test_add = True  # Modifying this to True will result in testing the add/remove functions of the reader class
 paths_to_gen = 10  # How many paths to generate
 path_dist = 'normal'  # One of 'normal', 'uniform'
 steps_per_update = 5  # How many steps the game takes in the interval of one frame update
-max_lanes = 3  # How many lanes are allowd going from A --> B (1-directional definition)
 
 r = Reader(filepath, entry_points, vrate, paths_to_gen, path_dist, max_lanes)  # Construct the Reader object to generate the vehicle matrices
 
@@ -42,20 +42,20 @@ This is a necessary step for visualization as the RL environment will refer to i
 """
 
 if test_add:
-    # Testing the add_segment method
-    r.add_segment(l2n('E'), l2n('Q'))
-    r.add_segment(l2n('E'), l2n('L'))
-    r.add_segment(l2n('M'), l2n('T'))
-    r.add_segment(l2n('T'), l2n('M'))
+    # Testing the add_lane method
+    r.add_lane(l2n('E'), l2n('Q'))
+    r.add_lane(l2n('E'), l2n('L'))
+    r.add_lane(l2n('M'), l2n('T'))
+    r.add_lane(l2n('T'), l2n('M'))
     print('Adding done...')
 
-    # Testing the remove_segment method
-    r.remove_segment(l2n('G'), l2n('F'))
-    r.remove_segment(l2n('F'), l2n('G'))
-    r.remove_segment(l2n('G'), l2n('D'))
-    r.remove_segment(l2n('D'), l2n('G'))
-    r.remove_segment(l2n('D'), l2n('C'))
-    r.remove_segment(l2n('C'), l2n('F'))
+    # Testing the remove_lane method
+    r.remove_lane(l2n('G'), l2n('F'))
+    r.remove_lane(l2n('F'), l2n('G'))
+    r.remove_lane(l2n('G'), l2n('D'))
+    r.remove_lane(l2n('D'), l2n('G'))
+    r.remove_lane(l2n('D'), l2n('C'))
+    r.remove_lane(l2n('C'), l2n('F'))
     print('Removing done...')
 
     # Testing the add_road method
@@ -68,18 +68,18 @@ if test_add:
     r.remove_road(l2n('B'), l2n('I'))
     print('Removing on starting graph done...')
 
-    # Testing the add_segment on segments that currently have lanes
-    r.add_segment(l2n('E'), l2n('M'))  # (E, M) already should have a lane at this point
-    r.add_segment(l2n('E'), l2n('M'))
-    r.add_segment(l2n('E'), l2n('L'))
-    r.add_segment(l2n('M'), l2n('T'))
+    # Testing the add_lane on segments that currently have lanes
+    r.add_lane(l2n('E'), l2n('M'))  # (E, M) already should have a lane at this point
+    r.add_lane(l2n('E'), l2n('M'))
+    r.add_lane(l2n('E'), l2n('L'))
+    r.add_lane(l2n('M'), l2n('T'))
     print('Adding multiple lanes done...')
 
-    # Testing the remove_segment on segments that already have lanes
-    r.remove_segment(l2n('E'), l2n('L'))
+    # Testing the remove_lane on segments that already have lanes
+    r.remove_lane(l2n('E'), l2n('L'))
 
     # try:
-    #     r.remove_segment(l2n('E'), l2n('L'))
+    #     r.remove_lane(l2n('E'), l2n('L'))
     # except SegmentRemovalError:
     #     print("Segment removal overflow (correct behavior)")
 

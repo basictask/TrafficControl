@@ -14,7 +14,7 @@ l = 300
 
 # Nodes
 WEST_RIGHT_START = (-b-l, a-c)
-WEST_LEFT_START =	(-b-l, -a-c)
+WEST_LEFT_START = (-b-l, -a-c)
 
 SOUTH_RIGHT_START = (a-c, b+l)
 SOUTH_LEFT_START = (-a-c, b+l)
@@ -26,7 +26,7 @@ NORTH_RIGHT_START = (-a+c, -b-l)
 NORTH_LEFT_START = (a+c, -b-l)
 
 WEST_RIGHT = (-b, a-c)
-WEST_LEFT =	(-b, -a-c)
+WEST_LEFT = (-b, -a-c)
 
 SOUTH_RIGHT = (a-c, b)
 SOUTH_LEFT = (-a-c, b)
