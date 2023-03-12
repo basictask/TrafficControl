@@ -98,7 +98,7 @@ def road(rd):
 
 
 sim.create_gen({
-    'vehicle_rate': 30,
+    'vehicle_rate': 1,
     'vehicles': [
         [3, {'path': [0, 8, 6]}],
         [1, {'path': [0, *road(12), 5]}],

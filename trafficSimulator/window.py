@@ -246,12 +246,12 @@ class Window:
                     self.rotated_box(position, (1, 3), cos=road.angle_cos, sin=road.angle_sin, color=color)
 
     def draw_status(self):
-        text_fps = self.text_font.render(f't={self.sim.t:.5}', False, (0, 0, 0))
-        text_frc = self.text_font.render(f'n={self.sim.frame_count}', False, (0, 0, 0))
+        text_time = self.text_font.render(f'time={self.sim.t:.2f}', False, (0, 0, 0))
         text_steps = self.text_font.render(f'steps={self.i_steps}', False, (0, 0, 0))
-        self.screen.blit(text_fps, (0, 0))
-        self.screen.blit(text_frc, (100, 0))
-        self.screen.blit(text_steps, (200, 0))
+        text_dist = self.text_font.render(f'distance={self.sim.total_vehicles_distance:.2f}', False, (0, 0, 0))
+        self.screen.blit(text_time, (0, 0))
+        self.screen.blit(text_steps, (0, 15))
+        self.screen.blit(text_dist, (0, 30))
 
     def draw(self):
         # Fill background

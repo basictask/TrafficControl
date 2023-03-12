@@ -21,7 +21,7 @@ class Simulation:
         self.t = 0.0  # Time keeping
         self.dt = 1 / 60  # Simulation time step
         self.frame_count = 0  # Frame count keeping
-        self.total_vehicles_distance = 0
+        self.total_vehicles_distance = 0  # How much distance did all cars make in the simulation
 
         # Arrays to store roads, generators and traffic signals
         self.roads = []
@@ -59,7 +59,7 @@ class Simulation:
     def update(self):
         # Update every road
         for road in self.roads:
-            road.update(self.dt)
+            self.total_vehicles_distance += road.update(self.dt)
 
         # Add vehicles
         for gen in self.generators:

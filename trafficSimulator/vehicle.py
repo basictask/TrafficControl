@@ -63,3 +63,7 @@ class Vehicle:
 
     def unslow(self):
         self.v_max = self._v_max
+
+    @property
+    def get__v_max(self):
+        return self._v_max

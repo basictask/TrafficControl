@@ -11,7 +11,6 @@ class Road:
         self.traffic_signal_group = None
 
         self.vehicles = deque()
-
         self.length = distance.euclidean(self.start, self.end)
         self.angle_sin = (self.end[1] - self.start[1]) / self.length
         self.angle_cos = (self.end[0] - self.start[0]) / self.length
@@ -47,7 +46,8 @@ class Road:
                     vehicle.unslow()
             else:  # If traffic signal is red
                 if self.vehicles[0].x >= self.length - self.traffic_signal.slow_distance:
-                    self.vehicles[0].slow(self.traffic_signal.slow_factor * self.vehicles[0]._v_max)  # Slow vehicles in slowing zone
+                    # self.vehicles[0].slow(self.traffic_signal.slow_factor * self.vehicles[0]._v_max)  # Slow vehicles in slowing zone
+                    self.vehicles[0].slow(self.traffic_signal.slow_factor * self.vehicles[0].get__v_max)  # Slow vehicles in slowing zone
 
                 # Check if the vehicle is in the stop zone
                 vehicle_stop_close = self.vehicles[0].x >= self.length - self.traffic_signal.stop_distance
@@ -55,4 +55,4 @@ class Road:
                 if vehicle_stop_close and vehicle_stop_far:
                     self.vehicles[0].stop()
 
-        return vehicles_distance  # ITT TARTOK A RETURN-T KIVINNI A SIM-IG
+        return vehicles_distance
