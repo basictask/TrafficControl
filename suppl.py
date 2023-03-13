@@ -6,6 +6,7 @@ These methods don't belong to any specific class operation and may be used acros
 from exceptions import *
 from trafficSimulator.window import Window
 from trafficSimulator.simulation import Simulation
+import pandas as pd
 
 
 def start_sim(roads: list, vehicle_mtx: dict, offset: tuple, steps_per_update: int, n_steps: int, show_win: bool) -> None:
@@ -47,13 +48,13 @@ def letter_to_number(letter: str) -> int:
         return int(letter[1:]) * 26 + ord(letter[0]) - ord('A')
 
 
-def l2n(x: str) -> int:
+def l2n(letter: str) -> int:
     """
     This is an alias for letter_to_numer
-    :param x: String representing a single character starting from 'A' = 0
+    :param letter: String representing a single character starting from 'A' = 0
     :return: integer representing a single character
     """
-    return letter_to_number(x)
+    return letter_to_number(letter)
 
 
 def letter_to_number_lst(lst: list) -> list:
@@ -63,6 +64,39 @@ def letter_to_number_lst(lst: list) -> list:
     :return: list of converted numbers to letters e.g.: [0, 1, 2, 3, 4, 5]
     """
     return list(map(letter_to_number, lst))  # Do conversion and return
+
+
+def number_to_letter(num: int) -> str:
+    """
+    Converts a letter back to a number
+    :param num: The number to be converted
+    :return: The alphabetical representation of the number where 0 --> A, 1 --> B ...
+    """
+    if num < 26:
+        return chr(num + 65)
+    else:
+        return chr(num % 26 + 65) + str(num // 26)
+
+
+def n2l(num: int) -> str:
+    """
+    This is an alias for number_to_letter
+    :param num: Numerical form of the letter
+    :return: Alphabetical representation of the letter
+    """
+    return number_to_letter(num)
+
+
+def pretty_matrix(matrix: pd.DataFrame) -> pd.DataFrame:
+    """
+    Converts the representational matrix into a prettier form
+    :param matrix: The n*n representational matrix
+    :return: The representational matrix where all the point identification numbers have been converted to letters
+    """
+    result = matrix.copy()
+    result.index = [n2l(x) for x in matrix.index]
+    result.columns = [n2l(x) for x in matrix.columns]
+    return result
 
 
 def drop_empty_keys(dct: dict) -> dict:
@@ -85,7 +119,10 @@ def find_key_to_value(dct: dict, val):
     :param val: The value to be looked for
     :return: The key belonging to the value
     """
-    return list(dct.keys())[list(dct.values()).index(val)]
+    try:
+        return list(dct.keys())[list(dct.values()).index(val)]
+    except ValueError:
+        raise NotStoredError('Dictionary doesn\'t contain value: {}'.format(val))
 
 
 def calc_intermediate_point(p1: tuple, p2: tuple, r: float) -> tuple:

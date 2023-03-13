@@ -1,4 +1,11 @@
 """
+ ▄▄▄▄▄▄▄ ▄▄▄ ▄▄▄▄▄▄▄ ▄▄   ▄▄    ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄    ▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄   ▄▄   ▄▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄
+█       █   █       █  █ █  █  █       █       █  █  █ █       █       █   ▄  █ █  █ █  █       █       █       █   ▄  █
+█       █   █▄     ▄█  █▄█  █  █       █   ▄   █   █▄█ █  ▄▄▄▄▄█▄     ▄█  █ █ █ █  █ █  █       █▄     ▄█   ▄   █  █ █ █
+█     ▄▄█   █ █   █ █       █  █     ▄▄█  █ █  █       █ █▄▄▄▄▄  █   █ █   █▄▄█▄█  █▄█  █     ▄▄█ █   █ █  █ █  █   █▄▄█▄
+█    █  █   █ █   █ █▄     ▄█  █    █  █  █▄█  █  ▄    █▄▄▄▄▄  █ █   █ █    ▄▄  █       █    █    █   █ █  █▄█  █    ▄▄  █
+█    █▄▄█   █ █   █   █   █    █    █▄▄█       █ █ █   █▄▄▄▄▄█ █ █   █ █   █  █ █       █    █▄▄  █   █ █       █   █  █ █
+█▄▄▄▄▄▄▄█▄▄▄█ █▄▄▄█   █▄▄▄█    █▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄█  █▄▄█▄▄▄▄▄▄▄█ █▄▄▄█ █▄▄▄█  █▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█ █▄▄▄█ █▄▄▄▄▄▄▄█▄▄▄█  █▄█
 This is the internal creator of the road configuration.
 It handles adding and removing nodes from the graph.
 The input is a construction from Geogebra that contains points and segments. Any other geometric shape will be ignored.
@@ -42,6 +49,7 @@ class Reader:
         self.locs = None
         self.graph = None
         self.paths = None
+        self.matrix = None
         self.points = None
         self.segments = None
         self.junctions = None
@@ -86,33 +94,40 @@ class Reader:
         self.points = points  # This member holds the junctions and buffer points
         self.junctions = points  # Assign the points to the junctions member --> reference to points that are not possible to remove
         self.segments = self.assembler.redo_config(df_segments=df_segments, points=points, add_reversed=True)  # Create the segment map and list segments
+        self.init_matrix()
 
-    def get_n_lanes(self, start: int, end: int) -> int:
+    def init_matrix(self) -> None:
         """
-        :param start: Where the beginning of the lane is
-        :param end: Where the end of the lane is
-        :return: Number of lanes currently going from (start --> end)
+        This is the setup function for the inner representation of the graph object
+        The matrix variable is one of the most important. It stores the number of lanes going from A --> B and the type of junction.
+        matrix.loc[A, B] refers to the number of lanes going from A to B. Legitimate values are 0...max_lanes
+        matrix.loc[A, A] refers to the type of junction in the node A. Legitimate values are 1: right-hand, 2: roundabout, 3: traffic light
+        :return: None
         """
-        try:
-            return int(self.segments.loc[self.segments['Definition'] == (start, end), 'N_lanes'])  # Number of lanes
-        except TypeError:
-            return 0  # In case the segment is not stored in the segments DataFrame
+        ind = sorted(list(self.points.keys()))
+        self.matrix = pd.DataFrame(index=ind, columns=ind)  # Create the object
+        self.matrix.fillna(0, inplace=True)  # Fill up with 0
+        # Iterate over the junctions and roads and fill up the missing values
+        for P in self.junctions.keys():
+            self.matrix.loc[P, P] = 1  # By default set to right-hand crossing
+        for start, end in self.segments['Definition']:
+            self.matrix.loc[start, end] = 1  # By default set to 1 lane going from A to B
 
     def check_valid_segment(self, start: int, end: int) -> bool:
         """
         Checks if a segment is valid in order to remove it or add it
         :param start: Node where the beginning of the road is
         :param end: Node where the end of the road is
-        :return: boolean: False --> invalid segment, True --> valid segment
+        :return: False for invalid segment, True for valid segment
         """
         caller_fn = inspect.stack()[1].function
         if start == end:  # Start and end node can't be the same
             return False
         if start not in self.points.keys() or end not in self.points.keys():  # Start and end don't exist
             return False
-        if caller_fn == 'add_lane' and self.get_n_lanes(start, end) == self.max_lanes:  # Road has reached maximum capacity
+        if caller_fn == 'add_lane' and self.matrix.loc[start, end] == self.max_lanes:  # Road has reached maximum capacity
             return False
-        elif caller_fn == 'remove_lane' and self.get_n_lanes(start, end) == 0:  # Caller is remove_lane function but there's no segment to remove
+        elif caller_fn == 'remove_lane' and self.matrix.loc[start, end] == 0:  # Caller is remove_lane function but there's no segment to remove
             return False
         return True
 
@@ -123,12 +138,17 @@ class Reader:
         Invalid cases --> negative reward
         :param start: Node where the beginning of the road is
         :param end: Node where the end of the road is
-        :return: int
+        :return: True for successful, False for unsuccessful
         """
         if self.check_valid_segment(start, end):
-            num_lanes = self.get_n_lanes(start, end)
-            if num_lanes == 0:  # Only one lane --> add as a new lane
+            num_lanes = self.matrix.loc[start, end]
+            # The number of lanes has reached the maximum
+            if num_lanes == self.max_lanes:
+                return False
+            # Only one lane ==> add as a new lane
+            elif num_lanes == 0:
                 df_segments = pd.concat([self.segments, pd.DataFrame({'Definition': [(start, end)], 'N_lanes': [1]})], ignore_index=True, axis=0)
+            # There's 1 or more lanes going from start to end ==> we add a midpoint and two segments
             else:
                 midpoint = 1 / (num_lanes + 1)  # Calculate where between A and B the buffer point is: A ---x---> B
                 coord_start = self.junctions[start]  # Get the (x, y) location of the starting point
@@ -138,8 +158,7 @@ class Reader:
                 # Add the buffer point to the total points
                 df_segments = pd.concat([self.segments, pd.DataFrame({'Definition': [(start, buffer_point_id), (buffer_point_id, end)],
                                                                       'N_lanes': [1, 1]})], ignore_index=True, axis=0)
-                df_segments.loc[df_segments['Definition'] == (start, end), 'N_lanes'] += 1
-
+            self.matrix.loc[start, end] += 1
             self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False)  # Create the segment map and list segments
             return True
         return False
@@ -149,16 +168,19 @@ class Reader:
         Removes a segment specified by (start, end)
         :param start: Node where the beginning of the road is
         :param end: Node where the end of the road is
-        :return: int
+        :return: True for successful, False for unsuccessful
         """
         if self.check_valid_segment(start, end):  # The entered points are valid
             df_segments = self.segments
+            # There are no lanes going from A to B
+            if self.matrix.loc[start, end] == 0:
+                return False
             # There's only one lane going A --> B
-            if self.get_n_lanes(start, end) == 1:
+            elif self.matrix.loc[start, end] == 1:
                 i = df_segments.loc[df_segments['Definition'] == (start, end), :].index  # Index object of segment definition
             # More lanes going A --> B ==> Find midpoint
             else:
-                midpoint = 1 / (self.get_n_lanes(start, end))  # Calculate where between A and B the buffer point is: A ---x---> B
+                midpoint = 1 / (self.matrix.loc[start, end])  # Calculate where between A and B the buffer point is: A ---x---> B
                 buffer_point = calc_intermediate_point(self.junctions[start], self.junctions[end], midpoint)  # Find the point that's between start and end
                 buffer_point_id = find_key_to_value(self.points, buffer_point)  # Find the ID of the buffer point
                 del self.points[buffer_point_id]  # Remove the buffer point from the points dict
@@ -167,11 +189,10 @@ class Reader:
             if len(i) == 0:  # There's no match (this should not be possible)
                 raise SegmentRemovalError('Cannot find segment: ({}, {})'.format(start, end))
 
+            self.matrix.loc[start, end] -= 1  # Decrease lane counter in matrix
             df_segments.drop(i, axis=0, inplace=True)  # Remove element with the marked index
             df_segments.index = np.arange(len(df_segments))  # Reset indices
-
             self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False)  # Create the segment map and list segments
-
             return True
         return False
 
@@ -180,7 +201,7 @@ class Reader:
         A road is a segment both ways defined as: A <---> B e.g a bidirectional edge on the graph
         :param start: Index of the starting graph node
         :param end: Index of the ending graph node
-        :return:
+        :return: True for successful, False for unsuccessful
         """
         # Check if a road can be constructed in both ways
         if self.check_valid_segment(start, end) and self.check_valid_segment(end, start):
@@ -193,9 +214,9 @@ class Reader:
         """
         A road is a segment both ways defined as: A <---> B e.g a bidirectional edge on the graph
         We can only remove a road if a bidirectional
-        :param start:
-        :param end:
-        :return:
+        :param start: Index of the starting graph node
+        :param end: Index of the ending graph node
+        :return: True for successful, False for unsuccessful
         """
         if self.check_valid_segment(start, end) and self.check_valid_segment(end, start):
             self.remove_lane(start, end)
@@ -223,7 +244,7 @@ class Reader:
 
     def get_matrices(self):
         """
-        Return the assembled matrices
+        Return the assembled matrices. This method calls the method of the same name from the assembler class
         :return: The locations of the nodes (city junctions) as [x,y] coordinates; The matrix that contains the paths
         """
         return self.assembler.get_matrices()

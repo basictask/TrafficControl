@@ -7,9 +7,10 @@ There are predefined cities and entry points added as comments.
 """
 
 # Imports
-from city_constructor import *
+from test_functions import *
 import os
 os.chdir('/home/daniel/Documents/ELTE/trafficControl')
+
 
 # %% Set up the reader from a .html GeoGebra construction protocol
 
@@ -37,53 +38,56 @@ if not test_add:
     roads, vehicle_mtx = r.get_matrices()
     start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update, n_steps, show_win)
 
-# %% Tessting add function
+# %% Testing add function
 """
 Note: This time we are using the letter_to_number function to define a node in the graph. 
 This is a necessary step for visualization as the RL environment will refer to it in numeric form
 """
 
+
 if test_add:
     # Testing the add_lane method
-    r.add_lane(l2n('E'), l2n('Q'))
-    r.add_lane(l2n('E'), l2n('L'))
-    r.add_lane(l2n('M'), l2n('T'))
-    r.add_lane(l2n('T'), l2n('M'))
-    print('Adding done...')
+    test_add_remove(r, 'add', 'lane', 'E', 'Q')
+    test_add_remove(r, 'add', 'lane', 'E', 'L')
+    test_add_remove(r, 'add', 'lane', 'M', 'T')
+    test_add_remove(r, 'add', 'lane', 'T', 'M')
+    print('Adding done...\n')
 
     # Testing the remove_lane method
-    r.remove_lane(l2n('G'), l2n('F'))
-    r.remove_lane(l2n('F'), l2n('G'))
-    r.remove_lane(l2n('G'), l2n('D'))
-    r.remove_lane(l2n('D'), l2n('G'))
-    r.remove_lane(l2n('D'), l2n('C'))
-    r.remove_lane(l2n('C'), l2n('F'))
-    print('Removing done...')
+    test_add_remove(r, 'remove', 'lane', 'G', 'F')
+    test_add_remove(r, 'remove', 'lane', 'F', 'G')
+    test_add_remove(r, 'remove', 'lane', 'G', 'D')
+    test_add_remove(r, 'remove', 'lane', 'D', 'G')
+    test_add_remove(r, 'remove', 'lane', 'D', 'C')
+    test_add_remove(r, 'remove', 'lane', 'C', 'F')
+    print('Removing done...\n')
 
     # Testing the add_road method
-    r.add_road(l2n('I'), l2n('F'))
-    r.add_road(l2n('B'), l2n('G'))
-    print('Adding on starting graph done...')
+    test_add_remove(r, 'add', 'road', 'I', 'F')
+    test_add_remove(r, 'add', 'road', 'B', 'G')
+    print('Adding on starting graph done...\n')
 
     # Testing the remove_road method
-    r.remove_road(l2n('I'), l2n('J'))
-    r.remove_road(l2n('B'), l2n('I'))
-    print('Removing on starting graph done...')
+    test_add_remove(r, 'remove', 'road', 'I', 'J')
+    test_add_remove(r, 'remove', 'road', 'B', 'I')
+    print('Removing on starting graph done...\n')
 
     # Testing the add_lane on segments that currently have lanes
-    r.add_lane(l2n('E'), l2n('M'))  # (E, M) already should have a lane at this point
-    r.add_lane(l2n('E'), l2n('M'))
-    r.add_lane(l2n('E'), l2n('L'))
-    r.add_lane(l2n('M'), l2n('T'))
-    print('Adding multiple lanes done...')
+    test_add_remove(r, 'add', 'lane', 'E', 'M')
+    test_add_remove(r, 'add', 'lane', 'E', 'M')
+    test_add_remove(r, 'add', 'lane', 'E', 'L')
+    test_add_remove(r, 'add', 'lane', 'M', 'T')
+    print('Adding multiple lanes done...\n')
 
     # Testing the remove_lane on segments that already have lanes
-    r.remove_lane(l2n('E'), l2n('L'))
+    test_add_remove(r, 'remove', 'lane', 'E', 'L')
+    test_add_remove(r, 'add', 'lane', 'E', 'L')
+    test_add_remove(r, 'remove', 'lane', 'E', 'L')
+    test_add_remove(r, 'remove', 'lane', 'E', 'L')
+    test_add_remove(r, 'remove', 'lane', 'E', 'L')
 
-    # try:
-    #     r.remove_lane(l2n('E'), l2n('L'))
-    # except SegmentRemovalError:
-    #     print("Segment removal overflow (correct behavior)")
+    # Display the final representation matrix
+    print(pretty_matrix(r.matrix))
 
     roads, vehicle_mtx = r.get_matrices()
     start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update, n_steps, show_win)

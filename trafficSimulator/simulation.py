@@ -1,3 +1,7 @@
+"""
+This is the class that defines the simulation to run a city configuration
+"""
+
 from .road import Road
 from copy import deepcopy
 from .traffic_signal import TrafficSignal
