@@ -1,8 +1,8 @@
 """
 Functions that are used to test the functionality
 """
-from city_constructor import Reader
 from suppl import *
+from city_constructor import Reader
 
 
 def test_add_remove(r: Reader, mode: str, infra: str, start: str, end: str) -> None:
@@ -36,4 +36,4 @@ def test_add_remove(r: Reader, mode: str, infra: str, start: str, end: str) -> N
     start = n2l(start)
     end = n2l(end)
     print(f'Number of lanes from {start} --> {end} = {n_lanes}')
-    print(f'{mode[:-1]}ing {infra} ==> {result}\n')
+    print(f'{mode} {infra} ==> {result}\n')
