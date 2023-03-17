@@ -90,11 +90,12 @@ if test_add:
     test_a_r_junct(r, 'trafficlight', 'Q')
     test_a_r_junct(r, 'trafficlight', 'T')
 
-    # Display the final representation matrix
-    print(pretty_matrix(r.matrix))
-
     # Generate all the matrices and go
     roads, vehicle_mtx, signals = r.get_matrices()
-    print(signals)
+
+    # Display the final representation matrix
+    print(pretty_matrix(r.matrix))
+    print(f'Signals: {signals}')
+
     start_sim(roads, vehicle_mtx, offset, steps_per_update, n_steps, show_win, signals)
     print('Done.')

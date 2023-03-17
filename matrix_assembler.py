@@ -260,18 +260,18 @@ class Assembler:
             if matrix.loc[trafficlight_node, trafficlight_node] == JUNCTION_CODES['trafficlight']:  # If the junction type is set to trafficlight
                 trafficlight_node_coords = self.points[trafficlight_node]  # Find the (x,y) coordinates of the junction
                 signals_ind = [i for i, (start, end) in enumerate(self.get_locs) if end == trafficlight_node_coords]  # Get the index of all segments that end with the node
-                angles = [find_angle(start, end, absolute=True) for start, end in self.get_locs if end == trafficlight_node_coords]  # Find the angles of all segmetns found
+                angles = [find_angle(start, end, absolute=False) for start, end in self.get_locs if end == trafficlight_node_coords]  # Find the angles of all segmetns found
                 ds = pd.Series(angles, index=signals_ind).sort_values(ascending=True)  # Assemble it into a nice data structure matching the indices and the angles
-                junction_signals = []
+                junction_signals = [[], []]
                 i = 0
                 while i < len(ds):  # This handle multilane roads. In theory all lanes belonging to the same roada will have the same inclination angle
-                    signal_pair = []
                     for k in range(2):
+                        signal = []
                         j = 0
                         while i + j < len(ds) and ds.iloc[i + j] == ds.iloc[i]:
-                            signal_pair.append(ds.index[i + j])
+                            signal.append(ds.index[i + j])
                             j += 1
                         i += j
-                    junction_signals.append(signal_pair)  # List that contains a pair of traffic lights. A pair of lights are in opposite phase oscillation
+                        junction_signals[k].extend(signal)  # List that contains a pair of traffic lights. A pair of lights are in opposite phase oscillation
                 signals_to_create.append(junction_signals)
         self.signals_to_create = signals_to_create

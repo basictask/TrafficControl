@@ -46,20 +46,19 @@ signals_to_create = []
 for trafficlight_node in nodes:
     signals_ind = [i for i, (start, end) in enumerate(roads) if end == trafficlight_node]
     signal_roads = [(start, end) for (start, end) in roads if end == trafficlight_node]
-    angles = [find_angle(start, end, absolute=True) for start, end in signal_roads]
-
+    angles = [find_angle(start, end, absolute=False) for start, end in signal_roads]
     ds = pd.Series(angles, index=signals_ind).sort_values(ascending=True)
-    junction_signals = []
+    junction_signals = [[], []]
     i = 0
     while i < len(ds):
-        signal_pair = []
         for k in range(2):
+            signal = []
             j = 0
             while i + j < len(ds) and ds.iloc[i + j] == ds.iloc[i]:
-                signal_pair.append(ds.index[i + j])
+                signal.append(ds.index[i + j])
                 j += 1
             i += j
-        junction_signals.append(signal_pair)
+            junction_signals[k].extend(signal)
     signals_to_create.append(junction_signals)
 
 print(signals_to_create)
