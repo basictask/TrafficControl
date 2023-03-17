@@ -24,7 +24,9 @@ class Window:
         # Set the default configuration
         self.width = 1400
         self.height = 900
-        self.bg_color = (50, 150, 50)
+        # self.bg_color = (50, 150, 50)  # Greenish
+        self.bg_color = (40, 42, 54)  # PyCharm-dark
+        self.font_color = (248, 248, 242)  # Pycharm-dark font color
         self.n_steps = n_steps
         self.i_steps = 0
         self.steps_per_update = steps_per_update
@@ -246,9 +248,9 @@ class Window:
                     self.rotated_box(position, (1, 3), cos=road.angle_cos, sin=road.angle_sin, color=color)
 
     def draw_status(self):
-        text_time = self.text_font.render(f'time={self.sim.t:.2f}', False, (0, 0, 0))
-        text_steps = self.text_font.render(f'steps={self.i_steps}', False, (0, 0, 0))
-        text_dist = self.text_font.render(f'distance={self.sim.total_vehicles_distance:.2f}', False, (0, 0, 0))
+        text_time = self.text_font.render(f'time={self.sim.t:.2f}', False, self.font_color)
+        text_steps = self.text_font.render(f'steps={self.i_steps}', False, self.font_color)
+        text_dist = self.text_font.render(f'distance={self.sim.total_vehicles_distance:.2f}', False, self.font_color)
         self.screen.blit(text_time, (0, 0))
         self.screen.blit(text_steps, (0, 15))
         self.screen.blit(text_dist, (0, 30))

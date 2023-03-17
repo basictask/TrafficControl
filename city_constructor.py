@@ -42,8 +42,8 @@ class Reader:
         # Params
         self.filepath = filepath
         self.max_lanes = max_lanes
-        entry_points = letter_to_number_lst(entry_points)   # Convert letters to numbers on entry points
-        self.assembler = Assembler(entry_points, vrate, pathnum, path_dist, max_lanes)
+        self.entry_points = letter_to_number_lst(entry_points)   # Convert letters to numbers on entry points
+        self.assembler = Assembler(self.entry_points, vrate, pathnum, path_dist, max_lanes)
 
         # Set up inner params
         self.locs = None
@@ -84,6 +84,11 @@ class Reader:
         df_points['Value'] = [tuple([float(x) for x in lst]) for lst in df_points['Value']]  # Convert coords to float
         points = {letter_to_number(x): y for x, y in zip(list(df_points.index), df_points['Value'])}  # {ID: (x, y), ...}
 
+        # Check if all entry points are legal
+        for p in self.entry_points:
+            if p not in points.keys():
+                raise IllegalEntryPointError(f"Entry point not present in graph: {number_to_letter(p)}")
+
         # Process segments
         df_segments['Definition'] = [re.findall(r'(?<=\()[^)]*(?=\))', x)[0] for x in df_segments['Definition']]  # Remove everything but the content in the parentheses
         df_segments['Definition'] = [re.findall(r'[A-Z]\d?', x) for x in df_segments['Definition']]  # Find the letters in the string
@@ -108,8 +113,8 @@ class Reader:
         self.matrix = pd.DataFrame(index=ind, columns=ind)  # Create the object
         self.matrix.fillna(0, inplace=True)  # Fill up with 0
         # Iterate over the junctions and roads and fill up the missing values
-        for P in self.junctions.keys():
-            self.matrix.loc[P, P] = 1  # By default set to right-hand crossing
+        for node in self.junctions.keys():
+            self.matrix.loc[node, node] = 1  # By default set to right-hand crossing
         for start, end in self.segments['Definition']:
             self.matrix.loc[start, end] = 1  # By default set to 1 lane going from A to B
 
@@ -172,7 +177,7 @@ class Reader:
         """
         if self.check_valid_segment(start, end):  # The entered points are valid
             df_segments = self.segments
-            # There are no lanes going from A to B
+            # There are no lanes going A --> B
             if self.matrix.loc[start, end] == 0:
                 return False
             # There's only one lane going A --> B
@@ -198,13 +203,12 @@ class Reader:
 
     def add_road(self, start: int, end: int) -> bool:
         """
-        A road is a segment both ways defined as: A <---> B e.g a bidirectional edge on the graph
+        A road is a segment both ways defined as: A <--> B e.g a bidirectional edge on the graph
         :param start: Index of the starting graph node
         :param end: Index of the ending graph node
         :return: True for successful, False for unsuccessful
         """
-        # Check if a road can be constructed in both ways
-        if self.check_valid_segment(start, end) and self.check_valid_segment(end, start):
+        if self.check_valid_segment(start, end) and self.check_valid_segment(end, start):  # Check if a road can be constructed in both ways
             self.add_lane(start, end)
             self.add_lane(end, start)
             return True
@@ -212,7 +216,7 @@ class Reader:
 
     def remove_road(self, start: int, end: int) -> bool:
         """
-        A road is a segment both ways defined as: A <---> B e.g a bidirectional edge on the graph
+        A road is a segment both ways defined as: A <--> B e.g a bidirectional edge on the graph
         We can only remove a road if a bidirectional
         :param start: Index of the starting graph node
         :param end: Index of the ending graph node
@@ -232,8 +236,7 @@ class Reader:
         :param location: (x, y) coordinate tuple of the location
         :return: The identifier of the point (serves as key in the points dict)
         """
-        # Find the name for the new point
-        current_points = sorted(list(self.points.keys()))
+        current_points = sorted(list(self.points.keys()))  # Find the name for the new point
         i = 0
         while i < len(current_points):  # Iterate over the points and find the next free slot
             if i != current_points[i]:  # There's a break in the assignment e.g. point was removed
@@ -242,12 +245,42 @@ class Reader:
         self.points[i] = location  # Assign tuple to point location
         return i  # Return the index of the newly created point
 
+    def add_trafficlight(self, node: int) -> bool:
+        """
+        Converts any type of junction into a right-hand priority intersection
+        Sets the parameter for the traffic light intersection in the representation matrix for the given node
+        :param node: The node to add the trafficlight intersection to:
+        :return: None
+        """
+        roads = self.segments['Definition']  # Get the roads' configuration from the assembler
+        n_incoming_lanes = count_incoming_lanes(roads, self.points, node, unique=True)  # Count how many lanes are comingin the junction
+        if 2 < n_incoming_lanes < 5 and self.matrix.loc[node, node] != JUNCTION_CODES['trafficlight']:  # Check for false conditions
+            self.matrix.loc[node, node] = JUNCTION_CODES['trafficlight']  # Set the node type to trafficlight in the matrix
+            self.assembler.gen_signal_list(self.matrix)  # Re-generate the traffic signal list
+            return True
+        return False
+
+    def add_righthand(self, node: int) -> bool:
+        """
+        Converts any type of junction into a right-hand priority intersection
+        Sets the parameter for the right-hand intersection in the representation matrix
+        Note: in order to be converted to right-hand, the junction must have at least as many incoming
+        lanes as defined by the min/max values of the other types of infrastructure
+        :param node: The junction to be converted into right-hand
+        :return: None
+        """
+        if self.matrix.loc[node, node] != JUNCTION_CODES['righthand']:  # Check if it's currently a right-hand intersection
+            self.matrix.loc[node, node] = JUNCTION_CODES['righthand']  # Set the node type to right-hand in the matrix
+            self.assembler.gen_signal_list(self.matrix)  # Re-generate the list of signals in the Assembler
+            return True
+        return False
+
     def get_matrices(self):
         """
         Return the assembled matrices. This method calls the method of the same name from the assembler class
-        :return: The locations of the nodes (city junctions) as [x,y] coordinates; The matrix that contains the paths
+        :return: The locations of the nodes (city junctions) as [x,y] coordinates; The matrix that contains the paths; The list of traffic signals to add to the simulation
         """
-        return self.assembler.get_matrices()
+        return self.assembler.get_locs, self.assembler.get_vehicle_mtx, self.assembler.get_singal_list
 
 
 #%% This is for testing only. Run the script and see how an assembled vehicle matrix looks.
@@ -271,4 +304,4 @@ if __name__ == '__main__':
 
     # Construct reader
     r = Reader(city, vehicles_start_on, vehicles_rate, paths_to_gen, paths_distribution)
-    roads, vehicle_mtx = r.get_matrices()
+    roads_mtx, vehicle_mtx, signals = r.get_matrices()

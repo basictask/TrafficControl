@@ -29,3 +29,10 @@ class TooManyPathsError(Exception):
     In case there are too many paths needed to be generated in the matrix assembler
     """
     pass
+
+
+class IllegalEntryPointError(Exception):
+    """
+    In case there's an antry point given which is not present in the graph
+    """
+    pass

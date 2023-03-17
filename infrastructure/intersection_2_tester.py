@@ -30,18 +30,23 @@ r.remove_road(l2n('E'), l2n('B'))
 # r.add_lane(l2n('E'), l2n('B'))
 r.add_lane(l2n('H'), l2n('D'))
 r.add_lane(l2n('F'), l2n('D'))
+r.add_lane(l2n('F'), l2n('D'))
 
 # Create the matrices and start the simulation
 roads, vehicle_mtx, _ = r.get_matrices()
 
 nodes = [(100.82, 94.34), (188.22, 95.34)]  # B, C
 
-signals_to_create = []
+print(count_incoming_lanes(r.segments['Definition'], r.points, l2n('B'), unique=True))
+print(count_incoming_lanes(r.segments['Definition'], r.points, l2n('B'), unique=False))
+print(count_incoming_lanes(r.segments['Definition'], r.points, l2n('D'), unique=True))
+print(count_incoming_lanes(r.segments['Definition'], r.points, l2n('D'), unique=False))
 
+signals_to_create = []
 for trafficlight_node in nodes:
     signals_ind = [i for i, (start, end) in enumerate(roads) if end == trafficlight_node]
     signal_roads = [(start, end) for (start, end) in roads if end == trafficlight_node]
-    angles = [find_angle(start, end) for start, end in signal_roads]
+    angles = [find_angle(start, end, absolute=True) for start, end in signal_roads]
 
     ds = pd.Series(angles, index=signals_ind).sort_values(ascending=True)
     junction_signals = []

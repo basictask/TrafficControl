@@ -3,7 +3,7 @@ from trafficSimulator import *
 sim = Simulation()
 
 # Play with these
-n = 15
+n = 100
 a = 2
 b = 12
 l = 300

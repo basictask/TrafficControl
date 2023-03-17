@@ -7,40 +7,10 @@
 █ ██▄██ █  ▄   █ █   █ █   █  █ █   █   ▄   █  █  ▄   █▄▄▄▄▄█ █▄▄▄▄▄█ █   █▄▄▄█ ██▄██ █ █▄█   █       █   █▄▄▄█   █  █ █
 █▄█   █▄█▄█ █▄▄█ █▄▄▄█ █▄▄▄█  █▄█▄▄▄█▄▄█ █▄▄█  █▄█ █▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄█   █▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄█  █▄█
 This is a supportive class that is used to construct the matrices from the segments DataFrame and the location of the points
-The class is used to generate two matrices:
-
-locs: stores the locations of the segments. For segment A --> B where each node is defined as (x, y) an entry in locs is ((x, y), (x, y))
-Example for locs
-    [
-        ((300, 98), (0, 98)),
-        ((0, 102), (300, 102)),
-        ((180, 60), (0, 60)),
-        ((220, 55), (180, 60)),
-        ((300, 30), (220, 55)),
-        ((180, 60), (160, 98)),
-        ((158, 130), (300, 130)),
-        ((0, 178), (300, 178)),
-        ((300, 182), (0, 182)),
-        ((160, 102), (155, 180))
-    ]
-
-vehicle_mtx: stores which path should we take. For each path the integer entries refer to which road should the vehicle take next.
-E.g. path [4,3,2] refers to locs[4] --> locs[3] --> locs[2] where each location defines an ((x, y), (x, y)) coordinate tuple pair.
-Example for vehicle_mtx:
-    {
-        'vehicle_rate': 60,
-        'vehicles': [
-            [1, {"path": [4, 3, 2]}],
-            [1, {"path": [0]}],
-            [1, {"path": [1]}],
-            [1, {"path": [6]}],
-            [1, {"path": [7]}]
-        ]
-    }
 """
 
 import numpy as np
-import pandas as pd
+
 from suppl import *
 
 
@@ -56,12 +26,67 @@ class Assembler:
         self.path_stack = None
         self.vehicle_mtx = None
         self.segment_map = None
+        self.signals_to_create = None
 
         self.vrate = vrate
         self.pathnum = pathnum
         self.max_lanes = max_lanes
         self.path_dist = path_dist
         self.entry_points = entry_points
+
+    @property
+    def get_locs(self) -> list:
+        """
+        locs: stores the locations of the segments. For segment A --> B where each node is defined as (x, y) an entry in locs is ((x, y), (x, y))
+        Example for locs
+            [
+                ((300, 98), (0, 98)),
+                ((0, 102), (300, 102)),
+                ((180, 60), (0, 60)),
+                ((220, 55), (180, 60)),
+                ((300, 30), (220, 55)),
+                ((180, 60), (160, 98)),
+                ((158, 130), (300, 130)),
+                ((0, 178), (300, 178)),
+                ((300, 182), (0, 182)),
+                ((160, 102), (155, 180))
+            ]
+        :return: The locations of the nodes (city junctions) as [x,y] coordinates (see example on the top of file)
+        """
+        return self.locs
+
+    @property
+    def get_vehicle_mtx(self) -> dict:
+        """
+        The vehicle matrix stores which path should we take. For each path the integer entries refer to which road should the vehicle take next.
+        E.g. path [4,3,2] refers to locs[4] --> locs[3] --> locs[2] where each location defines an ((x, y), (x, y)) coordinate tuple pair.
+        Example for vehicle_mtx:
+            {
+                'vehicle_rate': 60,
+                'vehicles': [
+                    [1, {"path": [4, 3, 2]}],
+                    [1, {"path": [0]}],
+                    [1, {"path": [1]}],
+                    [1, {"path": [6]}],
+                    [1, {"path": [7]}]
+                ]
+            }
+        :return: The matrix that contains the paths (see example on the top of file)
+        """
+        return self.vehicle_mtx
+
+    @property
+    def get_singal_list(self) -> list:
+        """
+        Also generates the matrix necessary to pass to the simulation in order to set up traffic lights on specific junctions
+        Example for signals_to_create:
+            [[[0, 9], [10, 8]], [[12, 2], [13, 11]]]
+        - Which is a list of junctions: [junction1, junction2, ...]
+        - Each junction is a pair of 2-lists where each element is a road: [[road1, road3], [road2, road4]]
+        - Where each pair is an opposite set of roads that sync in phase with each other. The other pair is the other set of roads that sync in the opposite phase
+        :return: The traffic signal list to feed to the start_sim function
+        """
+        return self.signals_to_create
 
     def redo_config(self, df_segments: pd.DataFrame, points: dict, add_reversed: bool) -> pd.DataFrame:
         """
@@ -222,9 +247,31 @@ class Assembler:
         gen['vehicles'] = vehicles
         self.vehicle_mtx = gen
 
-    def get_matrices(self):
+    def gen_signal_list(self, matrix: pd.DataFrame) -> None:
         """
-        Return the assembled matrices
-        :return: The locations of the nodes (city junctions) as [x,y] coordinates; The matrix that contains the paths
+        Sets the signals_to_create property of this class
+        The signals_to_create matrix consists of lists of junction signals
+        If a segment is assigned a traffic signal all the lanes on the segment will be assigned a signal with the same phase
+        :param matrix: Junction representational matrix passed from city_constructor
+        :return: None
         """
-        return self.locs, self.vehicle_mtx
+        signals_to_create = []
+        for trafficlight_node in matrix.index:
+            if matrix.loc[trafficlight_node, trafficlight_node] == JUNCTION_CODES['trafficlight']:  # If the junction type is set to trafficlight
+                trafficlight_node_coords = self.points[trafficlight_node]  # Find the (x,y) coordinates of the junction
+                signals_ind = [i for i, (start, end) in enumerate(self.get_locs) if end == trafficlight_node_coords]  # Get the index of all segments that end with the node
+                angles = [find_angle(start, end, absolute=True) for start, end in self.get_locs if end == trafficlight_node_coords]  # Find the angles of all segmetns found
+                ds = pd.Series(angles, index=signals_ind).sort_values(ascending=True)  # Assemble it into a nice data structure matching the indices and the angles
+                junction_signals = []
+                i = 0
+                while i < len(ds):  # This handle multilane roads. In theory all lanes belonging to the same roada will have the same inclination angle
+                    signal_pair = []
+                    for k in range(2):
+                        j = 0
+                        while i + j < len(ds) and ds.iloc[i + j] == ds.iloc[i]:
+                            signal_pair.append(ds.index[i + j])
+                            j += 1
+                        i += j
+                    junction_signals.append(signal_pair)  # List that contains a pair of traffic lights. A pair of lights are in opposite phase oscillation
+                signals_to_create.append(junction_signals)
+        self.signals_to_create = signals_to_create
