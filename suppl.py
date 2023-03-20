@@ -190,3 +190,34 @@ def count_incoming_lanes(segments: list, points: dict, node: int, unique: bool) 
         return len(set(angles))
     else:
         return len(angles)
+
+
+def find_closest_point_circle(point: tuple, center: tuple, r: float) -> tuple:
+    """
+    Finds the point on the perimeter of a circle that lies closest to a given point
+    :param point: (x, y) tuple defining the starting point
+    :param center: (x, y) tuple defining the center of the point
+    :param r: float value reoresenting the radius of the circle
+    :return: (x, y) point that lies on the perimeter of the circle that is the closest to the point
+    """
+    x1, y1 = center
+    x2, y2 = point
+    d = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)  # Distance between the point and center
+    if d >= r:
+        v = (x2 - x1, y2 - y1)
+        nv = (v[0] / d, v[1] / d)  # Normalize the vector
+        cv = (r * nv[0], r * nv[1])  # Calculate the vector from the center of the circle to the closest point
+        closest_point = (x1 + cv[0], y1 + cv[1])  # Calculate the coordinates of the closest point on the circle
+        return round(closest_point[0], 4), round(closest_point[1], 4)
+    return point  # If the distance is less than the radius, the closest point is the given point itself
+
+
+def check_connection_exists(df_segments: pd.DataFrame, connection: tuple) -> bool:
+    """
+    Checks if a connection is present in the df_segments variable
+    :param df_segments: df_segments created in the Assembler
+    :param connection: (x, y) tuple of indices that is examined
+    :return: True: connection is present, False: connection is not present
+    """
+    # Finds all the indices where the connection is present and returns if the length is larger than 0
+    return len(df_segments.loc[df_segments['Definition'] == connection, :].index) > 0

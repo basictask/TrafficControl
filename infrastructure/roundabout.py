@@ -3,12 +3,12 @@ from trafficSimulator import *
 sim = Simulation()
 
 # Play with these
-n = 15
-a = 2
-b = 20
-c = 5
-r = 10
-l = 300
+n = 15  # Resolution of the turns
+a = 2  # Controls one coordinate of the start of the roads
+b = 20  # Controls the other coordinate
+c = 5  # The angle of turning in the mini-roads / set to 5 otherwise it will behave weird
+r = 10  # Radius of the roundabout / set to 10 otherwise it will look weird
+l = 15  # Length of the road
 n_steps = 0
 steps_per_update = 5
 

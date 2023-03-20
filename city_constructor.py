@@ -42,6 +42,7 @@ class Reader:
         # Params
         self.filepath = filepath
         self.max_lanes = max_lanes
+        self.roundabout_radius = 10
         self.entry_points = letter_to_number_lst(entry_points)   # Convert letters to numbers on entry points
         self.assembler = Assembler(self.entry_points, vrate, pathnum, path_dist, max_lanes)
 
@@ -123,18 +124,31 @@ class Reader:
         Checks if a segment is valid in order to remove it or add it
         :param start: Node where the beginning of the road is
         :param end: Node where the end of the road is
-        :return: False for invalid segment, True for valid segment
+        :return: False: invalid segment, True: valid segment
         """
         caller_fn = inspect.stack()[1].function
         if start == end:  # Start and end node can't be the same
             return False
         if start not in self.points.keys() or end not in self.points.keys():  # Start and end don't exist
             return False
-        if caller_fn == 'add_lane' and self.matrix.loc[start, end] == self.max_lanes:  # Road has reached maximum capacity
-            return False
-        elif caller_fn == 'remove_lane' and self.matrix.loc[start, end] == 0:  # Caller is remove_lane function but there's no segment to remove
-            return False
+        if start in self.matrix.index and end in self.matrix.index:  # If start or end are not in the matrix they are buffer points
+            if caller_fn == 'add_lane' and self.matrix.loc[start, end] == self.max_lanes:  # Road has reached maximum capacity
+                return False
+            elif caller_fn == 'remove_lane' and self.matrix.loc[start, end] == 0:  # Caller is remove_lane function but there's no segment to remove
+                return False
         return True
+
+    def get_n_lanes(self, start, end):
+        """
+        Counts the number of lanes going start --> end
+        :param start: (x, y) coordinates of the starting node
+        :param end: (x, y) coordinates of the ending node
+        :return: Number of lanes in one direction
+        """
+        if start in self.matrix.index and end in self.matrix.index:
+            return self.matrix.loc[start, end]
+        else:
+            return 0
 
     def add_lane(self, start: int, end: int) -> bool:
         """
@@ -143,10 +157,10 @@ class Reader:
         Invalid cases --> negative reward
         :param start: Node where the beginning of the road is
         :param end: Node where the end of the road is
-        :return: True for successful, False for unsuccessful
+        :return: True: successful, False: unsuccessful
         """
         if self.check_valid_segment(start, end):
-            num_lanes = self.matrix.loc[start, end]
+            num_lanes = self.get_n_lanes(start, end)
             # The number of lanes has reached the maximum
             if num_lanes == self.max_lanes:
                 return False
@@ -173,15 +187,16 @@ class Reader:
         Removes a segment specified by (start, end)
         :param start: Node where the beginning of the road is
         :param end: Node where the end of the road is
-        :return: True for successful, False for unsuccessful
+        :return: True: successful, False: unsuccessful
         """
         if self.check_valid_segment(start, end):  # The entered points are valid
             df_segments = self.segments
+            num_lanes = self.get_n_lanes(start, end)
             # There are no lanes going A --> B
-            if self.matrix.loc[start, end] == 0:
+            if num_lanes == 0:
                 return False
             # There's only one lane going A --> B
-            elif self.matrix.loc[start, end] == 1:
+            elif num_lanes == 1:
                 i = df_segments.loc[df_segments['Definition'] == (start, end), :].index  # Index object of segment definition
             # More lanes going A --> B ==> Find midpoint
             else:
@@ -206,7 +221,7 @@ class Reader:
         A road is a segment both ways defined as: A <--> B e.g a bidirectional edge on the graph
         :param start: Index of the starting graph node
         :param end: Index of the ending graph node
-        :return: True for successful, False for unsuccessful
+        :return: True: successful, False: unsuccessful
         """
         if self.check_valid_segment(start, end) and self.check_valid_segment(end, start):  # Check if a road can be constructed in both ways
             self.add_lane(start, end)
@@ -220,7 +235,7 @@ class Reader:
         We can only remove a road if a bidirectional
         :param start: Index of the starting graph node
         :param end: Index of the ending graph node
-        :return: True for successful, False for unsuccessful
+        :return: True: successful, False: unsuccessful
         """
         if self.check_valid_segment(start, end) and self.check_valid_segment(end, start):
             self.remove_lane(start, end)
@@ -245,33 +260,84 @@ class Reader:
         self.points[i] = location  # Assign tuple to point location
         return i  # Return the index of the newly created point
 
-    def add_trafficlight(self, node: int) -> bool:
-        """
-        Converts any type of junction into a right-hand priority intersection
-        Sets the parameter for the traffic light intersection in the representation matrix for the given node
-        :param node: The node to add the trafficlight intersection to:
-        :return: None
-        """
-        roads = self.segments['Definition']  # Get the roads' configuration from the assembler
-        n_incoming_lanes = count_incoming_lanes(roads, self.points, node, unique=True)  # Count how many lanes are comingin the junction
-        if 2 < n_incoming_lanes < 5 and self.matrix.loc[node, node] != JUNCTION_CODES['trafficlight']:  # Check for false conditions
-            self.matrix.loc[node, node] = JUNCTION_CODES['trafficlight']  # Set the node type to trafficlight in the matrix
-            self.assembler.gen_signal_list(self.matrix)  # Re-generate the traffic signal list
-            return True
-        return False
-
     def add_righthand(self, node: int) -> bool:
         """
         Converts any type of junction into a right-hand priority intersection
         Sets the parameter for the right-hand intersection in the representation matrix
         Note: in order to be converted to right-hand, the junction must have at least as many incoming
         lanes as defined by the min/max values of the other types of infrastructure
-        :param node: The junction to be converted into right-hand
-        :return: None
+        :param node: The index of the junction to be converted into right-hand
+        :return: True: successful, False: unsuccessful
         """
         if self.matrix.loc[node, node] != JUNCTION_CODES['righthand']:  # Check if it's currently a right-hand intersection
             self.matrix.loc[node, node] = JUNCTION_CODES['righthand']  # Set the node type to right-hand in the matrix
             self.assembler.gen_signal_list(self.matrix)  # Re-generate the list of signals in the Assembler
+            return True
+        return False
+
+    def add_roundabout(self, node: int) -> bool:
+        """
+        Adds a roundabout to an intersection defined by the location of the node
+        :param node: The index of the junction to be converted into a roundabout
+        :return: True: successful, False: unsuccessful
+        """
+        if self.matrix.loc[node, node] != JUNCTION_CODES['roundabout']:
+            node_coords = self.points[node]
+            df_segments = self.segments
+            # Find the nodes connected to the node we are adding the roundabout to
+            connected_nodes = {}
+            for start, end in df_segments['Definition']:
+                if start == node:
+                    connected_nodes[end] = self.points[end]
+                elif end == node:
+                    connected_nodes[start] = self.points[start]
+
+            # Create new coordinates on the perimater of the roundabout
+            connected_nodes = pd.DataFrame(pd.Series(connected_nodes), columns=['end'])
+            connected_nodes['buffer_coord'] = [find_closest_point_circle(x, node_coords, self.roundabout_radius) for x in connected_nodes['end']]
+            connected_nodes['buffer_ind'] = [self.add_point(x) for x in connected_nodes['buffer_coord']]
+            connected_nodes['angle'] = [find_angle(node_coords, x, absolute=False) for x in connected_nodes['end']]
+
+            # Crate lanes between the buffer points
+            for ind in df_segments.index:
+                connection = df_segments.loc[ind, 'Definition']
+                if connection[0] == node:
+                    buffer_ind = connected_nodes.loc[connection[1], 'buffer_ind']
+                    df_segments = pd.concat([df_segments, pd.DataFrame({'Definition': [(buffer_ind, connection[1])], 'N_lanes': [1]})], ignore_index=True, axis=0)
+                elif connection[1] == node:
+                    buffer_ind = connected_nodes.loc[connection[0], 'buffer_ind']
+                    df_segments = pd.concat([df_segments, pd.DataFrame({'Definition': [(connection[0], buffer_ind)], 'N_lanes': [1]})], ignore_index=True, axis=0)
+
+            # Drop all connections to the central node
+            df_segments.drop(df_segments[[node in x for x in df_segments['Definition']]].index, axis=0, inplace=True)
+            df_segments.reset_index(drop=True, inplace=True)
+
+            # Connect all the buffer nodes
+            connected_nodes.sort_values(by='angle', inplace=True)
+            for i in range(1, len(connected_nodes)):
+                connection = (connected_nodes.iloc[i].loc['buffer_ind'], connected_nodes.iloc[i - 1].loc['buffer_ind'])
+                df_segments = pd.concat([df_segments, pd.DataFrame({'Definition': [connection], 'N_lanes': [1]})], ignore_index=True, axis=0)
+                if i == len(connected_nodes) - 1:
+                    connection = (connected_nodes.iloc[0].loc['buffer_ind'], connected_nodes.iloc[i].loc['buffer_ind'])
+                    df_segments = pd.concat([df_segments, pd.DataFrame({'Definition': [connection], 'N_lanes': [1]})], ignore_index=True, axis=0)
+            # Reassemble
+            self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False)  # Create the segment map and list segments
+            self.matrix.loc[node, node] = JUNCTION_CODES['roundabout']
+            return True
+        return False
+
+    def add_trafficlight(self, node: int) -> bool:
+        """
+        Converts any type of junction into a right-hand priority intersection
+        Sets the parameter for the traffic light intersection in the representation matrix for the given node
+        :param node: The index of the junction to be converted into right-hand
+        :return: True: successful, False: unsuccessful
+        """
+        roads = self.segments['Definition']  # Get the roads' configuration from the assembler
+        n_incoming_lanes = count_incoming_lanes(roads, self.points, node, unique=True)  # Count how many lanes are comingin the junction
+        if 2 < n_incoming_lanes < 5 and self.matrix.loc[node, node] != JUNCTION_CODES['trafficlight']:  # Check for false conditions
+            self.matrix.loc[node, node] = JUNCTION_CODES['trafficlight']  # Set the node type to trafficlight in the matrix
+            self.assembler.gen_signal_list(self.matrix)  # Re-generate the traffic signal list
             return True
         return False
 

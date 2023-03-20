@@ -24,7 +24,7 @@ entry_points = ['A', 'M', 'E', 'K', 'J', 'I', 'B', 'F', 'C', 'D', 'T']  # Bakats
 
 vrate = 60  # Rate of vehicles coming in from each entry point
 max_lanes = 3  # How many lanes are allowd going from A --> B (1-directional definition)
-offset = (-150, 110)  # The simulation window offset
+offset = (-500, -500)  # The simulation window offset
 n_steps = 0  # How many steps to simulate (in case there's no Sim window)
 show_win = True  # True if the Simulation window shall be displayed
 test_add = True  # Modifying this to True will result in testing the add/remove functions of the reader class
@@ -36,7 +36,7 @@ r = Reader(filepath, entry_points, vrate, paths_to_gen, path_dist, max_lanes)  #
 
 if not test_add:
     roads, vehicle_mtx = r.get_matrices()
-    start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update, n_steps, show_win)
+    start_sim(roads, vehicle_mtx, offset, steps_per_update, n_steps, show_win)
 
 # %% Testing add function
 """
