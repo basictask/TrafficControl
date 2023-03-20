@@ -36,3 +36,10 @@ class IllegalEntryPointError(Exception):
     In case there's an antry point given which is not present in the graph
     """
     pass
+
+
+class IllegalNodeConfigurationError(Exception):
+    """
+    In case some nodes are placed too close to eachother
+    """
+    pass

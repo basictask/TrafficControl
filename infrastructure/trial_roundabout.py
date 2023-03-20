@@ -24,7 +24,10 @@ radius = 10
 center_node = l2n('B')
 
 r = Reader(filepath, entry_points, vrate, paths_to_gen, path_dist)
-# r.add_roundabout(center_node)
+
+r.add_roundabout(center_node)
+# r.remove_roundabout(center_node)
+# r.add_trafficlight(center_node)
 
 roads, vehicle_mtx, signals = r.get_matrices()
 start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update, n_steps, show_win, signals)

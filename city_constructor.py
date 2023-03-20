@@ -86,9 +86,8 @@ class Reader:
         points = {letter_to_number(x): y for x, y in zip(list(df_points.index), df_points['Value'])}  # {ID: (x, y), ...}
 
         # Check if all entry points are legal
-        for p in self.entry_points:
-            if p not in points.keys():
-                raise IllegalEntryPointError(f"Entry point not present in graph: {number_to_letter(p)}")
+        check_all_coords_valid(points, self.max_lanes, self.roundabout_radius)
+        check_entry_points_calid(points, self.entry_points)
 
         # Process segments
         df_segments['Definition'] = [re.findall(r'(?<=\()[^)]*(?=\))', x)[0] for x in df_segments['Definition']]  # Remove everything but the content in the parentheses
@@ -203,7 +202,7 @@ class Reader:
                 midpoint = 1 / (self.matrix.loc[start, end])  # Calculate where between A and B the buffer point is: A ---x---> B
                 buffer_point = calc_intermediate_point(self.junctions[start], self.junctions[end], midpoint)  # Find the point that's between start and end
                 buffer_point_id = find_key_to_value(self.points, buffer_point)  # Find the ID of the buffer point
-                del self.points[buffer_point_id]  # Remove the buffer point from the points dict
+                self.points.pop(buffer_point_id, None)  # Remove the buffer point from the points dict
                 i = df_segments.loc[[buffer_point_id in x for x in df_segments['Definition']], :].index  # Remove all segments that contain the buffer point ID
 
             if len(i) == 0:  # There's no match (this should not be possible)
@@ -269,7 +268,11 @@ class Reader:
         :param node: The index of the junction to be converted into right-hand
         :return: True: successful, False: unsuccessful
         """
-        if self.matrix.loc[node, node] != JUNCTION_CODES['righthand']:  # Check if it's currently a right-hand intersection
+        # Remove roundabout and its' buffer nodes if they exist
+        if self.matrix.loc[node, node] == JUNCTION_CODES['roundabout']:
+            self.remove_roundabout(node)
+            return True
+        elif self.matrix.loc[node, node] != JUNCTION_CODES['righthand']:  # Check if it's currently a right-hand intersection
             self.matrix.loc[node, node] = JUNCTION_CODES['righthand']  # Set the node type to right-hand in the matrix
             self.assembler.gen_signal_list(self.matrix)  # Re-generate the list of signals in the Assembler
             return True
@@ -326,6 +329,43 @@ class Reader:
             return True
         return False
 
+    def remove_roundabout(self, node: int) -> None:
+        """
+        Removes all the configuration of a roundabout at a given node
+        Note: The agent is not able to call this method directly therefore its void. This step is just a preparation step to convert to other types of junctions
+        :param node: The index of the junction to be converted into roundabout
+        :return: True: successful, False: unsuccessful
+        """
+        df_segments = self.segments
+
+        # Find all buffer points within the radius of the roundabout
+        roundabout_nodes = []
+        for point_ind in self.points.keys():
+            if euclidean_distance(self.points[point_ind], self.points[node]) < self.roundabout_radius + 0.1 and point_ind != node:  # Find all nodes within a circle
+                roundabout_nodes.append(point_ind)
+
+        # Find all nodes that the buffer points are connected to
+        inds_to_drop = []
+        for ind in df_segments.index:
+            start, end = df_segments.loc[ind, 'Definition']
+            if start in roundabout_nodes and end in roundabout_nodes:  # A buffer connection for the roundabout
+                inds_to_drop.append(ind)
+            elif start in roundabout_nodes:  # Outgoing connection from the roundabout
+                inds_to_drop.append(ind)
+                df_segments = pd.concat([df_segments, pd.DataFrame({'Definition': [(node, end)], 'N_lanes': [1]})], ignore_index=True, axis=0)  # Add new connection
+            elif end in roundabout_nodes:  # Incoming connection into the roundabout
+                inds_to_drop.append(ind)
+                df_segments = pd.concat([df_segments, pd.DataFrame({'Definition': [(start, node)], 'N_lanes': [1]})], ignore_index=True, axis=0)  # Add new connection
+
+        # Iterate over the buffer points and remove them
+        for point_ind in roundabout_nodes:
+            self.points.pop(point_ind, None)
+
+        # Assemble segments DataFrame
+        df_segments.drop(inds_to_drop, axis=0, inplace=True)
+        df_segments.reset_index(drop=True, inplace=True)
+        self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False)  # Create the segment map and list segments
+
     def add_trafficlight(self, node: int) -> bool:
         """
         Converts any type of junction into a right-hand priority intersection
@@ -333,6 +373,10 @@ class Reader:
         :param node: The index of the junction to be converted into right-hand
         :return: True: successful, False: unsuccessful
         """
+        # Remove roundabout and its' buffer nodes if they exist
+        if self.matrix.loc[node, node] == JUNCTION_CODES['roundabout']:
+            self.remove_roundabout(node)
+
         roads = self.segments['Definition']  # Get the roads' configuration from the assembler
         n_incoming_lanes = count_incoming_lanes(roads, self.points, node, unique=True)  # Count how many lanes are comingin the junction
         if 2 < n_incoming_lanes < 5 and self.matrix.loc[node, node] != JUNCTION_CODES['trafficlight']:  # Check for false conditions

@@ -221,3 +221,50 @@ def check_connection_exists(df_segments: pd.DataFrame, connection: tuple) -> boo
     """
     # Finds all the indices where the connection is present and returns if the length is larger than 0
     return len(df_segments.loc[df_segments['Definition'] == connection, :].index) > 0
+
+
+def euclidean_distance(p1: tuple, p2: tuple) -> float:
+    """
+    Euclidean distance function between two points
+    :param p1: (x, y) tuple of the first point
+    :param p2: (x, y) tuple of the second point
+    :return: float value that represents the distance
+    """
+    x1, y1 = p1
+    x2, y2 = p2
+    distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+    return distance
+
+
+def check_all_coords_valid(points: dict, max_lanes: int, roundabout_radius: float) -> bool:
+    """
+    Checks if all points are far apart enough in order to add roundabouts around the nodes
+    :param points: Dictionary of points {index: (x, y), index: (x, y)...}
+    :param max_lanes: Number of maximum lanes in one direction (set by user in reader)
+    :param roundabout_radius: Radius of roundabouts (defined in the Reader class, generally no point in modifying it).
+    :return: True: all coordinates are far apart enough, False: some coordinates lie too close to eachother
+    """
+    ds = pd.Series(points)
+    i = 0
+    while i < len(ds) - 1:
+        j = i + 1
+        while j < len(ds) - 1:
+            dist = euclidean_distance(ds.iloc[i], ds.iloc[j])
+            if dist < 2 * max_lanes * roundabout_radius + 2:  # Two roundabouts times max. lanes next to eachother Plus a margin for error
+                raise IllegalNodeConfigurationError('Some nodes are placed too close to eachother: {}, {}'.format(ds.iloc[i].index, ds.iloc[j].index))
+            j += 1
+        i += 1
+    return True
+
+
+def check_entry_points_calid(points: dict, entry_points: list) -> bool:
+    """
+    Checks if all entry points are valid for a point configuration
+    :param points: Dictionary of points {index: (x, y), index: (x, y)...}
+    :param entry_points: List of entry points e.g. ['A', 'C', 'D', 'E', ...]
+    :return: True: all entry points are present in the point, False: some entry points were given that are not present in the points
+    """
+    for p in entry_points:
+        if p not in points.keys():
+            raise IllegalEntryPointError(f'Entry point not present in graph: {number_to_letter(p)}')
+    return True
