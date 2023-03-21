@@ -85,10 +85,14 @@ if test_add:
     test_a_r_roads(r, 'remove', 'lane', 'E', 'L')
     test_a_r_roads(r, 'remove', 'lane', 'E', 'L')
     test_a_r_roads(r, 'remove', 'lane', 'E', 'L')
+    print('Removing even more lanes done...\n')
 
     # Testing junction adding/removing
     test_a_r_junct(r, 'trafficlight', 'Q')
     test_a_r_junct(r, 'trafficlight', 'T')
+    print('Adding traffic lights done...\n')
+
+    test_a_r_junct(r, 'roundabout', 'M')
 
     # Generate all the matrices and go
     roads, vehicle_mtx, signals = r.get_matrices()

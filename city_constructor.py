@@ -159,8 +159,12 @@ class Reader:
         :return: True: successful, False: unsuccessful
         """
         if self.check_valid_segment(start, end):
-            num_lanes = self.get_n_lanes(start, end)
+            # If there's a roundabout on the junction: 1. Remove roundabout, 2. Reconfigure, 3. Reinstall roundabout
+            if self.matrix.loc[end, end] == JUNCTION_CODES['roundabout']:
+                self.remove_roundabout(end)
+
             # The number of lanes has reached the maximum
+            num_lanes = self.get_n_lanes(start, end)
             if num_lanes == self.max_lanes:
                 return False
             # Only one lane ==> add as a new lane
@@ -178,6 +182,10 @@ class Reader:
                                                                       'N_lanes': [1, 1]})], ignore_index=True, axis=0)
             self.matrix.loc[start, end] += 1
             self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False)  # Create the segment map and list segments
+
+            # Add the roundabout again
+            if self.matrix.loc[end, end] == JUNCTION_CODES['roundabout']:
+                self.add_roundabout(end)
             return True
         return False
 
@@ -189,6 +197,10 @@ class Reader:
         :return: True: successful, False: unsuccessful
         """
         if self.check_valid_segment(start, end):  # The entered points are valid
+            # If there's a roundabout on the junction: 1. Remove roundabout, 2. Reconfigure, 3. Reinstall roundabout
+            if self.matrix.loc[end, end] == JUNCTION_CODES['roundabout']:
+                self.remove_roundabout(end)
+
             df_segments = self.segments
             num_lanes = self.get_n_lanes(start, end)
             # There are no lanes going A --> B
@@ -212,6 +224,10 @@ class Reader:
             df_segments.drop(i, axis=0, inplace=True)  # Remove element with the marked index
             df_segments.index = np.arange(len(df_segments))  # Reset indices
             self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False)  # Create the segment map and list segments
+
+            # Add the roundabout again
+            if self.matrix.loc[end, end] == JUNCTION_CODES['roundabout']:
+                self.add_roundabout(end)
             return True
         return False
 
@@ -284,9 +300,11 @@ class Reader:
         :param node: The index of the junction to be converted into a roundabout
         :return: True: successful, False: unsuccessful
         """
-        if self.matrix.loc[node, node] != JUNCTION_CODES['roundabout']:
+        caller_fn = inspect.stack()[1].function
+        if self.matrix.loc[node, node] != JUNCTION_CODES['roundabout'] or caller_fn == 'add_lane':
             node_coords = self.points[node]
             df_segments = self.segments
+
             # Find the nodes connected to the node we are adding the roundabout to
             connected_nodes = {}
             for start, end in df_segments['Definition']:
@@ -295,11 +313,16 @@ class Reader:
                 elif end == node:
                     connected_nodes[start] = self.points[start]
 
-            # Create new coordinates on the perimater of the roundabout
+            # Create new coordinates on the perimeter of the roundabout
             connected_nodes = pd.DataFrame(pd.Series(connected_nodes), columns=['end'])
             connected_nodes['buffer_coord'] = [find_closest_point_circle(x, node_coords, self.roundabout_radius) for x in connected_nodes['end']]
-            connected_nodes['buffer_ind'] = [self.add_point(x) for x in connected_nodes['buffer_coord']]
+            connected_nodes['is_first'] = ~connected_nodes['buffer_coord'].duplicated(keep='first')
+            connected_nodes['buffer_ind'] = [self.add_point(x) if y else -1 for x, y in zip(connected_nodes['buffer_coord'], connected_nodes['is_first'])]
             connected_nodes['angle'] = [find_angle(node_coords, x, absolute=False) for x in connected_nodes['end']]
+
+            # Eliminate duplicate connections
+            buffer_node_angle = dict(connected_nodes.groupby('angle').first().loc[:, 'buffer_ind'])
+            connected_nodes['buffer_ind'] = [buffer_node_angle[x] for x in connected_nodes['angle']]
 
             # Crate lanes between the buffer points
             for ind in df_segments.index:
@@ -317,12 +340,14 @@ class Reader:
 
             # Connect all the buffer nodes
             connected_nodes.sort_values(by='angle', inplace=True)
+            connected_nodes.drop_duplicates(subset='buffer_ind', keep='first', inplace=True, ignore_index=True)
             for i in range(1, len(connected_nodes)):
                 connection = (connected_nodes.iloc[i].loc['buffer_ind'], connected_nodes.iloc[i - 1].loc['buffer_ind'])
                 df_segments = pd.concat([df_segments, pd.DataFrame({'Definition': [connection], 'N_lanes': [1]})], ignore_index=True, axis=0)
                 if i == len(connected_nodes) - 1:
                     connection = (connected_nodes.iloc[0].loc['buffer_ind'], connected_nodes.iloc[i].loc['buffer_ind'])
                     df_segments = pd.concat([df_segments, pd.DataFrame({'Definition': [connection], 'N_lanes': [1]})], ignore_index=True, axis=0)
+
             # Reassemble
             self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False)  # Create the segment map and list segments
             self.matrix.loc[node, node] = JUNCTION_CODES['roundabout']
@@ -373,13 +398,13 @@ class Reader:
         :param node: The index of the junction to be converted into right-hand
         :return: True: successful, False: unsuccessful
         """
-        # Remove roundabout and its' buffer nodes if they exist
-        if self.matrix.loc[node, node] == JUNCTION_CODES['roundabout']:
-            self.remove_roundabout(node)
-
         roads = self.segments['Definition']  # Get the roads' configuration from the assembler
         n_incoming_lanes = count_incoming_lanes(roads, self.points, node, unique=True)  # Count how many lanes are comingin the junction
         if 2 < n_incoming_lanes < 5 and self.matrix.loc[node, node] != JUNCTION_CODES['trafficlight']:  # Check for false conditions
+            # Remove roundabout and its' buffer nodes if they exist
+            if self.matrix.loc[node, node] == JUNCTION_CODES['roundabout']:
+                self.remove_roundabout(node)
+
             self.matrix.loc[node, node] = JUNCTION_CODES['trafficlight']  # Set the node type to trafficlight in the matrix
             self.assembler.gen_signal_list(self.matrix)  # Re-generate the traffic signal list
             return True

@@ -58,6 +58,8 @@ def test_a_r_junct(r: Reader, infra: str, node: str) -> None:
     result = -1
     if infra == 'righthand':
         result = r.add_righthand(node)
+    elif infra == 'roundabout':
+        result = r.add_roundabout(node)
     elif infra == 'trafficlight':
         result = r.add_trafficlight(node)
     else:

@@ -214,8 +214,8 @@ class Assembler:
             for x in lst:
                 path_stack.append(x)
 
-        if self.pathnum > len(path_stack):
-            raise TooManyPathsError('The number of paths input is larger than the number of all paths.')
+        if self.pathnum > len(path_stack):  # If there are too many paths input pick them all
+            self.pathnum = len(path_stack)
 
         self.path_stack = path_stack
         self.path_codes = path_codes
