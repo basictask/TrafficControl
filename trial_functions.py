@@ -69,5 +69,5 @@ def test_a_r_junct(r: Reader, infra: str, node: str) -> None:
         result = 'successful'
     else:
         result = 'unsuccessful'
-    print(f'Number of lanes incoming to {node}: {n_incoming}')
-    print(f'Convert to {infra}: {result}')
+    print(f'Number of lanes incoming to {node} = {n_incoming}')
+    print(f'Convert to {infra}: {result}\n')

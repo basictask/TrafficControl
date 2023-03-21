@@ -43,6 +43,7 @@ class Reader:
         self.filepath = filepath
         self.max_lanes = max_lanes
         self.roundabout_radius = 10
+        self.trafficlight_inbound = [3, 4]  # Allowed number of incoming landes in case of trafficlight intersections
         self.entry_points = letter_to_number_lst(entry_points)   # Convert letters to numbers on entry points
         self.assembler = Assembler(self.entry_points, vrate, pathnum, path_dist, max_lanes)
 
@@ -131,6 +132,9 @@ class Reader:
         if start not in self.points.keys() or end not in self.points.keys():  # Start and end don't exist
             return False
         if start in self.matrix.index and end in self.matrix.index:  # If start or end are not in the matrix they are buffer points
+            n_incoming = count_incoming_lanes(self.segments['Definition'], self.points, end, unique=True)
+            if self.matrix.loc[end, end] == JUNCTION_CODES['trafficlight'] and n_incoming not in self.trafficlight_inbound:  # Trafficlight intersection at max. capacity
+                return False
             if caller_fn == 'add_lane' and self.matrix.loc[start, end] == self.max_lanes:  # Road has reached maximum capacity
                 return False
             elif caller_fn == 'remove_lane' and self.matrix.loc[start, end] == 0:  # Caller is remove_lane function but there's no segment to remove
@@ -162,6 +166,8 @@ class Reader:
             # If there's a roundabout on the junction: 1. Remove roundabout, 2. Reconfigure, 3. Reinstall roundabout
             if self.matrix.loc[end, end] == JUNCTION_CODES['roundabout']:
                 self.remove_roundabout(end)
+            if self.matrix.loc[start, start] == JUNCTION_CODES['roundabout']:
+                self.remove_roundabout(start)
 
             # The number of lanes has reached the maximum
             num_lanes = self.get_n_lanes(start, end)
@@ -186,6 +192,10 @@ class Reader:
             # Add the roundabout again
             if self.matrix.loc[end, end] == JUNCTION_CODES['roundabout']:
                 self.add_roundabout(end)
+            if self.matrix.loc[start, start] == JUNCTION_CODES['roundabout']:
+                self.add_roundabout(start)
+
+            self.assembler.gen_signal_list(self.matrix)  # Re-generate the list of signals in the Assembler
             return True
         return False
 
@@ -200,6 +210,8 @@ class Reader:
             # If there's a roundabout on the junction: 1. Remove roundabout, 2. Reconfigure, 3. Reinstall roundabout
             if self.matrix.loc[end, end] == JUNCTION_CODES['roundabout']:
                 self.remove_roundabout(end)
+            if self.matrix.loc[start, start] == JUNCTION_CODES['roundabout']:
+                self.remove_roundabout(start)
 
             df_segments = self.segments
             num_lanes = self.get_n_lanes(start, end)
@@ -228,6 +240,10 @@ class Reader:
             # Add the roundabout again
             if self.matrix.loc[end, end] == JUNCTION_CODES['roundabout']:
                 self.add_roundabout(end)
+            if self.matrix.loc[start, start] == JUNCTION_CODES['roundabout']:
+                self.add_roundabout(start)
+
+            self.assembler.gen_signal_list(self.matrix)  # Re-generate the list of signals in the Assembler
             return True
         return False
 
@@ -349,8 +365,9 @@ class Reader:
                     df_segments = pd.concat([df_segments, pd.DataFrame({'Definition': [connection], 'N_lanes': [1]})], ignore_index=True, axis=0)
 
             # Reassemble
-            self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False)  # Create the segment map and list segments
             self.matrix.loc[node, node] = JUNCTION_CODES['roundabout']
+            self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False)  # Create the segment map and list segments
+            self.assembler.gen_signal_list(self.matrix)
             return True
         return False
 

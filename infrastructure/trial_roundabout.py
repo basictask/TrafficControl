@@ -1,11 +1,11 @@
 """
 This is a test file to design a roundabout
 Simple intersection design
-        A
-        |
-E ----- B ----- C
-        |
-        D
+        A               |        A   C            H
+        |               |        \\ /             |
+E ----- B ----- C       |   F ---- B ------------ G ---- J
+        |               |         / \\            |
+        D               |        E   D            I
 """
 from trial_functions import *
 from suppl import *
@@ -31,7 +31,13 @@ test_a_r_junct(r, 'roundabout', 'G')
 test_a_r_roads(r, 'add', 'lane', 'D', 'G')
 test_a_r_roads(r, 'add', 'road', 'E', 'D')
 test_a_r_roads(r, 'add', 'road', 'I', 'D')
-# test_a_r_junct(r, 'trafficlight', 'G')
+test_a_r_junct(r, 'trafficlight', 'D')
+test_a_r_roads(r, 'add', 'road', 'G', 'D')
+test_a_r_roads(r, 'add', 'road', 'H', 'C')
+test_a_r_roads(r, 'add', 'road', 'C', 'G')
+test_a_r_roads(r, 'add', 'lane', 'B', 'G')
+test_a_r_roads(r, 'add', 'lane', 'G', 'B')
+test_a_r_junct(r, 'trafficlight', 'C')
 
 roads, vehicle_mtx, signals = r.get_matrices()
 start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update, n_steps, show_win, signals)
