@@ -7,11 +7,10 @@ E ----- B ----- C
         |
         D
 """
-
-from city_constructor import Reader
 from trial_functions import *
 from suppl import *
 
+# Params
 vrate = 20
 n_steps = 0
 show_win = True
@@ -32,7 +31,7 @@ test_a_r_junct(r, 'roundabout', 'G')
 test_a_r_roads(r, 'add', 'lane', 'D', 'G')
 test_a_r_roads(r, 'add', 'road', 'E', 'D')
 test_a_r_roads(r, 'add', 'road', 'I', 'D')
-test_a_r_junct(r, 'trafficlight', 'G')
+# test_a_r_junct(r, 'trafficlight', 'G')
 
 roads, vehicle_mtx, signals = r.get_matrices()
 start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update, n_steps, show_win, signals)

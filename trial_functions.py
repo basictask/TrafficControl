@@ -54,7 +54,7 @@ def test_a_r_junct(r: Reader, infra: str, node: str) -> None:
     roads = r.segments['Definition']
     points = r.points
     node_coords = r.points[node]
-    n_incoming = count_incoming_lanes(roads, points, node_coords, unique=True)  # Number of incoming lanes
+    n_incoming = count_incoming_lanes(roads, points, node, unique=True)  # Number of incoming lanes
     result = -1
     if infra == 'righthand':
         result = r.add_righthand(node)
