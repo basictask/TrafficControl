@@ -28,7 +28,6 @@ class Vehicle:
 
     def update(self, lead, dt):
         # Update position and velocity
-        x_change = -1
         if self.v + self.a * dt < 0:
             x_change = 1 / 2 * self.v * self.v / self.a
             self.x -= x_change

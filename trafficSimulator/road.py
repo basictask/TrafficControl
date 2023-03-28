@@ -4,12 +4,13 @@ from collections import deque
 
 class Road:
     def __init__(self, start, end):
-        self.start = start
-        self.end = end
-
         self.traffic_signal = None
         self.traffic_signal_group = None
 
+        self.end = end
+        self.start = start
+        self.slow_distance = 20
+        self.slow_factor = 0.5
         self.vehicles = deque()
         self.length = distance.euclidean(self.start, self.end)
         self.angle_sin = (self.end[1] - self.start[1]) / self.length
@@ -41,12 +42,17 @@ class Road:
 
             # Check for traffic signal
             if self.traffic_signal_state:  # If traffic signal is green or doesn't exist then let vehicles pass
-                self.vehicles[0].unstop()
-                for vehicle in self.vehicles:
-                    vehicle.unslow()
+                if self.has_traffic_signal:
+                    self.vehicles[0].unstop()
+                    for vehicle in self.vehicles:
+                        vehicle.unslow()
+                else:
+                    if self.vehicles[0].x >= self.length - self.slow_distance:
+                        self.vehicles[0].slow(self.slow_factor * self.vehicles[0].get__v_max)
+                    elif self.vehicles[-1].x < self.slow_distance:
+                        self.vehicles[-1].unslow()
             else:  # If traffic signal is red
                 if self.vehicles[0].x >= self.length - self.traffic_signal.slow_distance:
-                    # self.vehicles[0].slow(self.traffic_signal.slow_factor * self.vehicles[0]._v_max)  # Slow vehicles in slowing zone
                     self.vehicles[0].slow(self.traffic_signal.slow_factor * self.vehicles[0].get__v_max)  # Slow vehicles in slowing zone
 
                 # Check if the vehicle is in the stop zone
