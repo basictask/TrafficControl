@@ -10,7 +10,6 @@ This is a supportive class that is used to construct the matrices from the segme
 """
 
 import numpy as np
-
 from suppl import *
 
 

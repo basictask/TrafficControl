@@ -8,14 +8,14 @@ There are predefined cities and entry points added as comments.
 # Imports
 from trial_functions import *
 import os
-os.chdir('/home/daniel/Documents/ELTE/trafficControl')
+os.chdir('/')
 
 
 # %% Set up the reader from a .html GeoGebra construction protocol
 
 # filepath = 'cities/simple.html'
 # filepath = 'cities/starcity.html'
-filepath = 'cities/bakats.html'
+filepath = '../cities/bakats.html'
 
 # Points that are valid for entering the traffic system
 # entry_points = ['A','C','G','J'] # Simple

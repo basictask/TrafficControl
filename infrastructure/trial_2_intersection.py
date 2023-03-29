@@ -1,5 +1,5 @@
 """
-This is a demonstration of how to add traffic lights to simple right-hand intersections for a configuration of 2 intersections at the same time
+This is a test file to design traffic lights to simple right-hand intersections for a configuration of 2 intersections at the same time
         C       F
         |       |
 A ----- B ----- D ----- G
@@ -11,7 +11,6 @@ Which is a list of junctions: [junction1, junction2, ...]
 Each junction is a pair of 2-lists where each element is a road: [[road1, road3], [road2, road4]]
 Where each pair is an opposite set of roads that sync in phase with each other. The other pair is the other set of roads that sync in the opposite phase
 """
-
 from city_constructor import Reader
 from suppl import *
 import pandas as pd

@@ -1,28 +1,31 @@
 import numpy as np
+import configparser
+args = configparser.ConfigParser()
+args.read('../config.ini')
 
 
 class Vehicle:
-    def __init__(self, config=None):
-        # Set default configuration
+    def __init__(self, config):
         if config is None:
             config = {}
 
-        self.a_max = 1.44
+        self.a_max = args['vehicle'].getfloat('a_max')
+        self.b_max = args['vehicle'].getfloat('b_max')
+        self.l = args['vehicle'].getint('l')
+        self.T = args['vehicle'].getint('T')
+        self.s0 = args['vehicle'].getint('s0')
+        self.v_max = args['vehicle'].getfloat('v_max')
+
+        # Set default configuration
         self.a = 0
-        self.b_max = 4.61
-        self.current_road_index = 0
-        self.l = 4
-        self.T = 1
         self.x = 0
         self.path = []
-        self.s0 = 4
-        self.stopped = False
-        self.sqrt_ab = 2 * np.sqrt(self.a_max * self.b_max)
-        self.v_max = 16.6
         self.v = self.v_max
+        self.stopped = False
         self._v_max = self.v_max
+        self.current_road_index = 0
+        self.sqrt_ab = 2 * np.sqrt(self.a_max * self.b_max)
 
-        # Update configuration
         for attr, val in config.items():
             setattr(self, attr, val)
 

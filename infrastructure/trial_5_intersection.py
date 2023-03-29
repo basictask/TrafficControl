@@ -1,17 +1,16 @@
 """
-This is a test file to design a roundabout
-Simple intersection design
-        A               |        A   C            H
-        |               |        \\ /             |
-E ----- B ----- C       |   F ---- B ------------ G ---- J
-        |               |         / \\            |
-        D               |        E   D            I
+This is a test file to design intersections. The layout of the nodes is as shown below:
+     A   C            H
+     \\ /             |
+F ---- B ------------ G ---- J
+      / \\            |
+     E   D            I
 """
 from trial_functions import *
 from suppl import *
 
 # Params
-vrate = 20
+vrate = 40
 n_steps = 0
 show_win = True
 paths_to_gen = 100
@@ -19,7 +18,6 @@ steps_per_update = 5
 path_dist = 'uniform'
 filepath = '../cities/test_5_intersection.html'
 entry_points = list('ACDEFHJI')
-radius = 10
 
 center_node = l2n('B')
 

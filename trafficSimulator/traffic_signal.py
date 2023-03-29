@@ -1,13 +1,20 @@
+import configparser
+args = configparser.ConfigParser()
+args.read('../config.ini')
+
+
 class TrafficSignal:
     def __init__(self, roads, config=None):
         if config is None:
             config = {}
+
+        self.slow_factor = args['trafficlight'].getfloat('slow_factor')
+        self.slow_distance = args['trafficlight'].getint('slow_distance')
+        self.stop_distance = args['trafficlight'].getint('stop_distance')
+
         # Set default configuration
         self.roads = roads
         self.last_t = 0
-        self.slow_factor = 0.4
-        self.slow_distance = 50
-        self.stop_distance = 15
         self.current_cycle_index = 0
         self.cycle = [(False, True), (True, False)]
 
