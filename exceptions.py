@@ -43,3 +43,17 @@ class IllegalNodeConfigurationError(Exception):
     In case some nodes are placed too close to eachother
     """
     pass
+
+
+class IllegalActionException(Exception):
+    """
+    In case the agent has chosen an action that is not defined
+    """
+    pass
+
+
+class NoneTypeAttributeError(Exception):
+    """
+    In case an object has an attribute that is set to None but that's not allowed
+    """
+    pass

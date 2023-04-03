@@ -1,9 +1,8 @@
 """
 This is the class that defines the simulation to run a city configuration
 """
-
-from .road import Road
 from copy import deepcopy
+from .road import Road
 from .traffic_signal import TrafficSignal
 from .vehicle_generator import VehicleGenerator
 
@@ -26,6 +25,7 @@ class Simulation:
         self.dt = 1 / 60  # Simulation time step
         self.frame_count = 0  # Frame count keeping
         self.total_vehicles_distance = 0  # How much distance did all cars make in the simulation
+        self.total_n_vehicles = 0
 
         # Arrays to store roads, generators and traffic signals
         self.roads = []
@@ -65,9 +65,10 @@ class Simulation:
         for road in self.roads:
             self.total_vehicles_distance += road.update(self.dt)
 
-        # Add vehicles
+        # Add vehicles if the elapsed time is as much as defined in the generator
         for gen in self.generators:
-            gen.update()
+            vehicle_added = gen.update()
+            self.total_n_vehicles += int(vehicle_added)
 
         for signal in self.traffic_signals:
             signal.update(self)
@@ -97,6 +98,7 @@ class Simulation:
         self.t += self.dt
         self.frame_count += 1
 
-    def run(self, steps):
+    def run(self, steps) -> (int, int):
         for _ in range(steps):
             self.update()
+        return self.total_n_vehicles, self.total_vehicles_distance

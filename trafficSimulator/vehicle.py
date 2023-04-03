@@ -1,7 +1,8 @@
+import os
 import numpy as np
 import configparser
 args = configparser.ConfigParser()
-args.read('../config.ini')
+args.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config.ini'))
 
 
 class Vehicle:

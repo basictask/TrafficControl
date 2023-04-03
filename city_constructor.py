@@ -17,14 +17,17 @@ Contains the data for road segments from node A --> B in the format (Ax, Ay) -->
 --> vehicle matrix
 Contains the paths that vehicles take in the configuration: A --> B, B --> C, C --> D
 """
-import os
-import re
+import configparser
 import inspect
+import re
+import os
 from matrix_assembler import *
+args = configparser.ConfigParser()
+args.read('/home/daniel/Documents/ELTE/trafficControl/config.ini')
 
 
 class Reader:
-    def __init__(self, filepath: str, entry_points: list, vrate: int, pathnum: int, path_dist: str, max_lanes: int = 3):
+    def __init__(self, filepath: str, entry_points: list, vrate: int, pathnum: int, path_dist: str):
         """
         Constructor class for the Reader object
         :param filepath: str that points to {./folder/city_name}.html
@@ -41,11 +44,11 @@ class Reader:
 
         # Params
         self.filepath = filepath
-        self.max_lanes = max_lanes
-        self.roundabout_radius = 10
-        self.trafficlight_inbound = [3, 4]  # Allowed number of incoming landes in case of trafficlight intersections
+        self.max_lanes = args['reader'].getint('max_lanes')
+        self.roundabout_radius = args['reader'].getint('radius')
+        self.trafficlight_inbound = [int(x) for x in args['trafficlight'].get('allow_inbound').split(',')]  # How many incoming lanes trafficlights allow
         self.entry_points = letter_to_number_lst(entry_points)   # Convert letters to numbers on entry points
-        self.assembler = Assembler(self.entry_points, vrate, pathnum, path_dist, max_lanes)
+        self.assembler = Assembler(self.entry_points, vrate, pathnum, path_dist, self.max_lanes)
 
         # Set up inner params
         self.locs = None
@@ -88,7 +91,7 @@ class Reader:
 
         # Check if all entry points are legal
         check_all_coords_valid(points, self.max_lanes, self.roundabout_radius)
-        check_entry_points_calid(points, self.entry_points)
+        check_entry_points_valid(points, self.entry_points)
 
         # Process segments
         df_segments['Definition'] = [re.findall(r'(?<=\()[^)]*(?=\))', x)[0] for x in df_segments['Definition']]  # Remove everything but the content in the parentheses
@@ -417,7 +420,7 @@ class Reader:
         """
         roads = self.segments['Definition']  # Get the roads' configuration from the assembler
         n_incoming_lanes = count_incoming_lanes(roads, self.points, node, unique=True)  # Count how many lanes are comingin the junction
-        if 2 < n_incoming_lanes < 5 and self.matrix.loc[node, node] != JUNCTION_CODES['trafficlight']:  # Check for false conditions
+        if n_incoming_lanes in self.trafficlight_inbound and self.matrix.loc[node, node] != JUNCTION_CODES['trafficlight']:  # Check for false conditions
             # Remove roundabout and its' buffer nodes if they exist
             if self.matrix.loc[node, node] == JUNCTION_CODES['roundabout']:
                 self.remove_roundabout(node)

@@ -8,7 +8,7 @@ There are predefined cities and entry points added as comments.
 # Imports
 from trial_functions import *
 import os
-os.chdir('/')
+# os.chdir('/')
 
 
 # %% Set up the reader from a .html GeoGebra construction protocol
@@ -23,7 +23,6 @@ filepath = '../cities/bakats.html'
 entry_points = ['A', 'M', 'E', 'K', 'J', 'I', 'B', 'F', 'C', 'D', 'T']  # Bakats area
 
 vrate = 60  # Rate of vehicles coming in from each entry point
-max_lanes = 3  # How many lanes are allowd going from A --> B (1-directional definition)
 offset = (-500, -500)  # The simulation window offset
 n_steps = 0  # How many steps to simulate (in case there's no Sim window)
 show_win = True  # True if the Simulation window shall be displayed
@@ -32,7 +31,7 @@ paths_to_gen = 10  # How many paths to generate
 path_dist = 'normal'  # One of 'normal', 'uniform'
 steps_per_update = 5  # How many steps the game takes in the interval of one frame update
 
-r = Reader(filepath, entry_points, vrate, paths_to_gen, path_dist, max_lanes)  # Construct the Reader object to generate the vehicle matrices
+r = Reader(filepath, entry_points, vrate, paths_to_gen, path_dist)  # Construct the Reader object to generate the vehicle matrices
 
 if not test_add:
     roads, vehicle_mtx = r.get_matrices()

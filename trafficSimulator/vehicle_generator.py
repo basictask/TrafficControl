@@ -31,7 +31,7 @@ class VehicleGenerator:
             if r <= 0:
                 return Vehicle(config)
 
-    def update(self):
+    def update(self) -> bool:
         """
         If time elasped after last added vehicle is greater than vehicle_period, generate a vehicle
         """
@@ -42,3 +42,5 @@ class VehicleGenerator:
                 road.vehicles.append(self.upcoming_vehicle)
                 self.last_added_time = self.sim.t  # Reset last_added_time and upcoming_vehicle
             self.upcoming_vehicle = self.generate_vehicle()
+            return True
+        return False
