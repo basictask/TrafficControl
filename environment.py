@@ -99,6 +99,12 @@ class Environment:
         self.reader = Reader(self.filepath, self.entry_points, self.vrate, self.paths_to_gen, self.path_dist)  # Reset the map
         self.state = self.reader.matrix  # Reset the internal state
 
+    def render_episode(self):
+        roads, vehicle_mtx, signals = self.reader.get_matrices()  # Assemble new city
+        show_win = True
+        total_n_vehicles, total_vehicles_distance = start_sim(roads, vehicle_mtx, self.offset, self.steps_per_update, self.n_steps, show_win, signals)
+        print(f'Total vehicles generated: {total_n_vehicles}, total distance taken: {total_vehicles_distance}')
+
 
 # Just for testing
 if __name__ == '__main__':
@@ -107,3 +113,4 @@ if __name__ == '__main__':
     # ACTIONS = {1: 'add_lane', 2: 'remove_lane', 3: 'add_road', 4: 'remove_road', 5: 'add_righthand', 6: 'add_roundabout', 7: 'add_trafficlight'}
     s, r = env.step(1, 3, 4)
     print(s, '\n', r)
+    env.render_episode()
