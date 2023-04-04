@@ -7,27 +7,15 @@ There are predefined cities and entry points added as comments.
 
 # Imports
 from trial_functions import *
-import os
-# os.chdir('/')
-
-
-# %% Set up the reader from a .html GeoGebra construction protocol
-
-# filepath = 'cities/simple.html'
-# filepath = 'cities/starcity.html'
-filepath = '../cities/bakats.html'
-
-# Points that are valid for entering the traffic system
-# entry_points = ['A','C','G','J'] # Simple
-# entry_points = ['A','D','F','H','J'] # Star city
-entry_points = ['A', 'M', 'E', 'K', 'J', 'I', 'B', 'F', 'C', 'D', 'T']  # Bakats area
 
 vrate = 60  # Rate of vehicles coming in from each entry point
 offset = (-500, -500)  # The simulation window offset
 n_steps = 0  # How many steps to simulate (in case there's no Sim window)
+filepath = '../cities/bakats.html'  # City map to read
 show_win = True  # True if the Simulation window shall be displayed
 test_add = True  # Modifying this to True will result in testing the add/remove functions of the reader class
 paths_to_gen = 10  # How many paths to generate
+entry_points = ['A', 'M', 'E', 'K', 'J', 'I', 'B', 'F', 'C', 'D', 'T']  # Points that are valid for entering the traffic system
 path_dist = 'normal'  # One of 'normal', 'uniform'
 steps_per_update = 5  # How many steps the game takes in the interval of one frame update
 
@@ -37,7 +25,7 @@ if not test_add:
     roads, vehicle_mtx = r.get_matrices()
     start_sim(roads, vehicle_mtx, offset, steps_per_update, n_steps, show_win)
 
-# %% Testing add function
+# Testing the add function
 """
 Note: This time we are using the letter_to_number function to define a node in the graph. 
 This is a necessary step for visualization as the RL environment will refer to it in numeric form
