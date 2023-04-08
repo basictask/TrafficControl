@@ -94,6 +94,10 @@ class Assembler:
         :return: None
         """
         self.points = points
+        if not check_valid_df_segments(df_segments, points):  # Check for point IDs in segments that don't exist
+            raise IllegalPointIDError('Illegal configuration found in df_segments')
+
+        # Assemble the matrix
         self.assemble_segments(df_segments, add_reversed)
         self.gen_road_mtx()  # Create a matrix of all the roads (locs)
         self.gen_path_graph()  # Construct a graph of all nodes
@@ -114,7 +118,7 @@ class Assembler:
             df_reverse = pd.DataFrame({'Definition': reverse_segm, 'N_lanes': np.ones(len(reverse_segm), dtype=int)})  # Create new DataFrame with the reversed segments
             df_segments = pd.concat([df_segments, df_reverse], axis=0, ignore_index=True, sort=False)  # Concat reversed segments to original DataFrame
 
-        df_segments.sort_values('Definition', ignore_index=True)
+        df_segments.sort_values('Definition', ignore_index=True, inplace=True)
         segment_map = {x: y for x, y in zip(df_segments['Definition'], list(df_segments.index))}
 
         self.segment_map = segment_map

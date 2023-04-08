@@ -45,7 +45,7 @@ class IllegalNodeConfigurationError(Exception):
     pass
 
 
-class IllegalActionException(Exception):
+class IllegalActionError(Exception):
     """
     In case the agent has chosen an action that is not defined
     """
@@ -55,5 +55,12 @@ class IllegalActionException(Exception):
 class NoneTypeAttributeError(Exception):
     """
     In case an object has an attribute that is set to None but that's not allowed
+    """
+    pass
+
+
+class IllegalPointIDError(Exception):
+    """
+    This is to handle a bug where a point gets added with the ID -1
     """
     pass

@@ -48,6 +48,8 @@ test_a_r_roads(r, 'add', 'lane', 'J', 'I')
 test_a_r_junct(r, 'trafficlight', 'H')
 test_a_r_junct(r, 'trafficlight', 'J')
 test_a_r_junct(r, 'trafficlight', 'I')
+test_a_r_roads(r, 'add', 'lane', 'B', 'G')
+test_a_r_roads(r, 'add', 'lane', 'G', 'B')
 
 roads, vehicle_mtx, signals = r.get_matrices()
 start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update, n_steps, show_win, signals)

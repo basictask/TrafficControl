@@ -17,11 +17,10 @@ Contains the data for road segments from node A --> B in the format (Ax, Ay) -->
 --> vehicle matrix
 Contains the paths that vehicles take in the configuration: A --> B, B --> C, C --> D
 """
-import configparser
-import inspect
+from matrix_assembler import *
 import re
 import os
-from matrix_assembler import *
+import configparser
 args = configparser.ConfigParser()
 args.read('/home/daniel/Documents/ELTE/trafficControl/config.ini')
 
@@ -130,6 +129,8 @@ class Reader:
         :return: False: invalid segment, True: valid segment
         """
         caller_fn = inspect.stack()[1].function
+        if start < 0 or end < 0:  # All point indices must be positive
+            return False
         if start == end:  # Start and end node can't be the same
             return False
         if start not in self.points.keys() or end not in self.points.keys():  # Start and end don't exist
@@ -291,6 +292,8 @@ class Reader:
             if i != current_points[i]:  # There's a break in the assignment e.g. point was removed
                 break
             i += 1
+        if i < 0:
+            raise IllegalPointIDError(f'Point added with illegla ID: {i}')
         self.points[i] = location  # Assign tuple to point location
         return i  # Return the index of the newly created point
 
@@ -306,6 +309,7 @@ class Reader:
         # Remove roundabout and its' buffer nodes if they exist
         if self.matrix.loc[node, node] == JUNCTION_CODES['roundabout']:
             self.remove_roundabout(node)
+            self.assembler.gen_signal_list(self.matrix)  # Re-generate the list of signals in the Assembler
             return True
         elif self.matrix.loc[node, node] != JUNCTION_CODES['righthand']:  # Check if it's currently a right-hand intersection
             self.matrix.loc[node, node] = JUNCTION_CODES['righthand']  # Set the node type to right-hand in the matrix
@@ -367,8 +371,11 @@ class Reader:
                     connection = (connected_nodes.iloc[0].loc['buffer_ind'], connected_nodes.iloc[i].loc['buffer_ind'])
                     df_segments = pd.concat([df_segments, pd.DataFrame({'Definition': [connection], 'N_lanes': [1]})], ignore_index=True, axis=0)
 
+            # check_valid_df_segments(df_segments, self.points)  # For debugging
+
             # Reassemble
             self.matrix.loc[node, node] = JUNCTION_CODES['roundabout']
+            check_valid_df_segments(df_segments, points=self.points)
             self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False)  # Create the segment map and list segments
             self.assembler.gen_signal_list(self.matrix)
             return True

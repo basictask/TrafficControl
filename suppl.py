@@ -7,6 +7,7 @@ from exceptions import *
 from trafficSimulator.window import Window
 from trafficSimulator.simulation import Simulation
 import pandas as pd
+import inspect
 import math
 
 # This is a constant to easily set the junction types' representations
@@ -14,7 +15,7 @@ JUNCTION_CODES = {'righthand': 1, 'roundabout': 2, 'trafficlight': 3}
 JUNCTION_TYPES = {v: k for k, v in JUNCTION_CODES.items()}  # Inverse of the JUNCTION_CODES dict
 
 # Actions are defined here in a dict as a constant
-ACTIONS = {1: 'add_lane', 2: 'remove_lane', 3: 'add_road', 4: 'remove_road', 5: 'add_righthand', 6: 'add_roundabout', 7: 'add_trafficlight'}
+ACTIONS = {0: 'add_lane', 1: 'remove_lane', 2: 'add_road', 3: 'remove_road', 4: 'add_righthand', 5: 'add_roundabout', 6: 'add_trafficlight'}
 ACTION_NAMES = {v: k for k, v in ACTIONS.items()}  # Inverse of the ACTIONS dict
 
 
@@ -191,8 +192,8 @@ def find_angle(start: tuple, end: tuple, absolute: bool = True) -> float:
             angle_deg += 360
         if angle_deg > 90:
             angle_deg = 180 - angle_deg
-        return round(abs(angle_deg), 4)
-    return round(angle_deg, 4)
+        return round(abs(angle_deg), 3)
+    return round(angle_deg, 3)
 
 
 def count_incoming_lanes(segments: list, points: dict, node: int, unique: bool) -> int:
@@ -280,6 +281,20 @@ def check_all_coords_valid(points: dict, max_lanes: int, roundabout_radius: floa
     return True
 
 
+def check_valid_df_segments(df_segments: pd.DataFrame, points: dict) -> bool:
+    """
+    Checks if all point IDs are valid in the df_segments DataFrame (usually before calling redo_config)
+    :param df_segments: Pandas DataFrame that defines the roads
+    :param points: Dictionary containing the location of the points
+    :return: True: valid segments, False: invalid segments
+    """
+    caller_fn = inspect.stack()[1].function
+    for start, end in df_segments['Definition']:
+        if start not in points.keys() or end not in points.keys() or start < 0 or end < 0:
+            return False
+    return True
+
+
 def check_entry_points_valid(points: dict, entry_points: list) -> bool:
     """
     Checks if all entry points are valid for a point configuration
@@ -302,3 +317,16 @@ def check_all_attributes_initialized(obj: object) -> None:
     for attr_name in dir(obj):
         if attr_name[:2] != '__' and attr_name[-2:] != '__' and getattr(obj, attr_name) is None:
             raise NoneTypeAttributeError(f'Error: some attributes of {type(obj).__name__} are set to None: {attr_name}')
+
+
+def apply_decay(eps: float, eps_end: float, eps_decay: float):
+    """
+    Applies epsilon decay to epsilon then returns the new value
+    :param eps: Epsilon [exploration probability]
+    :param eps_end: Minimum value of epsilon
+    :param eps_decay: Decay factor
+    :return:
+    """
+    if eps > eps_end:
+        eps *= eps_decay
+    return eps
