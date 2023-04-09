@@ -338,15 +338,15 @@ class Reader:
                     connected_nodes[start] = self.points[start]
 
             # Create new coordinates on the perimeter of the roundabout
-            connected_nodes = pd.DataFrame(pd.Series(connected_nodes), columns=['end'])
+            connected_nodes = pd.DataFrame(pd.Series(connected_nodes, dtype=object), columns=['end'])
             connected_nodes['buffer_coord'] = [find_closest_point_circle(x, node_coords, self.roundabout_radius) for x in connected_nodes['end']]
             connected_nodes['is_first'] = ~connected_nodes['buffer_coord'].duplicated(keep='first')
             connected_nodes['buffer_ind'] = [self.add_point(x) if y else -1 for x, y in zip(connected_nodes['buffer_coord'], connected_nodes['is_first'])]
             connected_nodes['angle'] = [find_angle(node_coords, x, absolute=False) for x in connected_nodes['end']]
 
             # Eliminate duplicate connections
-            buffer_node_angle = dict(connected_nodes.groupby('angle').first().loc[:, 'buffer_ind'])
-            connected_nodes['buffer_ind'] = [buffer_node_angle[x] for x in connected_nodes['angle']]
+            buffer_node_angles = dict(connected_nodes.groupby('angle').first().loc[:, 'buffer_ind'])
+            connected_nodes['buffer_ind'] = [buffer_node_angles[x] for x in connected_nodes['angle']]
 
             # Crate lanes between the buffer points
             for ind in df_segments.index:
