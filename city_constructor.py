@@ -309,6 +309,7 @@ class Reader:
         # Remove roundabout and its' buffer nodes if they exist
         if self.matrix.loc[node, node] == JUNCTION_CODES['roundabout']:
             self.remove_roundabout(node)
+            self.matrix.loc[node, node] = JUNCTION_CODES['righthand']  # Set the node type to right-hand in the matrix
             self.assembler.gen_signal_list(self.matrix)  # Re-generate the list of signals in the Assembler
             return True
         elif self.matrix.loc[node, node] != JUNCTION_CODES['righthand']:  # Check if it's currently a right-hand intersection

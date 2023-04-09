@@ -8,7 +8,7 @@ import numpy as np
 
 # Params
 vrate = 20
-n_steps = 20000
+n_steps = 10000
 show_win = False
 offset = (-100, -100)
 paths_to_gen = 100
@@ -25,7 +25,7 @@ n_nodes = r.matrix.shape[0]
 nodes = np.arange(n_nodes)
 n_actions = len(ACTIONS)
 actions = np.arange(n_actions)
-n_builds = 1000  # How many builds to execute at once
+n_builds = 200  # How many builds to execute at once
 
 start, end, action = -1, -1, -1
 roads, vehicle_mtx, signals = -1, -1, -1

@@ -51,16 +51,17 @@ class Environment:
         self.state_high = np.tile(self.max_lanes, self.state_shape)  # Highest values for the observations
         np.fill_diagonal(self.state_high, JUNCTION_CODES[max(JUNCTION_CODES.keys())])  # Fill with the lowest value junction
         self.action_space = tuple(range(7))  # Action space - see ACTIONS for more
+        self.action_shape = len(self.action_space)  # How many different actions are allowed
 
         check_all_attributes_initialized(self)  # Raise an error if a configuration has failed to read
 
-    def step(self, action: int, start: int, end: int) -> (pd.DataFrame, int):
+    def step(self, start: int, end: int, action: int) -> (pd.DataFrame, int):
         """
         Takes a single step in the environment. If the operation is successful the state-definition matrix gets updated.
         Whether it's successful or not a reward gets calculated. The reward is an integer value as it has large scales.
-        :param action: 0: add, 1: remove
         :param start: Index of the node where the infrastructure shall start
         :param end: Index of the node where the infrastructure shall end
+        :param action: 0: add, 1: remove
         :return: Observation: pandas DataFrame, reward: single numerical value
         """
         action_name = ACTIONS[action]
@@ -79,7 +80,7 @@ class Environment:
         elif action_name == 'add_trafficlight':
             successful = self.reader.add_trafficlight(end)
         else:
-            raise IllegalActionException(f'Undefined action: {action}')
+            raise IllegalActionError(f'Undefined action: {action}')
 
         if successful:
             roads, vehicle_mtx, signals = self.reader.get_matrices()  # Assemble new city
@@ -91,13 +92,14 @@ class Environment:
 
         return self.state, int(reward)
 
-    def reset(self) -> None:
+    def reset(self) -> pd.DataFrame:
         """
         Resets the environment in the starting state. This method only updates internal objects.
         :return: None
         """
         self.reader = Reader(self.filepath, self.entry_points, self.vrate, self.paths_to_gen, self.path_dist)  # Reset the map
         self.state = self.reader.matrix  # Reset the internal state
+        return self.state
 
     def render_episode(self):
         roads, vehicle_mtx, signals = self.reader.get_matrices()  # Assemble new city
