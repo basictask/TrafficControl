@@ -44,13 +44,13 @@ class Environment:
         self.rewarder = RewardCalculator()
 
         # State and action
-        self.state = self.reader.matrix
+        self.state = self.reader.matrix.copy()
         self.state_shape = self.state.shape  # Set up state space
         self.state_low = np.tile(0, self.state_shape)  # Lowest values for the observations
         np.fill_diagonal(self.state_low, JUNCTION_CODES[min(JUNCTION_CODES.keys())])  # Fill with the highest value junction
         self.state_high = np.tile(self.max_lanes, self.state_shape)  # Highest values for the observations
         np.fill_diagonal(self.state_high, JUNCTION_CODES[max(JUNCTION_CODES.keys())])  # Fill with the lowest value junction
-        self.action_space = tuple(range(7))  # Action space - see ACTIONS for more
+        self.action_space = tuple(ACTIONS.keys())  # Action space - see ACTIONS for more
         self.action_shape = len(self.action_space)  # How many different actions are allowed
 
         check_all_attributes_initialized(self)  # Raise an error if a configuration has failed to read
@@ -82,14 +82,15 @@ class Environment:
         else:
             raise IllegalActionError(f'Undefined action: {action}')
 
-        if successful:
-            roads, vehicle_mtx, signals = self.reader.get_matrices()  # Assemble new city
-            total_n_vehicles, total_vehicles_distance = start_sim(roads, vehicle_mtx, self.offset, self.steps_per_update, self.n_steps, self.show_win, signals)
-            self.state = self.reader.matrix  # Save observation
-            reward = self.rewarder.calc_reward_successful_build(action, start, end, self.state, self.reader.points, total_n_vehicles, total_vehicles_distance)
-        else:
-            reward = self.rewarder.calc_reward_unsuccessful_build(action, start, end, self.state)
-
+        # Assemble new city
+        roads, vehicle_mtx, signals = self.reader.get_matrices()
+        # Start the simulation and record characteristics
+        total_n_vehicles, total_vehicles_distance = start_sim(roads, vehicle_mtx, self.offset, self.steps_per_update, self.n_steps, self.show_win, signals)
+        # Save the observation for teh agent
+        self.state = self.reader.matrix.copy()
+        # Calculate the reward
+        reward = self.rewarder.calc_reward(successful, action, start, end, self.state, self.reader.points, total_n_vehicles, total_vehicles_distance)
+        # Return next state, reward
         return self.state, int(reward)
 
     def reset(self) -> pd.DataFrame:
@@ -101,7 +102,7 @@ class Environment:
         self.state = self.reader.matrix  # Reset the internal state
         return self.state
 
-    def render_episode(self):
+    def render_city(self) -> None:
         roads, vehicle_mtx, signals = self.reader.get_matrices()  # Assemble new city
         show_win = True
         total_n_vehicles, total_vehicles_distance = start_sim(roads, vehicle_mtx, self.offset, self.steps_per_update, self.n_steps, show_win, signals)
@@ -115,4 +116,4 @@ if __name__ == '__main__':
     # ACTIONS = {1: 'add_lane', 2: 'remove_lane', 3: 'add_road', 4: 'remove_road', 5: 'add_righthand', 6: 'add_roundabout', 7: 'add_trafficlight'}
     s, r = env.step(1, 3, 4)
     print(s, '\n', r)
-    env.render_episode()
+    env.render_city()

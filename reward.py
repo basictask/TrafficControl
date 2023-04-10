@@ -55,19 +55,46 @@ class RewardCalculator:
 
         check_all_attributes_initialized(self)  # Raise an error if a configuration has failed to read
 
-    def calc_reward_unsuccessful_build(self, action: int, start: int, end: int, matrix: pd.DataFrame) -> float:
+    def calc_reward(self, successful: bool, action: int, start: int, end: int, matrix: pd.DataFrame, points: dict, n_vehicles: int, vehicles_dist: int) -> float:
         """
+        A build can be successful if:
+            - The cost of building the infrastructure (in accordance with real values)
+            - The evaluation for the city configuration (how pedestrian-friendly a city is)
         A build can be unsuccessful if:
             - The agent tries to remove a lane/road where there is currently nothing to remove
             - The agent tries to add a lane/road where it has already reached maximum capacity (defined by n_lanes)
             - The agent tries to add a lane/road with the starting and ending nodes being the same (impossible)
             - The agent tries to add a junction where it is already built e.g. can't add a roundabout where it's already a roundabout
-        Note: for road addin/removal it's enough for one of the lanes to be at max. capacity or at 0 for the action to be unsuccessful
+            - Note: for road adding/removal it's enough for one of the lanes to be at max. capacity or at 0 for the action to be unsuccessful
+        :param successful: True: the infrastructure was built successfully, False: the infrastructure failed to build (see cases above)
         :param action: Index of the chosen action
         :param start: Index of the starting node
         :param end: Index of the ending node
         :param matrix: State-definition matrix
+        :param points: Dict of point coordinates {1: (x, y), 2: (x, y), ...}
+        :param n_vehicles: Number of vehicles that were spawned in the simulation
+        :param vehicles_dist: Distance taken by the vehicles
         :return: Negative reward as the agent has chosen a wrong action
+        """
+        if successful:
+            reward = self.calc_cost_infra(action, start, end, matrix, points)
+        else:
+            reward = self.calc_penalty_unsuccessful_build(action, start, end, matrix)
+        reward += self.calc_reward_city(matrix, points)
+        reward += self.calc_reward_vehicles_dist(n_vehicles, vehicles_dist)
+        return reward
+
+    def calc_penalty_unsuccessful_build(self, action: int, start: int, end: int, matrix: pd.DataFrame) -> float:
+        """
+        Calculates the penalty that is given if the agent tries to build a piece of infrastructure where it's technically impossible.
+            - Building a type of junction where there's already the same exact type of junction
+            - Removing lanes if the number of lanes between the nodes is already 0
+            - Adding lanes if the number of lanes has already reached the max_lanes parameter
+        :param action: Index of the chosen action
+        :param start: Index of the starting node
+        :param end: Index of the ending node
+        :param matrix: State-definition matrix
+        :return: Numerical value that is fed to the agent as a reward
         """
         reward = 0
         action_name = ACTIONS[action]
@@ -90,25 +117,6 @@ class RewardCalculator:
         elif 'add_righthand' == action_name or 'add_roundabout' == action_name or 'add_trafficlight' == action_name:  # Adding a junction where it's already built
             reward -= self.unsuccessful_add_junction_penalty
 
-        return reward
-
-    def calc_reward_successful_build(self, action: int, start: int, end: int, matrix: pd.DataFrame, points: dict, n_vehicles: int, vehicles_dist: int) -> float:
-        """
-        Calculates the reward for a successful build which includes:
-            - The cost of building the infrastructure (in accordance with real values)
-            - The evaluation for the city configuration (how pedestrian-friendly a city is)
-        :param action: Index of the chosen action
-        :param start: Index of the starting node
-        :param end: Index of the ending node
-        :param matrix: State-definition matrix
-        :param points: Dict of point coordinates {1: (x, y), 2: (x, y), ...}
-        :param n_vehicles: Number of vehicles that were spawned in the simulation
-        :param vehicles_dist: Distance taken by the vehicles
-        :return: Numerical value that is fed to the agent as a reward
-        """
-        reward = self.calc_cost_infra(action, start, end, matrix, points)
-        reward += self.calc_reward_city(matrix, points)
-        reward += self.calc_reward_vehicles_dist(n_vehicles, vehicles_dist)
         return reward
 
     @staticmethod

@@ -3,6 +3,8 @@ Functions that are used to test the functionality
 """
 from suppl import *
 from city_constructor import Reader
+from environment import Environment
+from agent import Agent
 
 
 def test_a_r_roads(r: Reader, mode: str, infra: str, start: str, end: str) -> None:
@@ -53,8 +55,7 @@ def test_a_r_junct(r: Reader, infra: str, node: str) -> None:
     node = l2n(node)
     roads = r.segments['Definition']
     points = r.points
-    node_coords = r.points[node]
-    n_incoming = count_incoming_lanes(roads, points, node, unique=True)  # Number of incoming lanes
+    n_incoming = count_incoming_lanes(r.matrix, node)  # Number of incoming lanes
     result = -1
     if infra == 'righthand':
         result = r.add_righthand(node)
@@ -71,3 +72,27 @@ def test_a_r_junct(r: Reader, infra: str, node: str) -> None:
         result = 'unsuccessful'
     print(f'Number of lanes incoming to {node} = {n_incoming}')
     print(f'Convert to {infra}: {result}\n')
+
+
+def play_one_episode(env: Environment, agent: Agent, max_t: int) -> list:
+    """
+    Uses the agent to do some time steps inside the episode
+    The process is:
+        1. Agent observes state
+        2. Agent chooses action
+        3. Agent executes action
+        4. Environment returns next state and reward
+    :return: a list of scores that the agent has received
+    """
+    state = env.reset()
+    scores = []
+    score = 0
+    eps = 0
+    for t in range(max_t):
+        start, end, action = agent.act(state, eps)
+        next_state, reward = env.step(start, end, action)
+        state = next_state
+        score += reward
+        scores.append(reward)
+        print('start: {}, end: {}, action: {}, reward: {}, total: {}'.format(start, end, ACTIONS[action], reward, score))
+    return scores

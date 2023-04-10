@@ -39,8 +39,8 @@ class QNetwork(nn.Module):
         """
         Defines the architecture of the model. The model needs to predict 3 values at each iteration:
             - Which action to take
-            - Starting node
-            - Ending node
+            - Starting node (scaled to a range between 0 and 1)
+            - Ending node (scaled to a range between 0 and 1)
         The architecture is a Dueling Double Deep Q-learning with 3 different heads to predict the 3 target variables
         :param state_shape: Shape of the state-definition matrix. Should be n*n.
         :param action_size: Integer value on how many actions can the agent take.
@@ -91,11 +91,11 @@ class QNetwork(nn.Module):
         :return: (start, end, action): for nodes A --> B build x infrastructure
         """
         # Preprocess
-        if state.shape == self.state_shape:
+        if state.shape == self.state_shape:  # Prediction pass
             state_tensor = torch.flatten(torch.tensor(np.array(state).astype(np.float32)))  # Convert the state to float and flatten
-        else:
-            state_tensor = torch.tensor(state)
-        
+        else:  # Learning pass
+            state_tensor = state.clone().detach().requires_grad_(True)
+
         # Hidden
         x = fn.relu(self.fc1(state_tensor))
         x = fn.relu(self.fc2(x))
@@ -108,7 +108,7 @@ class QNetwork(nn.Module):
         start_a = fn.relu(self.fc4_start_adv(x))
         start_a = self.start_adv(start_a)  # A(s,a) for start
 
-        start_n = torch.argmax(fn.softmax(start_a, dim=-1), dim=-1, keepdim=True)  # Starting node
+        start_n = torch.argmax(fn.softmax(start_a, dim=-1), dim=-1, keepdim=True) / self.n_nodes  # Starting node
         start_avg = torch.mean(start_a, dim=-1, keepdim=True)  # avg(A(s,a))
         start_q = start_v + start_a - start_avg  # Q(s,a) for start
 
@@ -120,7 +120,7 @@ class QNetwork(nn.Module):
         end_input = torch.cat([end_a, start_n], dim=-1)  # Append start to state-tensor
         end_a = self.end_adv(end_input)  # A(s,a) for end
 
-        end_n = torch.argmax(fn.softmax(end_a, dim=-1), dim=-1, keepdim=True)  # Ending node
+        end_n = torch.argmax(fn.softmax(end_a, dim=-1), dim=-1, keepdim=True).float() / self.n_nodes  # Ending node
         end_avg = torch.mean(end_a, dim=-1, keepdim=True)  # avg(A(s,a))
         end_q = end_v + end_a - end_avg  # Q(s,a) for end
 

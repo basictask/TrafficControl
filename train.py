@@ -9,9 +9,10 @@
 This is the file used to train the reinforcement learning agent.
 """
 # Imports
+from trial_functions import play_one_episode
 from suppl import ACTIONS, apply_decay
-from agent import Agent
 from environment import Environment
+from agent import Agent
 import os
 import torch
 import numpy as np
@@ -32,7 +33,7 @@ eps_decay = args['train'].getfloat('eps_decay')
 
 scores = []
 eps = eps_start
-scores_window = deque(maxlen=100)  # Keeping track of the last 100 scores
+scores_window = deque(maxlen=50)  # Keeping track of the last 100 scores
 
 env = Environment()
 agent = Agent(env.state_shape, env.action_shape)
@@ -41,12 +42,18 @@ for e in range(n_episodes):
     state = env.reset()
     score = 0
     for t in range(max_t):
-        start, end, action = agent.act(state, eps)  # Choose action based on state
-        print(f'start: {start}, end: {end}, action: {ACTIONS[action]}')
-        next_state, reward = env.step(start, end, action)  # Execute action in the environment
-        agent.step(state, start, end, action, reward, next_state)  # Record info in agent
+        # Choose action based on state
+        start, end, action = agent.act(state, eps)
+        # Execute action in the environment
+        next_state, reward = env.step(start, end, action)
+        # Record the info in the agent
+        agent.step(state, start, end, action, reward, next_state)
+        # Update state
         state = next_state
+        # Update score
         score += reward
+        # Logging
+        print('step: {}, start: {}, end: {}, action: {}'.format(t, start, end, ACTIONS[action]))
 
     # Record scores
     scores.append(score)
@@ -54,9 +61,14 @@ for e in range(n_episodes):
     scores_avg = np.mean(scores_window)
     eps = apply_decay(eps, eps_end, eps_decay)  # Apply decay
 
-    print(f'episode: {e}, score: {score}, average score: {scores_avg}')
+    print('episode: {}, epsilon: {:.2f}, score: {}, average score: {:.2f}'.format(e, eps, score, scores_avg))
 
     # Save NNs state
     if e % 10 == 0:
         torch.save(agent.qnetwork_local.state_dict(), './models/local.pth')
         torch.save(agent.qnetwork_target.state_dict(), './models/target.pth')
+
+
+#%% Letting the agent play for a certain number of steps to try the new protocol
+
+scores_test = play_one_episode(env, agent, max_t)

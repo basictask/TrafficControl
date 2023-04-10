@@ -20,6 +20,7 @@ Contains the paths that vehicles take in the configuration: A --> B, B --> C, C 
 from matrix_assembler import *
 import re
 import os
+import inspect
 import configparser
 args = configparser.ConfigParser()
 args.read('/home/daniel/Documents/ELTE/trafficControl/config.ini')
@@ -136,7 +137,7 @@ class Reader:
         if start not in self.points.keys() or end not in self.points.keys():  # Start and end don't exist
             return False
         if start in self.matrix.index and end in self.matrix.index:  # If start or end are not in the matrix they are buffer points
-            n_incoming = count_incoming_lanes(self.segments['Definition'], self.points, end, unique=True)
+            n_incoming = count_incoming_lanes(self.matrix, end)
             if self.matrix.loc[end, end] == JUNCTION_CODES['trafficlight'] and n_incoming not in self.trafficlight_inbound:  # Trafficlight intersection at max. capacity
                 return False
             if caller_fn == 'add_lane' and self.matrix.loc[start, end] == self.max_lanes:  # Road has reached maximum capacity
@@ -427,7 +428,7 @@ class Reader:
         :return: True: successful, False: unsuccessful
         """
         roads = self.segments['Definition']  # Get the roads' configuration from the assembler
-        n_incoming_lanes = count_incoming_lanes(roads, self.points, node, unique=True)  # Count how many lanes are comingin the junction
+        n_incoming_lanes = count_incoming_lanes(self.matrix, node)  # Count how many lanes are inbound to the junction
         if n_incoming_lanes in self.trafficlight_inbound and self.matrix.loc[node, node] != JUNCTION_CODES['trafficlight']:  # Check for false conditions
             # Remove roundabout and its' buffer nodes if they exist
             if self.matrix.loc[node, node] == JUNCTION_CODES['roundabout']:

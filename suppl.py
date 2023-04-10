@@ -7,7 +7,6 @@ from exceptions import *
 from trafficSimulator.window import Window
 from trafficSimulator.simulation import Simulation
 import pandas as pd
-import inspect
 import math
 
 # This is a constant to easily set the junction types' representations
@@ -196,24 +195,20 @@ def find_angle(start: tuple, end: tuple, absolute: bool = True) -> float:
     return round(angle_deg, 3)
 
 
-def count_incoming_lanes(segments: list, points: dict, node: int, unique: bool) -> int:
+def count_incoming_lanes(matrix: pd.DataFrame, node: int, unique=True) -> int:
     """
     Counts the number of lanes incoming given a certain node
     The number of incoming lanes is the number of segments that have a given node as the ending point
-    :param segments: Segments DataFrame that defines the graph connections by ID
-    :param points: Dictionary that defines the index:location mapping -> int:(x, y)
+    :param matrix: The n*n representational matrix
     :param node: The junction to count at (int)
-    :param unique: If unique is set to True multiple lanes of one road won't get counted as a separate entity
+    :param unique: True: number of incoming roads, False: number of incoming lanes
     :return: Number of lanes incoming towards node as integer (unique or not)
     """
-    angles = []
-    for start, end in segments:
-        if end == node:
-            angles.append(find_angle(points[start], points[end], absolute=False))
     if unique:
-        return len(set(angles))
+        ds = pd.Series(matrix.loc[:, node].drop(node))
+        return ds[ds > 0].count()
     else:
-        return len(angles)
+        return matrix.lox[:, node].drop(node).sum()
 
 
 def find_closest_point_circle(point: tuple, center: tuple, r: float) -> tuple:
@@ -288,7 +283,6 @@ def check_valid_df_segments(df_segments: pd.DataFrame, points: dict) -> bool:
     :param points: Dictionary containing the location of the points
     :return: True: valid segments, False: invalid segments
     """
-    caller_fn = inspect.stack()[1].function
     for start, end in df_segments['Definition']:
         if start not in points.keys() or end not in points.keys() or start < 0 or end < 0:
             return False

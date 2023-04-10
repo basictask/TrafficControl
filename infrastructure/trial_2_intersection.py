@@ -36,10 +36,10 @@ roads, vehicle_mtx, _ = r.get_matrices()
 
 nodes = [(100.82, 94.34), (188.22, 95.34)]  # B, C
 
-print(count_incoming_lanes(r.segments['Definition'], r.points, l2n('B'), unique=True))
-print(count_incoming_lanes(r.segments['Definition'], r.points, l2n('B'), unique=False))
-print(count_incoming_lanes(r.segments['Definition'], r.points, l2n('D'), unique=True))
-print(count_incoming_lanes(r.segments['Definition'], r.points, l2n('D'), unique=False))
+print(count_incoming_lanes(r.matrix, l2n('B')))
+print(count_incoming_lanes(r.matrix, l2n('B')))
+print(count_incoming_lanes(r.matrix, l2n('D')))
+print(count_incoming_lanes(r.matrix, l2n('D')))
 
 signals_to_create = []
 for trafficlight_node in nodes:
