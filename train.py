@@ -36,7 +36,7 @@ eps = eps_start
 scores_window = deque(maxlen=50)  # Keeping track of the last 100 scores
 
 env = Environment()
-agent = Agent(env.state_shape, env.action_shape)
+agent = Agent(env.state_shape, env.action_shape, env.state_high)
 
 for e in range(n_episodes):
     state = env.reset()
@@ -45,15 +45,15 @@ for e in range(n_episodes):
         # Choose action based on state
         start, end, action = agent.act(state, eps)
         # Execute action in the environment
-        next_state, reward = env.step(start, end, action)
+        next_state, reward, successful = env.step(start, end, action)
         # Record the info in the agent
-        agent.step(state, start, end, action, reward, next_state)
+        agent.step(state, start, end, action, reward, next_state, successful)
         # Update state
         state = next_state
         # Update score
         score += reward
         # Logging
-        print('step: {}, start: {}, end: {}, action: {}'.format(t, start, end, ACTIONS[action]))
+        print('step: {},\tstart: {},\tend: {},\taction: {},\treward: {},\tsuccessful: {}'.format(t, start, end, ACTIONS[action], reward, successful))
 
     # Record scores
     scores.append(score)

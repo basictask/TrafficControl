@@ -13,11 +13,9 @@ os.chdir(target_dir)
 for file in os.listdir(target_dir):
     if(file.endswith('.dot')):
         print("Rendering: " + file + "... ", end = "") 
-        
         (graph, ) = pydot.graph_from_dot_file(file)
         name = file.split('.')[0]
         graph.write_png(name + '.png')
-        
         print("Success")
 
 print("Done")

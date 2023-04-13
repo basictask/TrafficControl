@@ -35,18 +35,20 @@ class QNetwork(nn.Module):
     Q-network model for the reinforcement learning agent.
     The structure of the network can be defined in the __init__ function.
     """
-    def __init__(self, state_shape: tuple, action_size: int, n_neurons: list):
+    def __init__(self, state_shape: tuple, action_size: int, state_high: pd.DataFrame, n_neurons: list):
         """
         Defines the architecture of the model. The model needs to predict 3 values at each iteration:
             - Which action to take
             - Starting node (scaled to a range between 0 and 1)
             - Ending node (scaled to a range between 0 and 1)
         The architecture is a Dueling Double Deep Q-learning with 3 different heads to predict the 3 target variables
-        :param state_shape: Shape of the state-definition matrix. Should be n*n.
-        :param action_size: Integer value on how many actions can the agent take.
+        :param state_shape: Shape of the state-definition matrix. Should be n*n
+        :param action_size: Integer value on how many actions can the agent take
+        :param state_high: highest possible values for all the states (from Environment)
         :param n_neurons: A list of the sizes of each neuron layer. Defined in config.ini
         """
         self.state_shape = state_shape
+        self.state_high = state_high
         self.n_nodes = self.state_shape[0]
         self.input_size = self.n_nodes * self.n_nodes
         self.action_size = action_size
@@ -78,7 +80,7 @@ class QNetwork(nn.Module):
         self.action_value = nn.Linear(n_neurons[3], 1)  # V(s) for action
 
         self.fc4_action_adv = nn.Linear(n_neurons[2], n_neurons[3])  # H3
-        self.action_adv = nn.Linear(n_neurons[3] + 2, self.action_size)  # A(s,a) for action
+        self.action_adv = nn.Linear(n_neurons[3] + 3, self.action_size)  # A(s,a) for action
 
     def forward(self, state: pd.DataFrame) -> (int, int, int):
         """
@@ -108,7 +110,8 @@ class QNetwork(nn.Module):
         start_a = fn.relu(self.fc4_start_adv(x))
         start_a = self.start_adv(start_a)  # A(s,a) for start
 
-        start_n = torch.argmax(fn.softmax(start_a, dim=-1), dim=-1, keepdim=True) / self.n_nodes  # Starting node
+        start_i = torch.argmax(fn.softmax(start_a, dim=-1), dim=-1, keepdim=True)  # Starting node index
+        start_n = start_i.float() / self.n_nodes  # Starting node tensor
         start_avg = torch.mean(start_a, dim=-1, keepdim=True)  # avg(A(s,a))
         start_q = start_v + start_a - start_avg  # Q(s,a) for start
 
@@ -120,7 +123,8 @@ class QNetwork(nn.Module):
         end_input = torch.cat([end_a, start_n], dim=-1)  # Append start to state-tensor
         end_a = self.end_adv(end_input)  # A(s,a) for end
 
-        end_n = torch.argmax(fn.softmax(end_a, dim=-1), dim=-1, keepdim=True).float() / self.n_nodes  # Ending node
+        end_i = torch.argmax(fn.softmax(end_a, dim=-1), dim=-1, keepdim=True)  # Ending node index
+        end_n = end_i.float() / self.n_nodes  # Ending node tensor
         end_avg = torch.mean(end_a, dim=-1, keepdim=True)  # avg(A(s,a))
         end_q = end_v + end_a - end_avg  # Q(s,a) for end
 
@@ -129,13 +133,31 @@ class QNetwork(nn.Module):
         action_v = self.action_value(action_v)  # V(s) for action
 
         action_a = fn.relu(self.fc4_action_adv(x))
-        action_input = torch.cat([action_a, start_n, end_n], dim=-1)  # Append start and end to the state-definition
+        current_state = self.get_current_state(start_i, end_i, state)
+        action_input = torch.cat([action_a, start_n, end_n, current_state], dim=-1).float()  # Append start, end and current state
         action_a = self.action_adv(action_input)  # A(s,a) for action
 
         action_avg = torch.mean(action_a, dim=-1, keepdim=True)  # avg(A(s,a))
         action_q = action_v + action_a - action_avg  # Q(s,a) for action
 
         return start_q, start_v, end_q, end_v, action_q, action_v
+
+    def get_current_state(self, start_i: torch.tensor, end_i: torch.tensor, state: pd.DataFrame) -> torch.tensor:
+        """
+        Find the current element in the state-representation matrix. This method is needed because the input size varies at learning and prediction
+        :param start_i: Starting node tensor
+        :param end_i: Ending node tensor
+        :param state: State tensor
+        :return: A 1-dimensional torch tensor: either 1*1 or 1*batch_size
+        """
+        if state.shape == self.state_shape:
+            current_state = torch.tensor(state.loc[int(start_i), int(end_i)] / self.state_high.loc[int(start_i), int(end_i)]).unsqueeze(-1)  # x(start, end)
+        else:
+            state_unpacked = []
+            for i in range(state.shape[0]):
+                state_unpacked.append(state[i, :].reshape(self.state_shape)[start_i[i][0], end_i[i][0]])
+            current_state = torch.tensor(state_unpacked).unsqueeze(-1)
+        return current_state
 
 
 class ReplayBuffer:
@@ -150,9 +172,9 @@ class ReplayBuffer:
         """
         self.memory = deque(maxlen=buffer_size)
         self.batch_size = int(batch_size)
-        self.experience = namedtuple('experience', field_names=['state', 'start', 'end', 'action', 'reward', 'next_state'])
+        self.experience = namedtuple('experience', field_names=['state', 'start', 'end', 'action', 'reward', 'next_state', 'successful'])
 
-    def add(self, state: pd.DataFrame, start: int, end: int, action: int, reward: float, next_state: pd.DataFrame):
+    def add(self, state: pd.DataFrame, start: int, end: int, action: int, reward: float, next_state: pd.DataFrame, successful: int):
         """
         Adds a new experience to the replay buffer.
         :param state: State-definition matrix
@@ -161,14 +183,15 @@ class ReplayBuffer:
         :param action: Action taken in the state
         :param reward: Reward received for the action
         :param next_state: Next state of the environment
+        :param successful: If the operation has completed successfully
         :return: None
         """
-        self.memory.append(self.experience(state, start, end, action, reward, next_state))
+        self.memory.append(self.experience(state, start, end, action, reward, next_state, successful))
 
-    def sample(self):
+    def sample(self) -> tuple:
         """
         Takes a sample from the replaybuffer
-        :return: Batch of previously experienced (states, starts, ends, actions, rewards, next_states)
+        :return: Batch of previously experienced (states, starts, ends, actions, rewards, next_states, successfuls)
         """
         experiences = random.sample(self.memory, k=self.batch_size)  # Sample the experience buffer
 
@@ -178,8 +201,9 @@ class ReplayBuffer:
         actions = torch.from_numpy(np.vstack([e.action for e in experiences if e is not None])).long()
         rewards = torch.from_numpy(np.vstack([e.reward for e in experiences if e is not None])).float()
         next_states = torch.from_numpy(np.vstack([np.array(e.next_state).flatten() for e in experiences if e is not None])).float()
+        successfuls = torch.from_numpy(np.vstack([e.successful for e in experiences if e is not None])).long()
 
-        return states, starts, ends, actions, rewards, next_states
+        return states, starts, ends, actions, rewards, next_states, successfuls
 
     def __len__(self):
         """
@@ -192,11 +216,12 @@ class Agent:
     """
     This class defines the reinforcement learning agent
     """
-    def __init__(self, state_size: tuple, action_size: int):
+    def __init__(self, state_size: tuple, action_size: int, state_high: pd.DataFrame):
         """
         Setup the agent by reading the learning parameters from the config
         :param state_size: Size of the state-definition matrix
         :param action_size: Number of actions that is possible to take
+        :param state_high: Numpy array of the
         """
         self.tau = args['learning'].getfloat('tau')
         self.gamma = args['learning'].getfloat('gamma')
@@ -207,44 +232,22 @@ class Agent:
         self.n_neurons_local = [int(x) for x in args['learning'].get('n_neurons_local').split(',')]
         self.n_neurons_target = [int(x) for x in args['learning'].get('n_neurons_target').split(',')]
 
+        self.state_high = state_high
         self.state_size = state_size
-        self.n_nodes = self.state_size[0]
+        self.n_nodes = state_size[0]
         self.action_size = action_size
-        self.action_stack = np.array([])
+        self.action_stack = np.zeros((0, 4))  # Initialize the action stack to 0x4 dimensions: [start, end, action, reward]
         self.history = np.zeros((0, 3))  # Initialize the stack to 0x3 dimensions: [start, end, action]
         self.state_stack = np.zeros((0, 3))  # Initialize the stack to 0x3 dimensions: [V(start), V(end), V(action)]
 
-        self.qnetwork_local = QNetwork(state_size, action_size, self.n_neurons_local)  # Local network (for every step)
-        self.qnetwork_target = QNetwork(state_size, action_size, self.n_neurons_target)  # Target network (for self.update_every)
+        self.qnetwork_local = QNetwork(state_size, action_size, state_high, self.n_neurons_local)  # Local network (for every step)
+        self.qnetwork_target = QNetwork(state_size, action_size, state_high, self.n_neurons_target)  # Target network (for self.update_every)
         self.optimizer = optim.Adam(self.qnetwork_local.parameters(), lr=self.learning_rate)
 
         self.memory = ReplayBuffer(self.buffer_size, self.batch_size)
         self.t_step = 0  # Initialize time step (for self.update_every)
 
         check_all_attributes_initialized(self)  # Check if all attributes have been set up properly
-
-    def step(self, state: pd.DataFrame, start: int, end: int, action: int, reward: int, next_state: pd.DataFrame):
-        """
-        Save one step in the reinforcement learning environment
-        :param state: State before stepping
-        :param start: Starting node for the infrastructure
-        :param end: Ending node for the infrastructure
-        :param action: Action that was the prediction of the model in the state
-        :param reward: Reward that was received for the action
-        :param next_state: Next state of the environment
-        :return: None
-        """
-        self.memory.add(state, start, end, action, reward, next_state)  # Save experience in replay memory
-
-        # This variable is only used for inference - it gets filled here
-        if len(self.action_stack) == 0:
-            self.action_stack = np.array([start, end, action, reward])
-        else:
-            self.action_stack = np.vstack([self.action_stack, np.array([start, end, action, reward])])
-
-        self.t_step = (self.t_step + 1) % self.update_every  # Update the time step
-        if self.t_step == 0 and len(self.memory) > self.batch_size:  # If there's enough experience in the memory we will sample it and learn
-            self.learn()
 
     def act(self, state: pd.DataFrame, eps: float):
         """
@@ -274,12 +277,33 @@ class Agent:
             action = np.random.randint(self.action_size)
             return start, end, action
 
+    def step(self, state: pd.DataFrame, start: int, end: int, action: int, reward: int, next_state: pd.DataFrame, successful: bool):
+        """
+        Save one step in the reinforcement learning environment
+        :param state: State before stepping
+        :param start: Starting node for the infrastructure
+        :param end: Ending node for the infrastructure
+        :param action: Action that was the prediction of the model in the state
+        :param reward: Reward that was received for the action
+        :param next_state: Next state of the environment
+        :param successful: If the operation has completed successfully
+        :return: None
+        """
+        self.memory.add(state, start, end, action, reward, next_state, int(successful))  # Save experience in replay memory
+
+        # This variable is only used for inference - it gets filled here
+        self.action_stack = np.vstack([self.action_stack, np.array([start, end, action, reward])])
+
+        self.t_step = (self.t_step + 1) % self.update_every  # Update the time step
+        if self.t_step == 0 and len(self.memory) > self.batch_size:  # If there's enough experience in the memory we will sample it and learn
+            self.learn()
+
     def learn(self):
         """
         Apply the gradients based on previoyus experience
         :return: None
         """
-        states, starts, ends, actions, rewards, next_states = self.memory.sample()  # Obtain a random mini-batch
+        states, starts, ends, actions, rewards, next_states, successfuls = self.memory.sample()  # Obtain a random mini-batch
 
         # Compute and minimize the loss
         target_start_q, target_start_v, target_end_q, target_end_v, target_action_q, target_action_v = self.qnetwork_target(next_states)
@@ -287,19 +311,19 @@ class Agent:
 
         # Start
         targets_start_q_next = target_start_q.detach().max(1)[0].unsqueeze(1)
-        targets_start = rewards + self.gamma * targets_start_q_next
+        targets_start = rewards + self.gamma * targets_start_q_next * successfuls
         expected_start = local_start_q.gather(1, starts)
         loss_start = fn.mse_loss(expected_start, targets_start)
 
         # End
         targets_end_q_next = target_end_q.detach().max(1)[0].unsqueeze(1)
-        targets_end = rewards + self.gamma * targets_end_q_next
+        targets_end = rewards + self.gamma * targets_end_q_next * successfuls
         expected_end = local_end_q.gather(1, ends)
         loss_end = fn.mse_loss(expected_end, targets_end)
 
         # Action
         targets_action_q_next = target_action_q.detach().max(1)[0].unsqueeze(1)
-        targets_action = rewards + self.gamma * targets_action_q_next
+        targets_action = rewards + self.gamma * targets_action_q_next * successfuls
         expected_action = local_action_q.gather(1, actions)
         loss_action = fn.mse_loss(expected_action, targets_action)
 

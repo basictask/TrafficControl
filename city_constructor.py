@@ -140,9 +140,9 @@ class Reader:
             n_incoming = count_incoming_lanes(self.matrix, end)
             if self.matrix.loc[end, end] == JUNCTION_CODES['trafficlight'] and n_incoming not in self.trafficlight_inbound:  # Trafficlight intersection at max. capacity
                 return False
-            if caller_fn == 'add_lane' and self.matrix.loc[start, end] == self.max_lanes:  # Road has reached maximum capacity
+            if ('add_lane' == caller_fn or 'add_road' == caller_fn) and self.matrix.loc[start, end] == self.max_lanes:  # Road has reached maximum capacity
                 return False
-            elif caller_fn == 'remove_lane' and self.matrix.loc[start, end] == 0:  # Caller is remove_lane function but there's no segment to remove
+            elif ('remove_lane' == caller_fn or 'remove_road' == caller_fn) and self.matrix.loc[start, end] == 0:  # Caller is remove_lane function but there's no segment to remove
                 return False
         return True
 
@@ -427,13 +427,12 @@ class Reader:
         :param node: The index of the junction to be converted into right-hand
         :return: True: successful, False: unsuccessful
         """
-        roads = self.segments['Definition']  # Get the roads' configuration from the assembler
         n_incoming_lanes = count_incoming_lanes(self.matrix, node)  # Count how many lanes are inbound to the junction
         if n_incoming_lanes in self.trafficlight_inbound and self.matrix.loc[node, node] != JUNCTION_CODES['trafficlight']:  # Check for false conditions
             # Remove roundabout and its' buffer nodes if they exist
             if self.matrix.loc[node, node] == JUNCTION_CODES['roundabout']:
                 self.remove_roundabout(node)
-
+            # Change state and generate signal list
             self.matrix.loc[node, node] = JUNCTION_CODES['trafficlight']  # Set the node type to trafficlight in the matrix
             self.assembler.gen_signal_list(self.matrix)  # Re-generate the traffic signal list
             return True

@@ -8,8 +8,8 @@ digraph "round-table" {
 
     // Defining nodes
     roundabout [label="Roundabout"]
-    trafficLight [label="Traffic Light"]
-    rightHand [label="Right-handed"]      
+    trafficLight [label="Right-handed"]
+    rightHand [label="Traffic light"]      
 
     // Defining connections
     // a' a
@@ -17,10 +17,10 @@ digraph "round-table" {
     trafficLight -> roundabout [ label="α\'"]
 
     // b' b
-    rightHand -> trafficLight [label="β"]
-    trafficLight -> rightHand [label="β\'"]
+    rightHand -> trafficLight [label="β\'"]
+    trafficLight -> rightHand [label="β"]
 
     // c c'
-    roundabout -> rightHand [label="γ\'"]
-    rightHand -> roundabout [label="γ"]
+    roundabout -> rightHand [label="α + β"]
+    rightHand -> roundabout [label="β\' + α\'"]
 }

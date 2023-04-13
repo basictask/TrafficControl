@@ -49,6 +49,13 @@ class RewardCalculator:
         self.same_start_end_penalty = args['reward'].getfloat('same_start_end_penalty')
         self.additional_lane_penalty = args['reward'].getfloat('additional_lane_penalty')
         self.multilane_penalty_threshold = args['reward'].getfloat('multilane_penalty_threshold')
+
+        # Successful actions
+        self.successful_add_lane_bonus = args['reward'].getfloat('successful_add_lane_bonus')
+        self.successful_remove_lane_bonus = args['reward'].getfloat('successful_remove_lane_bonus')
+        self.successful_add_junction_bonus = args['reward'].getfloat('successful_add_junction_bonus')
+
+        # Unsuccessful actions
         self.unsuccessful_add_lane_penalty = args['reward'].getfloat('unsuccessful_add_lane_penalty')
         self.unsuccessful_remove_lane_penalty = args['reward'].getfloat('unsuccessful_remove_lane_penalty')
         self.unsuccessful_add_junction_penalty = args['reward'].getfloat('unsuccessful_add_junction_penalty')
@@ -57,9 +64,13 @@ class RewardCalculator:
 
     def calc_reward(self, successful: bool, action: int, start: int, end: int, matrix: pd.DataFrame, points: dict, n_vehicles: int, vehicles_dist: int) -> float:
         """
-        A build can be successful if:
+        The components of a city's evaluation:
             - The cost of building the infrastructure (in accordance with real values)
             - The evaluation for the city configuration (how pedestrian-friendly a city is)
+        A build can be successful if:
+            - The agent adds a new junction where it's not already present
+            - The agent adds a lane to a road that hasn't yet reached max_lanes
+            - The agent adds a lane where none of the directions has reached max_lanes
         A build can be unsuccessful if:
             - The agent tries to remove a lane/road where there is currently nothing to remove
             - The agent tries to add a lane/road where it has already reached maximum capacity (defined by n_lanes)
@@ -77,22 +88,46 @@ class RewardCalculator:
         :return: Negative reward as the agent has chosen a wrong action
         """
         if successful:
-            reward = self.calc_cost_infra(action, start, end, matrix, points)
+            reward = self.calc_cost_infra(start, end, action, matrix, points)
+            reward += self.calc_bonus_successful_build(action)
         else:
-            reward = self.calc_penalty_unsuccessful_build(action, start, end, matrix)
+            reward = self.calc_penalty_unsuccessful_build(start, end, action, matrix)
         reward += self.calc_reward_city(matrix, points)
         reward += self.calc_reward_vehicles_dist(n_vehicles, vehicles_dist)
         return reward
 
-    def calc_penalty_unsuccessful_build(self, action: int, start: int, end: int, matrix: pd.DataFrame) -> float:
+    def calc_bonus_successful_build(self, action: int) -> float:
+        """
+        Calculates the bonus that is given If the agent has chosen an action that is possible in the current context.
+        :param action: Index of the chosen action
+        :return: Numerical value that is fed to the agent as a reward
+        """
+        reward = 0
+        action_name = ACTIONS[action]
+
+        if 'add_lane' == action_name:
+            reward += self.successful_add_lane_bonus
+
+        elif 'remove_lane' == action_name:
+            reward += self.successful_remove_lane_bonus
+
+        elif 'add_road' == action_name:
+            reward += self.successful_add_lane_bonus * 2
+
+        elif 'remove_road' == action_name:
+            reward += self.successful_remove_lane_bonus * 2
+
+        elif 'add_righthand' == action_name or 'add_roundabout' == action_name or 'add_trafficlight' == action_name:
+            reward += self.successful_add_junction_bonus
+
+        return reward
+
+    def calc_penalty_unsuccessful_build(self, start: int, end: int, action: int, matrix: pd.DataFrame) -> float:
         """
         Calculates the penalty that is given if the agent tries to build a piece of infrastructure where it's technically impossible.
-            - Building a type of junction where there's already the same exact type of junction
-            - Removing lanes if the number of lanes between the nodes is already 0
-            - Adding lanes if the number of lanes has already reached the max_lanes parameter
-        :param action: Index of the chosen action
         :param start: Index of the starting node
         :param end: Index of the ending node
+        :param action: Index of the chosen action
         :param matrix: State-definition matrix
         :return: Numerical value that is fed to the agent as a reward
         """
@@ -105,7 +140,7 @@ class RewardCalculator:
         elif 'add_lane' == action_name and matrix.loc[start, end] == self.max_lanes:  # Adding a lane with max. capacity reached
             reward -= self.unsuccessful_add_lane_penalty
 
-        elif 'remove_lane' == action_name and matrix.loc[start, end] == self.max_lanes:  # Removing lane with max. capacity reached
+        elif 'remove_lane' == action_name and matrix.loc[start, end] == 0:  # Removing lane with max. capacity reached
             reward -= self.unsuccessful_remove_lane_penalty
 
         elif 'add_road' == action_name and (matrix.loc[start, end] == self.max_lanes or matrix.loc[end, start] == self.max_lanes):  # Adding road at max. capa
@@ -130,12 +165,12 @@ class RewardCalculator:
         """
         return total_vehicles_distance / total_n_vehicles  # How much distance did a vehicle take on average
 
-    def calc_cost_infra(self, action: int, start: int, end: int, matrix: pd.DataFrame, points: dict) -> float:
+    def calc_cost_infra(self, start: int, end: int, action: int, matrix: pd.DataFrame, points: dict) -> float:
         """
         Calculates the cost of adding/removing a single piece of infrastructure like roads, lanes and junctions
-        :param action: One of the keys from the ACTIONS dict
         :param start: Starting node
         :param end: Ending node (for junctions only ending node is considered)
+        :param action: One of the keys from the ACTIONS dict
         :param matrix: State matrix for the map
         :param points: Dict of point coordinates {1: (x, y), 2: (x, y), ...}
         :return: Numerical based on how much reward the agent gets. Not necessarily an int.
@@ -259,7 +294,7 @@ class RewardCalculator:
                     if euclidean_distance(points[i], points[j]) > dist_thres:
                         reward -= self.long_road_penalty * matrix.loc[i, j]
                     else:
-                        reward += self.long_road_penalty
+                        reward += self.long_road_penalty * matrix.loc[i, j]
         return reward
 
     def calc_multilane_penalty(self, matrix: pd.DataFrame, points: dict) -> float:

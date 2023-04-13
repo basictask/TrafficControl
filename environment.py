@@ -43,19 +43,27 @@ class Environment:
         # Set up the rewarder
         self.rewarder = RewardCalculator()
 
-        # State and action
+        # State
         self.state = self.reader.matrix.copy()
         self.state_shape = self.state.shape  # Set up state space
+
+        # Low values for the state
         self.state_low = np.tile(0, self.state_shape)  # Lowest values for the observations
         np.fill_diagonal(self.state_low, JUNCTION_CODES[min(JUNCTION_CODES.keys())])  # Fill with the highest value junction
+        self.state_low = pd.DataFrame(self.state_low, columns=self.reader.matrix.columns, index=self.reader.matrix.index)  # Convert to DataFrame
+
+        # High values for the state
         self.state_high = np.tile(self.max_lanes, self.state_shape)  # Highest values for the observations
         np.fill_diagonal(self.state_high, JUNCTION_CODES[max(JUNCTION_CODES.keys())])  # Fill with the lowest value junction
+        self.state_high = pd.DataFrame(self.state_high, columns=self.reader.matrix.columns, index=self.reader.matrix.index)  # Convert to DataFrame
+
+        # Action
         self.action_space = tuple(ACTIONS.keys())  # Action space - see ACTIONS for more
         self.action_shape = len(self.action_space)  # How many different actions are allowed
 
         check_all_attributes_initialized(self)  # Raise an error if a configuration has failed to read
 
-    def step(self, start: int, end: int, action: int) -> (pd.DataFrame, int):
+    def step(self, start: int, end: int, action: int) -> (pd.DataFrame, int, bool):
         """
         Takes a single step in the environment. If the operation is successful the state-definition matrix gets updated.
         Whether it's successful or not a reward gets calculated. The reward is an integer value as it has large scales.
@@ -89,9 +97,9 @@ class Environment:
         # Save the observation for teh agent
         self.state = self.reader.matrix.copy()
         # Calculate the reward
-        reward = self.rewarder.calc_reward(successful, action, start, end, self.state, self.reader.points, total_n_vehicles, total_vehicles_distance)
-        # Return next state, reward
-        return self.state, int(reward)
+        reward = int(self.rewarder.calc_reward(successful, action, start, end, self.state, self.reader.points, total_n_vehicles, total_vehicles_distance))
+        # Return next state, reward, successful
+        return self.state, reward, successful
 
     def reset(self) -> pd.DataFrame:
         """
