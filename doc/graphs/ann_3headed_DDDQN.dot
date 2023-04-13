@@ -1,0 +1,61 @@
+digraph "ann_singlehead" { 
+    // Label properies 
+    label = "Three-headed deep Q-network architecture"
+    labelloc = "top"
+    
+    // Make graph vertical 
+    //rankdir = "LR"
+
+    // Defining nodes
+    input [label = "x"]
+    hidden1 [label = "h1"]
+    hidden2 [label = "..."]
+    hidden_start [label = "h"]
+    hidden_end [label = "h"]
+    hidden_action [label = "h"]
+    
+    A_start [label = "A(s, start)"]
+    V_start [label = "V(s)"]
+    softmax_start [label = "softmax(start)"]
+    Q_start [label = "Q(s, start)"]
+
+    A_end [label = "A(s, end)"]
+    V_end [label = "V(s)"]
+    softmax_end [label = "softmax(end)"]
+    Q_end [label = "Q(s, end)"]
+
+    A_action [label = "A(s, action)"]
+    V_action [label = "V(s)"]
+    softmax_action [label = "softmax(action)"]
+    Q_action [label = "Q(s, action)"]
+
+    // Definition of connections
+    input -> hidden1
+    hidden1 -> hidden2 
+
+    hidden2 -> hidden_start
+    hidden_start -> A_start
+    hidden_start -> V_start
+    A_start -> softmax_start
+    A_start -> Q_start
+    V_start -> Q_start
+
+    hidden2 -> hidden_end
+    hidden_end -> A_end
+    hidden_end -> V_end
+    A_end -> softmax_end
+    A_end -> Q_end
+    V_end -> Q_end
+
+    softmax_start -> hidden_end
+
+    hidden2 -> hidden_action
+    hidden_action -> A_action
+    hidden_action -> V_action
+    A_action -> softmax_action
+    A_action -> Q_action
+    V_action -> Q_action
+
+    softmax_start -> hidden_action
+    softmax_end -> hidden_action
+}
