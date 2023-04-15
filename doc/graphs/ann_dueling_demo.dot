@@ -1,0 +1,22 @@
+digraph dueling_architecture {
+    labelloc = "top"
+
+    # Make graph vertical
+    rankdir = "LR"
+
+    # Node definitions
+    MLP [label = "MLP"]
+    fc1 [label = "Fully connected"]
+    fc2 [label = "Fully connected"]
+    V_s [label = "V(s) [1*1]"]
+    A_sa [label = "A(s,a) [action_size*1]"]
+    Q_sa [label = "Q(s,a)"]
+
+    # Defining connections
+    MLP -> fc1
+    MLP -> fc2
+    fc1 -> V_s
+    fc2 -> A_sa
+    V_s -> Q_sa
+    A_sa -> Q_sa
+}
