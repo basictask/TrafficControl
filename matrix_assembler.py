@@ -87,13 +87,17 @@ class Assembler:
         """
         return self.signals_to_create
 
-    def redo_config(self, df_segments: pd.DataFrame, points: dict, add_reversed: bool) -> pd.DataFrame:
+    def redo_config(self, df_segments: pd.DataFrame, points: dict, add_reversed: bool, entry_points: list) -> pd.DataFrame:
         """
-        Regenerate all the necessary configurations
-        This is the base structure to set all the inner variables
+        Regenerate all the necessary configurations. This is the base procedure to set all the inner variables
+        :param df_segments: Pandas DataFrame containing all the segments for any two nodes N1 --> N2
+        :param points: Dict containing all the point coordinates
+        :param add_reversed: create an one-way N1 ---> N2 or two-way N1 <--> N2 road
+        :param entry_points: List of point indices where vehicles can enter the structure
         :return: None
         """
         self.points = points
+        self.entry_points = entry_points
         if not check_valid_df_segments(df_segments, points):  # Check for point IDs in segments that don't exist
             raise IllegalPointIDError('Illegal configuration found in df_segments')
 

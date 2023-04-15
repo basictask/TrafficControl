@@ -25,6 +25,7 @@ class Window:
         self.width = 1400
         self.height = 900
         # self.bg_color = (50, 150, 50)  # Greenish
+        # self.bg_color = (255, 255, 255)
         self.bg_color = (40, 42, 54)  # PyCharm-dark
         self.font_color = (248, 248, 242)  # Pycharm-dark font color
         self.n_steps = n_steps

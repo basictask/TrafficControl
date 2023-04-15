@@ -102,7 +102,7 @@ class Reader:
 
         self.points = points  # This member holds the junctions and buffer points
         self.junctions = points  # Assign the points to the junctions member --> reference to points that are not possible to remove
-        self.segments = self.assembler.redo_config(df_segments=df_segments, points=points, add_reversed=True)  # Create the segment map and list segments
+        self.segments = self.assembler.redo_config(df_segments=df_segments, points=points, add_reversed=True, entry_points=self.entry_points)  # Assemble all matrices
         self.init_matrix()
 
     def init_matrix(self) -> None:
@@ -192,7 +192,7 @@ class Reader:
                 df_segments = pd.concat([self.segments, pd.DataFrame({'Definition': [(start, buffer_point_id), (buffer_point_id, end)],
                                                                       'N_lanes': [1, 1]})], ignore_index=True, axis=0)
             self.matrix.loc[start, end] += 1
-            self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False)  # Create the segment map and list segments
+            self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False, entry_points=self.entry_points)  # Assemble matrices
 
             # Add the roundabout again
             if self.matrix.loc[end, end] == JUNCTION_CODES['roundabout']:
@@ -240,7 +240,7 @@ class Reader:
             self.matrix.loc[start, end] -= 1  # Decrease lane counter in matrix
             df_segments.drop(i, axis=0, inplace=True)  # Remove element with the marked index
             df_segments.index = np.arange(len(df_segments))  # Reset indices
-            self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False)  # Create the segment map and list segments
+            self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False, entry_points=self.entry_points)  # Assemble matrices
 
             # Add the roundabout again
             if self.matrix.loc[end, end] == JUNCTION_CODES['roundabout']:
@@ -375,10 +375,14 @@ class Reader:
 
             # check_valid_df_segments(df_segments, self.points)  # For debugging
 
+            # Add one of the buffer coordinates as an entry point
+            # When an entry point gets convereted into a roundabout it loses its ability to generate vehicles
+            self.entry_points.append(min(connected_nodes['buffer_ind']))
+
             # Reassemble
             self.matrix.loc[node, node] = JUNCTION_CODES['roundabout']
             check_valid_df_segments(df_segments, points=self.points)
-            self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False)  # Create the segment map and list segments
+            self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False, entry_points=self.entry_points)  # Assemble matrices
             self.assembler.gen_signal_list(self.matrix)
             return True
         return False
@@ -415,10 +419,13 @@ class Reader:
         for point_ind in roundabout_nodes:
             self.points.pop(point_ind, None)
 
+        # Remove the element from the entry points that was added because of the rooundabout
+        self.entry_points.remove(min(roundabout_nodes))
+
         # Assemble segments DataFrame
         df_segments.drop(inds_to_drop, axis=0, inplace=True)
         df_segments.reset_index(drop=True, inplace=True)
-        self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False)  # Create the segment map and list segments
+        self.segments = self.assembler.redo_config(df_segments=df_segments, points=self.points, add_reversed=False, entry_points=self.entry_points)  # Assemble matrices
 
     def add_trafficlight(self, node: int) -> bool:
         """
