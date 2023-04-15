@@ -14,7 +14,8 @@ JUNCTION_CODES = {'righthand': 1, 'roundabout': 2, 'trafficlight': 3}
 JUNCTION_TYPES = {v: k for k, v in JUNCTION_CODES.items()}  # Inverse of the JUNCTION_CODES dict
 
 # Actions are defined here in a dict as a constant
-ACTIONS = {0: 'add_lane', 1: 'remove_lane', 2: 'add_road', 3: 'remove_road', 4: 'add_righthand', 5: 'add_roundabout', 6: 'add_trafficlight'}
+# ACTIONS = {0: 'add_lane', 1: 'remove_lane', 2: 'add_road', 3: 'remove_road', 4: 'add_righthand', 5: 'add_roundabout', 6: 'add_trafficlight'}
+ACTIONS = {0: 'add_lane', 1: 'remove_lane', 2: 'add_righthand', 3: 'add_roundabout', 4: 'add_trafficlight'}
 ACTION_NAMES = {v: k for k, v in ACTIONS.items()}  # Inverse of the ACTIONS dict
 
 

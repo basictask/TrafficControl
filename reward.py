@@ -23,6 +23,7 @@ class RewardCalculator:
         Constructor for the reward calculator. Reads values from the config and saves them as data fields
         :return: None
         """
+        self.reward_track = pd.Series(dtype=np.int64)
         self.max_lanes = args['reader'].getfloat('max_lanes')
 
         # Costs
@@ -62,7 +63,7 @@ class RewardCalculator:
 
         check_all_attributes_initialized(self)  # Raise an error if a configuration has failed to read
 
-    def calc_reward(self, successful: bool, action: int, start: int, end: int, matrix: pd.DataFrame, points: dict, n_vehicles: int, vehicles_dist: int) -> float:
+    def calc_reward(self, successful: bool, action: int, start: int, end: int, matrix: pd.DataFrame, points: dict, vehicles_dist: int) -> float:
         """
         The components of a city's evaluation:
             - The cost of building the infrastructure (in accordance with real values)
@@ -83,18 +84,22 @@ class RewardCalculator:
         :param end: Index of the ending node
         :param matrix: State-definition matrix
         :param points: Dict of point coordinates {1: (x, y), 2: (x, y), ...}
-        :param n_vehicles: Number of vehicles that were spawned in the simulation
         :param vehicles_dist: Distance taken by the vehicles
         :return: Negative reward as the agent has chosen a wrong action
         """
         if successful:
             reward = self.calc_cost_infra(start, end, action, matrix, points)
             reward += self.calc_bonus_successful_build(action)
+            reward += self.calc_reward_city(matrix, points)
+            reward += self.calc_reward_vehicles_dist(vehicles_dist)
+
+            self.reward_track = pd.concat([self.reward_track, pd.Series(np.int64(reward))])
+            reward_result = self.reward_track.diff().fillna(0).iloc[-1]
+            return int(reward_result)
+
         else:
             reward = self.calc_penalty_unsuccessful_build(start, end, action, matrix)
-        reward += self.calc_reward_city(matrix, points)
-        reward += self.calc_reward_vehicles_dist(n_vehicles, vehicles_dist)
-        return reward
+            return int(reward)
 
     def calc_bonus_successful_build(self, action: int) -> float:
         """
@@ -155,15 +160,14 @@ class RewardCalculator:
         return reward
 
     @staticmethod
-    def calc_reward_vehicles_dist(total_n_vehicles: int, total_vehicles_distance: int) -> float:
+    def calc_reward_vehicles_dist(total_vehicles_distance: int) -> float:
         """
         Defines how the reward calculator should assess the number of vehicles and the distance taken by them
         Note: The numerical values are calculated by the simulation if we run
-        :param total_n_vehicles: Number of vehicles that were spawned in the simulation
         :param total_vehicles_distance: Distance taken by the vehicles
         :return: Aggregate numerical value to describe vehicle performance
         """
-        return total_vehicles_distance / total_n_vehicles  # How much distance did a vehicle take on average
+        return total_vehicles_distance  # / total_n_vehicles  # How much distance did a vehicle take on average
 
     def calc_cost_infra(self, start: int, end: int, action: int, matrix: pd.DataFrame, points: dict) -> float:
         """
@@ -180,24 +184,20 @@ class RewardCalculator:
 
         # Lanes and roads
         if action_name == 'add_lane':
-            n_lanes = matrix.loc[start, end] + 1
             length = euclidean_distance(points[start], points[end])
-            reward -= length * self.cost_add_lane_unit ** n_lanes
+            reward -= length * self.cost_add_lane_unit
 
         elif action_name == 'remove_lane':
-            n_lanes = matrix.loc[start, end] + 1
             length = euclidean_distance(points[start], points[end])
-            reward -= length * self.cost_remove_lane_unit ** n_lanes
+            reward -= length * self.cost_remove_lane_unit
 
         elif action_name == 'add_road':
-            n_lanes = matrix.loc[start, end] + 1
             length = euclidean_distance(points[start], points[end])
-            reward -= length * self.cost_add_road_unit ** n_lanes
+            reward -= length * self.cost_add_road_unit
 
         elif action_name == 'remove_road':
-            n_lanes = matrix.loc[start, end] + 1
             length = euclidean_distance(points[start], points[end])
-            reward -= length * self.cost_remove_road_unit ** n_lanes
+            reward -= length * self.cost_remove_road_unit
 
         # Junctions
         elif action_name == 'add_righthand':

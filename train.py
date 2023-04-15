@@ -43,7 +43,7 @@ for e in range(n_episodes):
     score = 0
     for t in range(max_t):
         # Choose action based on state
-        start, end, action = agent.act(state, eps)
+        start, end, action, was_random = agent.act(state, eps)
         # Execute action in the environment
         next_state, reward, successful = env.step(start, end, action)
         # Record the info in the agent
@@ -53,7 +53,9 @@ for e in range(n_episodes):
         # Update score
         score += reward
         # Logging
-        print('step: {},\tstart: {},\tend: {},\taction: {},\treward: {},\tsuccessful: {}'.format(t, start, end, ACTIONS[action], reward, successful))
+        print('step: {}, start: {}, end: {}, action: {},\treward: {}, successful: {}, random: {}'.format(
+            t, start, end, ACTIONS[action], reward, successful, was_random
+        ))
 
     # Record scores
     scores.append(score)

@@ -24,6 +24,7 @@ digraph "ann_singlehead" {
     softmax_end [label = "softmax(end)"]
     Q_end [label = "Q(s, end)"]
 
+    X_state [label = "x(start, end)"]
     A_action [label = "A(s, action)"]
     V_action [label = "V(s)"]
     softmax_action [label = "softmax(action)"]
@@ -50,6 +51,7 @@ digraph "ann_singlehead" {
     softmax_start -> hidden_end
 
     hidden2 -> hidden_action
+    X_state -> hidden_action
     hidden_action -> A_action
     hidden_action -> V_action
     A_action -> softmax_action

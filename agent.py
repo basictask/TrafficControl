@@ -268,14 +268,14 @@ class Agent:
             start = np.argmax(start_q.cpu().data.numpy())
             end = np.argmax(end_q.cpu().data.numpy())
             action = np.argmax(action_q.cpu().data.numpy())
-            return start, end, action
+            return start, end, action, False
 
         # Random action selection
         else:
             start = np.random.randint(self.n_nodes)
             end = np.random.randint(self.n_nodes)
             action = np.random.randint(self.action_size)
-            return start, end, action
+            return start, end, action, True
 
     def step(self, state: pd.DataFrame, start: int, end: int, action: int, reward: int, next_state: pd.DataFrame, successful: bool):
         """
@@ -311,21 +311,21 @@ class Agent:
 
         # Start
         targets_start_q_next = target_start_q.detach().max(1)[0].unsqueeze(1)
-        targets_start = rewards + self.gamma * targets_start_q_next * successfuls
+        targets_start = rewards + self.gamma * targets_start_q_next  # * successfuls
         expected_start = local_start_q.gather(1, starts)
-        loss_start = fn.mse_loss(expected_start, targets_start)
+        loss_start = fn.l1_loss(expected_start, targets_start)
 
         # End
         targets_end_q_next = target_end_q.detach().max(1)[0].unsqueeze(1)
-        targets_end = rewards + self.gamma * targets_end_q_next * successfuls
+        targets_end = rewards + self.gamma * targets_end_q_next  # * successfuls
         expected_end = local_end_q.gather(1, ends)
-        loss_end = fn.mse_loss(expected_end, targets_end)
+        loss_end = fn.l1_loss(expected_end, targets_end)
 
         # Action
         targets_action_q_next = target_action_q.detach().max(1)[0].unsqueeze(1)
-        targets_action = rewards + self.gamma * targets_action_q_next * successfuls
+        targets_action = rewards + self.gamma * targets_action_q_next  # * successfuls
         expected_action = local_action_q.gather(1, actions)
-        loss_action = fn.mse_loss(expected_action, targets_action)
+        loss_action = fn.l1_loss(expected_action, targets_action)
 
         # Calculate loss and step in optimizer
         loss_tensor = torch.tensor([loss_start, loss_end, loss_action])

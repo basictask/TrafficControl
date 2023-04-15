@@ -52,8 +52,8 @@ test_a_r_roads(r, 'add', 'lane', 'B', 'G')
 test_a_r_roads(r, 'add', 'lane', 'G', 'B')
 test_a_r_roads(r, 'add', 'lane', 'H', 'H')
 
-for i in range(10):
-    test_a_r_roads(r, 'add', 'road', 'A', 'C')
+for x in entry_points:
+    test_a_r_junct(r, 'roundabout', x)
 
 roads, vehicle_mtx, signals = r.get_matrices()
 start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update, n_steps, show_win, signals)
