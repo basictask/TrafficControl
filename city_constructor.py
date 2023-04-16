@@ -420,7 +420,8 @@ class Reader:
             self.points.pop(point_ind, None)
 
         # Remove the element from the entry points that was added because of the rooundabout
-        self.entry_points.remove(min(roundabout_nodes))
+        if len(roundabout_nodes) > 0:
+            self.entry_points.remove(min(roundabout_nodes))
 
         # Assemble segments DataFrame
         df_segments.drop(inds_to_drop, axis=0, inplace=True)

@@ -1,7 +1,7 @@
 digraph "round-table" { 
     // Label properies 
-    label = "Conversion rates between junctions"
-    labelloc = "top"
+    // label = "Conversion rates between junctions"
+    // labelloc = "top"
     
     // Make graph vertical 
     rankdir = "LR"

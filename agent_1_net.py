@@ -11,14 +11,13 @@ There can be multiple types of agents defined depending on the task.
 The baseline model that was defined was a DDDQN agent
 """
 # Own
-from suppl import check_all_attributes_initialized
+from suppl import ACTION_NAMES, JUNCTION_TYPES, count_incoming_lanes, check_all_attributes_initialized
+from replay_buffer import ReplayBuffer
 # Generic
 import os
 import random
 import numpy as np
 import pandas as pd
-from collections import deque
-from collections import namedtuple
 # Deep Learning
 import torch
 import torch.nn as nn
@@ -47,6 +46,7 @@ class QNetwork(nn.Module):
         :param state_high: highest possible values for all the states (from Environment)
         :param n_neurons: A list of the sizes of each neuron layer. Defined in config.ini
         """
+        self.trafficlight_inbound = [int(x) for x in args['trafficlight'].get('allow_inbound').split(',')]
         self.state_shape = state_shape
         self.state_high = state_high
         self.n_nodes = self.state_shape[0]
@@ -80,9 +80,9 @@ class QNetwork(nn.Module):
         self.action_value = nn.Linear(n_neurons[3], 1)  # V(s) for action
 
         self.fc4_action_adv = nn.Linear(n_neurons[2], n_neurons[3])  # H3
-        self.action_adv = nn.Linear(n_neurons[3] + 3, self.action_size)  # A(s,a) for action
+        self.action_adv = nn.Linear(n_neurons[3] + 2, self.action_size)  # A(s,a) for action
 
-    def forward(self, state: pd.DataFrame) -> (int, int, int):
+    def forward(self, state) -> (int, int, int):
         """
         One pass of the neural network model to predict: start, end, action, state-action value
         The state gets flattened and converted into floating-point values.
@@ -110,10 +110,11 @@ class QNetwork(nn.Module):
         start_a = fn.relu(self.fc4_start_adv(x))
         start_a = self.start_adv(start_a)  # A(s,a) for start
 
-        start_i = torch.argmax(fn.softmax(start_a, dim=-1), dim=-1, keepdim=True)  # Starting node index
-        start_n = start_i.float() / self.n_nodes  # Starting node tensor
         start_avg = torch.mean(start_a, dim=-1, keepdim=True)  # avg(A(s,a))
         start_q = start_v + start_a - start_avg  # Q(s,a) for start
+
+        start_i = torch.argmax(start_q, dim=-1, keepdim=True)  # Starting node index
+        start_n = start_i.float() / self.n_nodes  # Starting node tensor
 
         # End
         end_v = fn.relu(self.fc4_end_value(x))
@@ -123,35 +124,42 @@ class QNetwork(nn.Module):
         end_input = torch.cat([end_a, start_n], dim=-1)  # Append start to state-tensor
         end_a = self.end_adv(end_input)  # A(s,a) for end
 
-        end_i = torch.argmax(fn.softmax(end_a, dim=-1), dim=-1, keepdim=True)  # Ending node index
-        end_n = end_i.float() / self.n_nodes  # Ending node tensor
         end_avg = torch.mean(end_a, dim=-1, keepdim=True)  # avg(A(s,a))
         end_q = end_v + end_a - end_avg  # Q(s,a) for end
+
+        end_i = torch.argmax(end_q, dim=-1, keepdim=True)  # Ending node index
+        end_n = end_i.float() / self.n_nodes  # Ending node tensor
 
         # Action
         action_v = fn.relu(self.fc4_action_value(x))
         action_v = self.action_value(action_v)  # V(s) for action
 
         action_a = fn.relu(self.fc4_action_adv(x))
-        current_state = self.get_current_state(start_i, end_i, state)
-        action_input = torch.cat([action_a, start_n, end_n, current_state], dim=-1).float()  # Append start, end and current state
+        # current_state = self.get_current_state(start_i, end_i, state)  -->  removed from torch.cat command
+        action_input = torch.cat([action_a, start_n, end_n], dim=-1).float()  # Append start, end and current state
         action_a = self.action_adv(action_input)  # A(s,a) for action
 
         action_avg = torch.mean(action_a, dim=-1, keepdim=True)  # avg(A(s,a))
         action_q = action_v + action_a - action_avg  # Q(s,a) for action
 
+        action_q = self.get_valid_actions(start_i, end_i, action_q, state)
+
         return start_q, start_v, end_q, end_v, action_q, action_v
 
-    def get_current_state(self, start_i: torch.tensor, end_i: torch.tensor, state: pd.DataFrame) -> torch.tensor:
+    def get_current_state(self, start_i: torch.tensor, end_i: torch.tensor, state, normalize: bool) -> torch.tensor:
         """
         Find the current element in the state-representation matrix. This method is needed because the input size varies at learning and prediction
         :param start_i: Starting node tensor
         :param end_i: Ending node tensor
         :param state: State tensor
+        :param normalize: The state will be divided by the corresponding state_high value
         :return: A 1-dimensional torch tensor: either 1*1 or 1*batch_size
         """
         if state.shape == self.state_shape:
-            current_state = torch.tensor(state.loc[int(start_i), int(end_i)] / self.state_high.loc[int(start_i), int(end_i)]).unsqueeze(-1)  # x(start, end)
+            if normalize:
+                current_state = torch.tensor(state.loc[int(start_i), int(end_i)] / self.state_high.loc[int(start_i), int(end_i)]).unsqueeze(-1)  # x(start, end)
+            else:
+                current_state = torch.tensor(state.loc[int(start_i), int(end_i)]).unsqueeze(-1)
         else:
             state_unpacked = []
             for i in range(state.shape[0]):
@@ -159,60 +167,57 @@ class QNetwork(nn.Module):
             current_state = torch.tensor(state_unpacked).unsqueeze(-1)
         return current_state
 
-
-class ReplayBuffer:
-    """
-    Replay memory for the Agent. The replay memory gets sampled each update_every iteration that can be set in config.ini
-    """
-    def __init__(self, buffer_size: int, batch_size: int):
+    def get_valid_actions(self, start_i: torch.tensor, end_i: torch.tensor, action_q: torch.tensor, state) -> torch.tensor:
         """
-        Create the replaybuffer
-        :param buffer_size: How many actions shall fit into the memory at once
-        :param batch_size: Size of minibatches
-        """
-        self.memory = deque(maxlen=buffer_size)
-        self.batch_size = int(batch_size)
-        self.experience = namedtuple('experience', field_names=['state', 'start', 'end', 'action', 'reward', 'next_state', 'successful'])
-
-    def add(self, state: pd.DataFrame, start: int, end: int, action: int, reward: float, next_state: pd.DataFrame, successful: int):
-        """
-        Adds a new experience to the replay buffer.
+        Inspect the context of the starting and ending node and eliminate all the invalid actions
+        :param start_i: Starting node index
+        :param end_i: Ending node index
+        :param action_q: Torch tensor for the action values
         :param state: State-definition matrix
-        :param start: Starting node for the infrastructure
-        :param end: Ending node for the infrastructure
-        :param action: Action taken in the state
-        :param reward: Reward received for the action
-        :param next_state: Next state of the environment
-        :param successful: If the operation has completed successfully
-        :return: None
+        :return: A new torch tensor of Q-values with invalid actions set to -inf
         """
-        self.memory.append(self.experience(state, start, end, action, reward, next_state, successful))
+        current_state_start_end = self.get_current_state(start_i, end_i, state, normalize=False)
+        current_state_end_end = self.get_current_state(end_i, end_i, state, normalize=False)
 
-    def sample(self) -> tuple:
-        """
-        Takes a sample from the replaybuffer
-        :return: Batch of previously experienced (states, starts, ends, actions, rewards, next_states, successfuls)
-        """
-        experiences = random.sample(self.memory, k=self.batch_size)  # Sample the experience buffer
+        if action_q.dim() == 1:
+            action_q = action_q.unsqueeze(0)
+            n_incoming = [count_incoming_lanes(state, int(end_i))]
+        else:
+            n_incoming = []
+            for i in range(len(start_i)):
+                n_incoming.append(count_incoming_lanes(pd.DataFrame(state[i].reshape(self.state_shape), dtype=int), int(end_i[i])))
 
-        states = torch.from_numpy(np.vstack([np.array(e.state).flatten() for e in experiences if e is not None])).float()
-        starts = torch.from_numpy(np.vstack([e.start for e in experiences if e is not None])).long()
-        ends = torch.from_numpy(np.vstack([e.end for e in experiences if e is not None])).long()
-        actions = torch.from_numpy(np.vstack([e.action for e in experiences if e is not None])).long()
-        rewards = torch.from_numpy(np.vstack([e.reward for e in experiences if e is not None])).float()
-        next_states = torch.from_numpy(np.vstack([np.array(e.next_state).flatten() for e in experiences if e is not None])).float()
-        successfuls = torch.from_numpy(np.vstack([e.successful for e in experiences if e is not None])).long()
+        for i in range(len(start_i)):
+            start = int(start_i[i])
+            end = int(end_i[i])
+            current_junction = JUNCTION_TYPES[int(current_state_end_end[i])]
 
-        return states, starts, ends, actions, rewards, next_states, successfuls
+            if start != end and int(current_state_start_end[i]) == self.state_high.loc[start, end]:  # Maximum number of lanes reached
+                action_q[i, ACTION_NAMES['add_lane']] = float('-inf')
 
-    def __len__(self):
-        """
-        :return: Returns the number of elements inside the replay buffer. Overwrites the __len__ property of the object
-        """
-        return len(self.memory)
+            elif start != end and int(current_state_start_end[i]) == 0:
+                action_q[i, ACTION_NAMES['remove_lane']] = float('-inf')
+
+            if start == end:
+                action_q[i, ACTION_NAMES['add_lane']] = float('-inf')
+                action_q[i, ACTION_NAMES['remove_lane']] = float('-inf')
+
+            if current_junction == 'righthand':
+                action_q[i, ACTION_NAMES['add_righthand']] = float('-inf')
+
+            elif current_junction == 'roundabout':
+                action_q[i, ACTION_NAMES['add_roundabout']] = float('-inf')
+
+            elif current_junction == 'trafficlight':
+                action_q[i, ACTION_NAMES['add_trafficlight']] = float('-inf')
+
+            if not n_incoming[i] in self.trafficlight_inbound:
+                action_q[i, ACTION_NAMES['add_trafficlight']] = float('-inf')
+
+        return action_q
 
 
-class Agent:
+class Agent1Net:
     """
     This class defines the reinforcement learning agent
     """
@@ -225,12 +230,14 @@ class Agent:
         """
         self.tau = args['learning'].getfloat('tau')
         self.gamma = args['learning'].getfloat('gamma')
+        self.max_lanes = args['reader'].getint('max_lanes')
         self.batch_size = args['learning'].getint('batch_size')
         self.buffer_size = int(args['learning'].getfloat('buffer_size'))
         self.update_every = args['learning'].getfloat('update_every')
         self.learning_rate = args['learning'].getfloat('learning_rate')
         self.n_neurons_local = [int(x) for x in args['learning'].get('n_neurons_local').split(',')]
         self.n_neurons_target = [int(x) for x in args['learning'].get('n_neurons_target').split(',')]
+        self.trafficlight_inbound = [int(x) for x in args['trafficlight'].get('allow_inbound').split(',')]
 
         self.state_high = state_high
         self.state_size = state_size
@@ -240,8 +247,8 @@ class Agent:
         self.history = np.zeros((0, 3))  # Initialize the stack to 0x3 dimensions: [start, end, action]
         self.state_stack = np.zeros((0, 3))  # Initialize the stack to 0x3 dimensions: [V(start), V(end), V(action)]
 
-        self.qnetwork_local = QNetwork(state_size, action_size, state_high, self.n_neurons_local)  # Local network (for every step)
-        self.qnetwork_target = QNetwork(state_size, action_size, state_high, self.n_neurons_target)  # Target network (for self.update_every)
+        self.qnetwork_local = QNetwork(self.state_size, self.action_size, self.state_high, self.n_neurons_local)  # Local network (for every step)
+        self.qnetwork_target = QNetwork(self.state_size, self.action_size, self.state_high, self.n_neurons_target)  # Target network (for self.update_every)
         self.optimizer = optim.Adam(self.qnetwork_local.parameters(), lr=self.learning_rate)
 
         self.memory = ReplayBuffer(self.buffer_size, self.batch_size)
@@ -274,8 +281,45 @@ class Agent:
         else:
             start = np.random.randint(self.n_nodes)
             end = np.random.randint(self.n_nodes)
-            action = np.random.randint(self.action_size)
+            action = self.choose_random_action(start, end, state)
             return start, end, action, True
+
+    def choose_random_action(self, start: int, end: int, state: pd.DataFrame) -> int:
+        """
+        Chooses a valid random action depending on the state
+        :param start: Index of the starting node
+        :param end: Index of the anding node
+        :param state: State-definition matrix
+        :return: Integer representation of valid action
+        """
+        current_state_start_end = state.loc[start, end]
+        current_state_end_end = state.loc[end, end]
+        current_junction = JUNCTION_TYPES[current_state_end_end]
+        all_actions = list(range(self.action_size))
+
+        if start != end and current_state_start_end == self.state_high.loc[start, end]:  # Maximum number of lanes reached
+            all_actions.remove(ACTION_NAMES['add_lane'])
+
+        elif start != end and current_state_start_end == 0:
+            all_actions.remove(ACTION_NAMES['remove_lane'])
+
+        if start == end:
+            all_actions.remove(ACTION_NAMES['add_lane'])
+            all_actions.remove(ACTION_NAMES['remove_lane'])
+
+        if current_junction == 'righthand':
+            all_actions.remove(ACTION_NAMES['add_righthand'])
+
+        elif current_junction == 'roundabout':
+            all_actions.remove(ACTION_NAMES['add_roundabout'])
+
+        elif current_junction == 'trafficlight':
+            all_actions.remove(ACTION_NAMES['add_trafficlight'])
+
+        if ACTION_NAMES['add_trafficlight'] in all_actions and not count_incoming_lanes(state, end) in self.trafficlight_inbound:
+            all_actions.remove(ACTION_NAMES['add_trafficlight'])
+
+        return np.random.choice(all_actions)
 
     def step(self, state: pd.DataFrame, start: int, end: int, action: int, reward: int, next_state: pd.DataFrame, successful: bool):
         """
@@ -313,19 +357,19 @@ class Agent:
         targets_start_q_next = target_start_q.detach().max(1)[0].unsqueeze(1)
         targets_start = rewards + self.gamma * targets_start_q_next  # * successfuls
         expected_start = local_start_q.gather(1, starts)
-        loss_start = fn.l1_loss(expected_start, targets_start)
+        loss_start = fn.mse_loss(expected_start, targets_start)
 
         # End
         targets_end_q_next = target_end_q.detach().max(1)[0].unsqueeze(1)
         targets_end = rewards + self.gamma * targets_end_q_next  # * successfuls
         expected_end = local_end_q.gather(1, ends)
-        loss_end = fn.l1_loss(expected_end, targets_end)
+        loss_end = fn.mse_loss(expected_end, targets_end)
 
         # Action
         targets_action_q_next = target_action_q.detach().max(1)[0].unsqueeze(1)
         targets_action = rewards + self.gamma * targets_action_q_next  # * successfuls
         expected_action = local_action_q.gather(1, actions)
-        loss_action = fn.l1_loss(expected_action, targets_action)
+        loss_action = fn.mse_loss(expected_action, targets_action)
 
         # Calculate loss and step in optimizer
         loss_tensor = torch.tensor([loss_start, loss_end, loss_action])
@@ -343,3 +387,11 @@ class Agent:
         """
         for target_param, local_param in zip(self.qnetwork_target.parameters(), self.qnetwork_local.parameters()):
             target_param.data.copy_(self.tau * local_param.data + (1.0 - self.tau) * target_param.data)
+
+    def save_models(self) -> None:
+        """
+        Saves the model files into the given path
+        :return: None
+        """
+        torch.save(self.qnetwork_local.state_dict(), './models/local.pth')
+        torch.save(self.qnetwork_target.state_dict(), './models/target.pth')

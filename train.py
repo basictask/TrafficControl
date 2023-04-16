@@ -12,9 +12,10 @@ This is the file used to train the reinforcement learning agent.
 from trial_functions import play_one_episode
 from suppl import ACTIONS, apply_decay
 from environment import Environment
-from agent import Agent
+from agent_q_net import AgentQNet
+# from agent_3_net import Agent3Net
+# from agent_1_net import Agent1Net
 import os
-import torch
 import numpy as np
 from collections import deque
 import configparser
@@ -36,7 +37,9 @@ eps = eps_start
 scores_window = deque(maxlen=50)  # Keeping track of the last 100 scores
 
 env = Environment()
-agent = Agent(env.state_shape, env.action_shape, env.state_high)
+# agent = Agent(env.state_shape, env.action_shape, env.state_high)
+# agent = Agent3Net(env.state_shape, env.action_shape, env.state_high)
+agent = AgentQNet(env.state_shape, env.action_shape, env.state_high)
 
 for e in range(n_episodes):
     state = env.reset()
@@ -54,7 +57,7 @@ for e in range(n_episodes):
         score += reward
         # Logging
         print('step: {}, start: {}, end: {}, action: {},\treward: {}, successful: {}, random: {}'.format(
-            t, start, end, ACTIONS[action], reward, successful, was_random
+            t, start, end, ACTIONS[action].rjust(20), reward, successful, was_random
         ))
 
     # Record scores
@@ -67,8 +70,7 @@ for e in range(n_episodes):
 
     # Save NNs state
     if e % 10 == 0:
-        torch.save(agent.qnetwork_local.state_dict(), './models/local.pth')
-        torch.save(agent.qnetwork_target.state_dict(), './models/target.pth')
+        agent.save_models()
 
 
 #%% Letting the agent play for a certain number of steps to try the new protocol

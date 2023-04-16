@@ -4,7 +4,6 @@ Functions that are used to test the functionality
 from suppl import *
 from city_constructor import Reader
 from environment import Environment
-from agent import Agent
 
 
 def test_a_r_roads(r: Reader, mode: str, infra: str, start: str, end: str) -> None:
@@ -53,8 +52,6 @@ def test_a_r_junct(r: Reader, infra: str, node: str) -> None:
     :return: None
     """
     node = l2n(node)
-    roads = r.segments['Definition']
-    points = r.points
     n_incoming = count_incoming_lanes(r.matrix, node)  # Number of incoming lanes
     result = -1
     if infra == 'righthand':
@@ -74,7 +71,7 @@ def test_a_r_junct(r: Reader, infra: str, node: str) -> None:
     print(f'Convert to {infra}: {result}\n')
 
 
-def play_one_episode(env: Environment, agent: Agent, max_t: int) -> list:
+def play_one_episode(env: Environment, agent, max_t: int) -> list:
     """
     Uses the agent to do some time steps inside the episode
     The process is:
@@ -89,7 +86,7 @@ def play_one_episode(env: Environment, agent: Agent, max_t: int) -> list:
     score = 0
     eps = 0
     for t in range(max_t):
-        start, end, action = agent.act(state, eps)
+        start, end, action, _ = agent.act(state, eps)
         next_state, reward = env.step(start, end, action)
         state = next_state
         score += reward

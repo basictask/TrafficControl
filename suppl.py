@@ -305,12 +305,12 @@ def check_entry_points_valid(points: dict, entry_points: list) -> bool:
 
 def check_all_attributes_initialized(obj: object) -> None:
     """
-    Checks if all public properties of __attr_name__ have initialized values
+    Checks if all public properties of _attr_name_ have initialized values
     :param obj: Any type of object
     :return: Throws an exception if any Nonetype attribute value is found
     """
     for attr_name in dir(obj):
-        if attr_name[:2] != '__' and attr_name[-2:] != '__' and getattr(obj, attr_name) is None:
+        if attr_name[:1] != '_' and attr_name[-1:] != '_' and getattr(obj, attr_name) is None:
             raise NoneTypeAttributeError(f'Error: some attributes of {type(obj).__name__} are set to None: {attr_name}')
 
 

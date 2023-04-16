@@ -97,7 +97,7 @@ class Environment:
         # Save the observation for teh agent
         self.state = self.reader.matrix.copy()
         # Calculate the reward
-        reward = self.rewarder.calc_reward(successful, action, start, end, self.state, self.reader.points, total_vehicles_distance)
+        reward = self.rewarder.calc_reward(action, start, end, self.state, self.reader.points, total_vehicles_distance)
         # Return next state, reward, successful
         return self.state, reward, successful
 

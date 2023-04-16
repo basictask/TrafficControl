@@ -51,19 +51,9 @@ class RewardCalculator:
         self.additional_lane_penalty = args['reward'].getfloat('additional_lane_penalty')
         self.multilane_penalty_threshold = args['reward'].getfloat('multilane_penalty_threshold')
 
-        # Successful actions
-        self.successful_add_lane_bonus = args['reward'].getfloat('successful_add_lane_bonus')
-        self.successful_remove_lane_bonus = args['reward'].getfloat('successful_remove_lane_bonus')
-        self.successful_add_junction_bonus = args['reward'].getfloat('successful_add_junction_bonus')
-
-        # Unsuccessful actions
-        self.unsuccessful_add_lane_penalty = args['reward'].getfloat('unsuccessful_add_lane_penalty')
-        self.unsuccessful_remove_lane_penalty = args['reward'].getfloat('unsuccessful_remove_lane_penalty')
-        self.unsuccessful_add_junction_penalty = args['reward'].getfloat('unsuccessful_add_junction_penalty')
-
         check_all_attributes_initialized(self)  # Raise an error if a configuration has failed to read
 
-    def calc_reward(self, successful: bool, action: int, start: int, end: int, matrix: pd.DataFrame, points: dict, vehicles_dist: int) -> float:
+    def calc_reward(self, action: int, start: int, end: int, matrix: pd.DataFrame, points: dict, vehicles_dist: int) -> float:
         """
         The components of a city's evaluation:
             - The cost of building the infrastructure (in accordance with real values)
@@ -78,7 +68,6 @@ class RewardCalculator:
             - The agent tries to add a lane/road with the starting and ending nodes being the same (impossible)
             - The agent tries to add a junction where it is already built e.g. can't add a roundabout where it's already a roundabout
             - Note: for road adding/removal it's enough for one of the lanes to be at max. capacity or at 0 for the action to be unsuccessful
-        :param successful: True: the infrastructure was built successfully, False: the infrastructure failed to build (see cases above)
         :param action: Index of the chosen action
         :param start: Index of the starting node
         :param end: Index of the ending node
@@ -87,77 +76,13 @@ class RewardCalculator:
         :param vehicles_dist: Distance taken by the vehicles
         :return: Negative reward as the agent has chosen a wrong action
         """
-        if successful:
-            reward = self.calc_cost_infra(start, end, action, matrix, points)
-            reward += self.calc_bonus_successful_build(action)
-            reward += self.calc_reward_city(matrix, points)
-            reward += self.calc_reward_vehicles_dist(vehicles_dist)
+        reward = self.calc_cost_infra(start, end, action, matrix, points)
+        reward += self.calc_reward_city(matrix, points)
+        reward += self.calc_reward_vehicles_dist(vehicles_dist)
 
-            self.reward_track = pd.concat([self.reward_track, pd.Series(np.int64(reward))])
-            reward_result = self.reward_track.diff().fillna(0).iloc[-1]
-            return int(reward_result)
-
-        else:
-            reward = self.calc_penalty_unsuccessful_build(start, end, action, matrix)
-            return int(reward)
-
-    def calc_bonus_successful_build(self, action: int) -> float:
-        """
-        Calculates the bonus that is given If the agent has chosen an action that is possible in the current context.
-        :param action: Index of the chosen action
-        :return: Numerical value that is fed to the agent as a reward
-        """
-        reward = 0
-        action_name = ACTIONS[action]
-
-        if 'add_lane' == action_name:
-            reward += self.successful_add_lane_bonus
-
-        elif 'remove_lane' == action_name:
-            reward += self.successful_remove_lane_bonus
-
-        elif 'add_road' == action_name:
-            reward += self.successful_add_lane_bonus * 2
-
-        elif 'remove_road' == action_name:
-            reward += self.successful_remove_lane_bonus * 2
-
-        elif 'add_righthand' == action_name or 'add_roundabout' == action_name or 'add_trafficlight' == action_name:
-            reward += self.successful_add_junction_bonus
-
-        return reward
-
-    def calc_penalty_unsuccessful_build(self, start: int, end: int, action: int, matrix: pd.DataFrame) -> float:
-        """
-        Calculates the penalty that is given if the agent tries to build a piece of infrastructure where it's technically impossible.
-        :param start: Index of the starting node
-        :param end: Index of the ending node
-        :param action: Index of the chosen action
-        :param matrix: State-definition matrix
-        :return: Numerical value that is fed to the agent as a reward
-        """
-        reward = 0
-        action_name = ACTIONS[action]
-
-        if ('road' in action_name or 'lane' in action_name) and start == end:  # Building a lane/road with the same start and endpoint
-            reward -= self.same_start_end_penalty
-
-        elif 'add_lane' == action_name and matrix.loc[start, end] == self.max_lanes:  # Adding a lane with max. capacity reached
-            reward -= self.unsuccessful_add_lane_penalty
-
-        elif 'remove_lane' == action_name and matrix.loc[start, end] == 0:  # Removing lane with max. capacity reached
-            reward -= self.unsuccessful_remove_lane_penalty
-
-        elif 'add_road' == action_name and (matrix.loc[start, end] == self.max_lanes or matrix.loc[end, start] == self.max_lanes):  # Adding road at max. capa
-            reward -= self.unsuccessful_add_lane_penalty * 2
-
-        elif 'remove_road' == action_name and (matrix.loc[start, end] == 0 or matrix.loc[end, start] == 0):  # Removing road at max. capacity
-            reward -= self.unsuccessful_remove_lane_penalty * 2
-
-        elif 'add_righthand' == action_name or 'add_roundabout' == action_name or 'add_trafficlight' == action_name:  # Adding a junction where it's already built
-            reward -= self.unsuccessful_add_junction_penalty
-
-        return reward
+        self.reward_track = pd.concat([self.reward_track, pd.Series(np.int64(reward))])
+        reward_result = self.reward_track.diff().fillna(0).iloc[-1]
+        return int(reward_result)
 
     @staticmethod
     def calc_reward_vehicles_dist(total_vehicles_distance: int) -> float:
