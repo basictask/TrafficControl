@@ -18,14 +18,13 @@ args.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini')
 
 
 class RewardCalculator:
-    def __init__(self):
+    def __init__(self, matrix: pd.DataFrame, points: dict):
         """
         Constructor for the reward calculator. Reads values from the config and saves them as data fields
+        :param matrix: State-definition matrix
+        :param points: Dict of point coordinates {1: (x, y), 2: (x, y), ...}
         :return: None
         """
-        self.reward_track = pd.Series(dtype=np.int64)
-        self.max_lanes = args['reader'].getfloat('max_lanes')
-
         # Costs
         self.cost_add_lane_unit = args['reward'].getfloat('cost_add_lane_unit')
         self.cost_remove_lane_unit = args['reward'].getfloat('cost_remove_lane_unit')
@@ -50,6 +49,10 @@ class RewardCalculator:
         self.same_start_end_penalty = args['reward'].getfloat('same_start_end_penalty')
         self.additional_lane_penalty = args['reward'].getfloat('additional_lane_penalty')
         self.multilane_penalty_threshold = args['reward'].getfloat('multilane_penalty_threshold')
+
+        # Other
+        self.reward_track = pd.Series([self.calc_reward_city(matrix, points)])
+        self.max_lanes = args['reader'].getfloat('max_lanes')
 
         check_all_attributes_initialized(self)  # Raise an error if a configuration has failed to read
 
@@ -76,7 +79,8 @@ class RewardCalculator:
         :param vehicles_dist: Distance taken by the vehicles
         :return: Negative reward as the agent has chosen a wrong action
         """
-        reward = self.calc_cost_infra(start, end, action, matrix, points)
+        reward = 0
+        reward += self.calc_cost_infra(start, end, action, matrix, points)
         reward += self.calc_reward_city(matrix, points)
         reward += self.calc_reward_vehicles_dist(vehicles_dist)
 
@@ -237,9 +241,3 @@ class RewardCalculator:
                 else:
                     reward += euclidean_distance(points[i], points[j]) * self.multilane_penalty
         return reward
-
-
-# Only for debugging
-if __name__ == '__main__':
-    r = RewardCalculator()
-    k = 1

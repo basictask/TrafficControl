@@ -377,7 +377,8 @@ class Reader:
 
             # Add one of the buffer coordinates as an entry point
             # When an entry point gets convereted into a roundabout it loses its ability to generate vehicles
-            self.entry_points.append(min(connected_nodes['buffer_ind']))
+            if len(connected_nodes) > 0 and not min(connected_nodes['buffer_ind']) in self.entry_points:
+                self.entry_points.append(min(connected_nodes['buffer_ind']))
 
             # Reassemble
             self.matrix.loc[node, node] = JUNCTION_CODES['roundabout']
@@ -418,10 +419,8 @@ class Reader:
         # Iterate over the buffer points and remove them
         for point_ind in roundabout_nodes:
             self.points.pop(point_ind, None)
-
-        # Remove the element from the entry points that was added because of the rooundabout
-        if len(roundabout_nodes) > 0:
-            self.entry_points.remove(min(roundabout_nodes))
+            if point_ind in self.entry_points:  # Remove the element from the entry points that was added because of the roundabout
+                self.entry_points.remove(point_ind)
 
         # Assemble segments DataFrame
         df_segments.drop(inds_to_drop, axis=0, inplace=True)

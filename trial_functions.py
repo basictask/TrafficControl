@@ -87,7 +87,7 @@ def play_one_episode(env: Environment, agent, max_t: int) -> list:
     eps = 0
     for t in range(max_t):
         start, end, action, _ = agent.act(state, eps)
-        next_state, reward = env.step(start, end, action)
+        next_state, reward, successful = env.step(start, end, action)
         state = next_state
         score += reward
         scores.append(reward)

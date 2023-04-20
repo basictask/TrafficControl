@@ -12,9 +12,11 @@ This is the file used to train the reinforcement learning agent.
 from trial_functions import play_one_episode
 from suppl import ACTIONS, apply_decay
 from environment import Environment
-from agent_q_net import AgentQNet
+# from agent_q_net import AgentQNet
 # from agent_3_net import Agent3Net
 # from agent_1_net import Agent1Net
+from agent_gnn import AgentGNet
+# from agent_dualgnn import Agent2GNet
 import os
 import numpy as np
 from collections import deque
@@ -39,7 +41,8 @@ scores_window = deque(maxlen=50)  # Keeping track of the last 100 scores
 env = Environment()
 # agent = Agent(env.state_shape, env.action_shape, env.state_high)
 # agent = Agent3Net(env.state_shape, env.action_shape, env.state_high)
-agent = AgentQNet(env.state_shape, env.action_shape, env.state_high)
+agent = AgentGNet(env.state_shape, env.action_shape, env.state_high)
+# agent = Agent2GNet(env.state_shape, env.action_shape, env.state_high)
 
 for e in range(n_episodes):
     state = env.reset()
@@ -56,8 +59,8 @@ for e in range(n_episodes):
         # Update score
         score += reward
         # Logging
-        print('step: {}, start: {}, end: {}, action: {},\treward: {}, successful: {}, random: {}'.format(
-            t, start, end, ACTIONS[action].rjust(20), reward, successful, was_random
+        print('step: {},\tstart: {},\tend: {},\taction: {} reward: {} successful: {}, random: {}'.format(
+            t, start, end, (ACTIONS[action] + ',').ljust(20), (str(reward) + ',').ljust(10), successful, was_random
         ))
 
     # Record scores
@@ -66,7 +69,7 @@ for e in range(n_episodes):
     scores_avg = np.mean(scores_window)
     eps = apply_decay(eps, eps_end, eps_decay)  # Apply decay
 
-    print('episode: {}, epsilon: {:.2f}, score: {}, average score: {:.2f}'.format(e, eps, score, scores_avg))
+    print('episode: {}, epsilon: {:.2f}, score: {}, average score: {:.2f}\n'.format(e, eps, score, scores_avg))
 
     # Save NNs state
     if e % 10 == 0:

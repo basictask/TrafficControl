@@ -41,7 +41,7 @@ class Environment:
         self.reader = Reader(self.filepath, self.entry_points, self.vrate, self.paths_to_gen, self.path_dist)
 
         # Set up the rewarder
-        self.rewarder = RewardCalculator()
+        self.rewarder = RewardCalculator(self.reader.matrix, self.reader.points)
 
         # State
         self.state = self.reader.matrix.copy()

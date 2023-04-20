@@ -7,6 +7,8 @@ from exceptions import *
 from trafficSimulator.window import Window
 from trafficSimulator.simulation import Simulation
 import pandas as pd
+import numpy as np
+import torch
 import math
 
 # This is a constant to easily set the junction types' representations
@@ -325,3 +327,70 @@ def apply_decay(eps: float, eps_end: float, eps_decay: float):
     if eps > eps_end:
         eps *= eps_decay
     return eps
+
+
+def choose_random_action(start: int, end: int, state: pd.DataFrame, action_size: int, state_high: pd.DataFrame, trafficlight_inbound: list) -> int:
+    """
+    Chooses a valid random action depending on the state
+    :param start: Index of the starting node
+    :param end: Index of the anding node
+    :param state: State-definition matrix
+    :param action_size: Number of possible action (int)
+    :param state_high: Pandas DataFrame containing the highest values for all states
+    :param trafficlight_inbound: List of allowed incoming roads in case of trafficlight intersections
+    :return: Integer representation of valid action
+    """
+    current_state_start_end = state.loc[start, end]
+    current_state_end_end = state.loc[end, end]
+    current_junction = JUNCTION_TYPES[current_state_end_end]
+    all_actions = list(range(action_size))
+
+    if start != end and current_state_start_end == state_high.loc[start, end]:  # Maximum number of lanes reached
+        all_actions.remove(ACTION_NAMES['add_lane'])
+
+    elif start != end and current_state_start_end == 0:
+        all_actions.remove(ACTION_NAMES['remove_lane'])
+
+    if start == end:
+        all_actions.remove(ACTION_NAMES['add_lane'])
+        all_actions.remove(ACTION_NAMES['remove_lane'])
+
+    if current_junction == 'righthand':
+        all_actions.remove(ACTION_NAMES['add_righthand'])
+
+    elif current_junction == 'roundabout':
+        all_actions.remove(ACTION_NAMES['add_roundabout'])
+
+    elif current_junction == 'trafficlight':
+        all_actions.remove(ACTION_NAMES['add_trafficlight'])
+
+    if ACTION_NAMES['add_trafficlight'] in all_actions and not count_incoming_lanes(state, end) in trafficlight_inbound:
+        all_actions.remove(ACTION_NAMES['add_trafficlight'])
+
+    return np.random.choice(all_actions)
+
+
+def get_batch_graph_features(state: torch.tensor, indexer: torch.tensor):
+    """
+    Returns a batch of node features for the training of the graph convolutional neural network
+    :param state: State-definition tensor of shape batch_size * n_nodes * n_nodes
+    :param indexer: Indexer the given columns of the matrix. Either start or end node
+    :return: Torch tensor of shape batch_size * n_nodes
+    """
+    features = torch.zeros((0, state.shape[-1]))
+    for i in range(len(indexer)):
+        features = torch.vstack((features, state[i][indexer[i]]))
+    return features
+
+
+def get_batch_embeddings(embeddings: torch.tensor, indexer: torch.tensor):
+    """
+    Finds the embeddings belonging to the nodes that are given by the indexer
+    :param embeddings: Torch tensoor of n_nodes * embedding_size
+    :param indexer: Torch tensor of size 1 * batch_size
+    :return: Torch tensor of batch_size * embedding_size
+    """
+    batch_embeddings = torch.zeros((0, embeddings.shape[1]))
+    for i in range(len(indexer)):
+        batch_embeddings = torch.vstack((batch_embeddings, embeddings[indexer[i], :]))
+    return batch_embeddings
