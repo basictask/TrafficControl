@@ -26,7 +26,7 @@ import torch.nn.functional as fn
 # Arguments
 import configparser
 args = configparser.ConfigParser()
-args.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini'))
+args.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../config.ini'))
 
 
 class QNetwork(nn.Module):
@@ -393,5 +393,5 @@ class Agent1Net:
         Saves the model files into the given path
         :return: None
         """
-        torch.save(self.qnetwork_local.state_dict(), './models/local.pth')
-        torch.save(self.qnetwork_target.state_dict(), './models/target.pth')
+        torch.save(self.qnetwork_local.state_dict(), '../models/local.pth')
+        torch.save(self.qnetwork_target.state_dict(), '../models/target.pth')

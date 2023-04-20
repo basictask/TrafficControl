@@ -12,11 +12,8 @@ This is the file used to train the reinforcement learning agent.
 from trial_functions import play_one_episode
 from suppl import ACTIONS, apply_decay
 from environment import Environment
-# from agent_q_net import AgentQNet
-# from agent_3_net import Agent3Net
-# from agent_1_net import Agent1Net
-from agent_gnn import AgentGNet
-# from agent_dualgnn import Agent2GNet
+# from agents.agent_gnn import AgentGNet
+from agents.agent_q_net import *
 import os
 import numpy as np
 from collections import deque
@@ -41,7 +38,7 @@ scores_window = deque(maxlen=50)  # Keeping track of the last 100 scores
 env = Environment()
 # agent = Agent(env.state_shape, env.action_shape, env.state_high)
 # agent = Agent3Net(env.state_shape, env.action_shape, env.state_high)
-agent = AgentGNet(env.state_shape, env.action_shape, env.state_high)
+agent = AgentQNet(env.state_shape, env.action_shape, env.state_high)
 # agent = Agent2GNet(env.state_shape, env.action_shape, env.state_high)
 
 for e in range(n_episodes):
