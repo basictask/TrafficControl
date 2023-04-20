@@ -217,7 +217,7 @@ class QNetwork(nn.Module):
         return action_q
 
 
-class Agent1Net:
+class Agent:
     """
     This class defines the reinforcement learning agent
     """
@@ -393,5 +393,5 @@ class Agent1Net:
         Saves the model files into the given path
         :return: None
         """
-        torch.save(self.qnetwork_local.state_dict(), '../models/local.pth')
-        torch.save(self.qnetwork_target.state_dict(), '../models/target.pth')
+        torch.save(self.qnetwork_local.state_dict(), './models/local.pth')
+        torch.save(self.qnetwork_target.state_dict(), './models/target.pth')

@@ -35,6 +35,7 @@ class GraphEndNetwork(nn.Module):
         self.node_embedding = nn.Embedding(self.n_nodes, self.embedding_size)
         self.fc1 = nn.Linear(self.in_features, self.n_neurons[0])  # States are input here
         self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
+        self.d1 = nn.Dropout(p=0.5)
         self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
         self.fc4 = nn.Linear(self.n_neurons[2], action_size)
 
@@ -57,6 +58,7 @@ class GraphEndNetwork(nn.Module):
         edge_features = torch.cat((start_features, start_embedding), dim=-1)
         x = fn.relu(self.fc1(edge_features))
         x = fn.relu(self.fc2(x))
+        x = self.d1(x)
         x = fn.relu(self.fc3(x))
         end_q = fn.relu(self.fc4(x))
         end_q = end_q.squeeze(0)
@@ -78,8 +80,11 @@ class GraphActionNetwork(nn.Module):
         # Define the layers
         self.node_embedding = nn.Embedding(self.n_nodes, self.embedding_size)
         self.fc1 = nn.Linear(self.in_features, self.n_neurons[0])  # States are input here
+        self.d1 = nn.Dropout(p=0.8)
         self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
+        self.d2 = nn.Dropout(p=0.7)
         self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
+        self.d3 = nn.Dropout(p=0.5)
         self.fc4 = nn.Linear(self.n_neurons[2], self.n_neurons[3])
         self.fc5 = nn.Linear(self.n_neurons[3], action_size)
 
@@ -97,7 +102,7 @@ class GraphActionNetwork(nn.Module):
             start_embedding = node_embeddings[start]
             end_embedding = node_embeddings[end]
         else:  # Learning pass
-            start_features = get_batch_graph_features(state, start)  # ITT TARTOK EZT DEBUGGOLNI KELL
+            start_features = get_batch_graph_features(state, start)
             end_features = get_batch_graph_features(state, end)
             start_embedding = get_batch_embeddings(node_embeddings, start)
             end_embedding = get_batch_embeddings(node_embeddings, end)
@@ -105,8 +110,11 @@ class GraphActionNetwork(nn.Module):
         # Compute the action
         edge_features = torch.cat((start_features, end_features, start_embedding, end_embedding), dim=-1)
         x = fn.relu(self.fc1(edge_features))
+        x = self.d1(x)
         x = fn.relu(self.fc2(x))
+        x = self.d2(x)
         x = fn.relu(self.fc3(x))
+        x = self.d3(x)
         x = fn.relu(self.fc4(x))
         action_q = fn.relu(self.fc5(x))
         action_q = action_q.squeeze(0)
@@ -115,7 +123,7 @@ class GraphActionNetwork(nn.Module):
         return start, end, action_q,
 
 
-class Agent2GNet:
+class Agent:
     """
     This class defines the reinforcement learning agent
     """
@@ -330,5 +338,5 @@ class Agent2GNet:
         Iterates over all the models and saves their states
         :return: None
         """
-        torch.save(self.action_gnn.state_dict(), '../models/action_gnn.pth')
-        torch.save(self.end_gnn.state_dict(), '../models/end_gnn.pth')
+        torch.save(self.action_gnn.state_dict(), './models/action_gnn.pth')
+        torch.save(self.end_gnn.state_dict(), './models/end_gnn.pth')

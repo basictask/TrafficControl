@@ -67,7 +67,7 @@ class QNetwork(nn.Module):
         return q, value
 
 
-class Agent3Net:
+class Agent:
     """
     This class defines the reinforcement learning agent
     """
@@ -375,11 +375,11 @@ class Agent3Net:
         Iterates over all the models and saves their states
         :return: None
         """
-        torch.save(self.start_qnetwork_local.state_dict(), '../models/start_local.pth')
-        torch.save(self.start_qnetwork_target.state_dict(), '../models/start_target.pth')
+        torch.save(self.start_qnetwork_local.state_dict(), './models/start_local.pth')
+        torch.save(self.start_qnetwork_target.state_dict(), './models/start_target.pth')
 
-        torch.save(self.end_qnetwork_local.state_dict(), '../models/end_local.pth')
-        torch.save(self.end_qnetwork_target.state_dict(), '../models/end_target.pth')
+        torch.save(self.end_qnetwork_local.state_dict(), './models/end_local.pth')
+        torch.save(self.end_qnetwork_target.state_dict(), './models/end_target.pth')
 
-        torch.save(self.action_qnetwork_local.state_dict(), '../models/action_local.pth')
-        torch.save(self.action_qnetwork_target.state_dict(), '../models/action_target.pth')
+        torch.save(self.action_qnetwork_local.state_dict(), './models/action_local.pth')
+        torch.save(self.action_qnetwork_target.state_dict(), './models/action_target.pth')

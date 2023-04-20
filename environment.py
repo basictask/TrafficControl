@@ -41,7 +41,7 @@ class Environment:
         self.reader = Reader(self.filepath, self.entry_points, self.vrate, self.paths_to_gen, self.path_dist)
 
         # Set up the rewarder
-        self.rewarder = RewardCalculator(self.reader.matrix, self.reader.points)
+        self.rewarder = RewardCalculator()
 
         # State
         self.state = self.reader.matrix.copy()
@@ -107,6 +107,7 @@ class Environment:
         :return: None
         """
         self.reader = Reader(self.filepath, self.entry_points, self.vrate, self.paths_to_gen, self.path_dist)  # Reset the map
+        self.rewarder = RewardCalculator()
         self.state = self.reader.matrix  # Reset the internal state
         return self.state
 

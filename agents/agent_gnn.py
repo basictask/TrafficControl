@@ -72,7 +72,7 @@ class GraphNetwork(nn.Module):
         return start, end, action_q,
 
 
-class AgentGNet:
+class Agent:
     """
     This class defines the reinforcement learning agent
     """
@@ -261,4 +261,4 @@ class AgentGNet:
         Iterates over all the models and saves their states
         :return: None
         """
-        torch.save(self.gcnn.state_dict(), '../models/gcnn.pth')
+        torch.save(self.gcnn.state_dict(), './models/gcnn.pth')

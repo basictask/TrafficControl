@@ -18,11 +18,9 @@ args.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini')
 
 
 class RewardCalculator:
-    def __init__(self, matrix: pd.DataFrame, points: dict):
+    def __init__(self):
         """
         Constructor for the reward calculator. Reads values from the config and saves them as data fields
-        :param matrix: State-definition matrix
-        :param points: Dict of point coordinates {1: (x, y), 2: (x, y), ...}
         :return: None
         """
         # Costs
@@ -46,12 +44,11 @@ class RewardCalculator:
         self.trafficlight_bonus = args['reward'].getfloat('trafficlight_bonus')
         self.alone_node_penalty = args['reward'].getfloat('alone_node_penalty')
         self.no_nodes_alone_bonus = args['reward'].getfloat('no_nodes_alone_bonus')
-        self.same_start_end_penalty = args['reward'].getfloat('same_start_end_penalty')
         self.additional_lane_penalty = args['reward'].getfloat('additional_lane_penalty')
         self.multilane_penalty_threshold = args['reward'].getfloat('multilane_penalty_threshold')
 
         # Other
-        self.reward_track = pd.Series([self.calc_reward_city(matrix, points)])
+        self.reward_track = pd.Series([], dtype=np.float)
         self.max_lanes = args['reader'].getfloat('max_lanes')
 
         check_all_attributes_initialized(self)  # Raise an error if a configuration has failed to read
