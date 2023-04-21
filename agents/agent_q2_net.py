@@ -242,8 +242,8 @@ class Agent:
 
         # Estimating the Q-values for end
         local_end_q = self.end_nn(starts)
-        local_end_q = local_end_q.gather(1, ends)
-        starts, target_end_q = self.end_nn(next_states, starts)
+        local_end_q = local_end_q.gather(1, starts)
+        target_end_q = self.end_nn(ends)
         target_end_q = target_end_q.detach().max(1)[0].unsqueeze(1)
         target_end_q = rewards + self.gamma * target_end_q
 
@@ -254,7 +254,7 @@ class Agent:
         self.end_optimizer.step()
 
         # Q-values for the action
-        starts, ends, local_action_q = self.action_nn(states, starts, ends)
+        local_action_q = self.action_nn(ends)
         local_action_q = local_action_q.gather(1, actions)
         starts, ends, target_action_q = self.action_nn(next_states, starts, ends)
         target_action_q = target_action_q.detach().max(1)[0].unsqueeze(1)

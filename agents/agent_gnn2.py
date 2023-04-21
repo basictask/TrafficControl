@@ -35,7 +35,7 @@ class GraphEndNetwork(nn.Module):
         self.node_embedding = nn.Embedding(self.n_nodes, self.embedding_size)
         self.fc1 = nn.Linear(self.in_features, self.n_neurons[0])  # States are input here
         self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
-        self.d1 = nn.Dropout(p=0.5)
+        self.d1 = nn.Dropout(p=0.8)
         self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
         self.fc4 = nn.Linear(self.n_neurons[2], action_size)
 
@@ -82,9 +82,9 @@ class GraphActionNetwork(nn.Module):
         self.fc1 = nn.Linear(self.in_features, self.n_neurons[0])  # States are input here
         self.d1 = nn.Dropout(p=0.8)
         self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
-        self.d2 = nn.Dropout(p=0.7)
+        self.d2 = nn.Dropout(p=0.8)
         self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
-        self.d3 = nn.Dropout(p=0.5)
+        self.d3 = nn.Dropout(p=0.8)
         self.fc4 = nn.Linear(self.n_neurons[2], self.n_neurons[3])
         self.fc5 = nn.Linear(self.n_neurons[3], action_size)
 
