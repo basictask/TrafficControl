@@ -39,6 +39,11 @@ class GraphEndNetwork(nn.Module):
         self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
         self.fc4 = nn.Linear(self.n_neurons[2], action_size)
 
+        nn.init.xavier_uniform_(self.fc1.weight)
+        nn.init.xavier_uniform_(self.fc2.weight)
+        nn.init.xavier_uniform_(self.fc3.weight)
+        nn.init.xavier_uniform_(self.fc4.weight)
+
         check_all_attributes_initialized(self)
 
     def forward(self, state: torch.tensor, start=None):
@@ -87,6 +92,12 @@ class GraphActionNetwork(nn.Module):
         self.d3 = nn.Dropout(p=0.8)
         self.fc4 = nn.Linear(self.n_neurons[2], self.n_neurons[3])
         self.fc5 = nn.Linear(self.n_neurons[3], action_size)
+
+        nn.init.xavier_uniform_(self.fc1.weight)
+        nn.init.xavier_uniform_(self.fc2.weight)
+        nn.init.xavier_uniform_(self.fc3.weight)
+        nn.init.xavier_uniform_(self.fc4.weight)
+        nn.init.xavier_uniform_(self.fc5.weight)
 
         check_all_attributes_initialized(self)
 
@@ -289,8 +300,9 @@ class Agent:
         :param successful: If the operation has completed successfully
         :return: None
         """
-        self.memory.add(state, start, end, action, reward, next_state, int(successful))  # Save experience in replay memory
-        self.t_step = (self.t_step + 1) % self.update_every  # Update the time step
+        if reward != 0:  # Skip adding the initial reward of 0 (as it's a delta)
+            self.memory.add(state, start, end, action, reward, next_state, int(successful))  # Save experience in replay memory
+            self.t_step = (self.t_step + 1) % self.update_every  # Update the time step
 
         if self.t_step == 0 and len(self.memory) > self.batch_size:  # If there's enough experience in the memory we will sample it and learn
             self.learn()
