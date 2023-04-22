@@ -85,19 +85,16 @@ class GraphActionNetwork(nn.Module):
         # Define the layers
         self.node_embedding = nn.Embedding(self.n_nodes, self.embedding_size)
         self.fc1 = nn.Linear(self.in_features, self.n_neurons[0])  # States are input here
-        self.d1 = nn.Dropout(p=0.8)
         self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
-        self.d2 = nn.Dropout(p=0.8)
+        self.d1 = nn.Dropout(p=0.5)
         self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
-        self.d3 = nn.Dropout(p=0.8)
-        self.fc4 = nn.Linear(self.n_neurons[2], self.n_neurons[3])
-        self.fc5 = nn.Linear(self.n_neurons[3], action_size)
+        self.d2 = nn.Dropout(p=0.5)
+        self.fc4 = nn.Linear(self.n_neurons[2], action_size)
 
         nn.init.xavier_uniform_(self.fc1.weight)
         nn.init.xavier_uniform_(self.fc2.weight)
         nn.init.xavier_uniform_(self.fc3.weight)
         nn.init.xavier_uniform_(self.fc4.weight)
-        nn.init.xavier_uniform_(self.fc5.weight)
 
         check_all_attributes_initialized(self)
 
@@ -121,14 +118,11 @@ class GraphActionNetwork(nn.Module):
         # Compute the action
         edge_features = torch.cat((start_features, end_features, start_embedding, end_embedding), dim=-1)
         x = fn.relu(self.fc1(edge_features))
-        x = self.d1(x)
         x = fn.relu(self.fc2(x))
-        x = self.d2(x)
+        x = self.d1(x)
         x = fn.relu(self.fc3(x))
-        x = self.d3(x)
-        x = fn.relu(self.fc4(x))
-        action_q = fn.relu(self.fc5(x))
-        action_q = action_q.squeeze(0)
+        x = self.d2(x)
+        action_q = fn.relu(self.fc4(x)).squeeze(0)
 
         # Return the output and the edge weight
         return start, end, action_q,
@@ -158,6 +152,7 @@ class Agent:
 
         # Setting inner parameters
         self.error_track = []
+        self.node_trace = []
         self.action_size = action_size
         self.state_high = state_high
         self.n_nodes = state_shape[0]
@@ -183,10 +178,11 @@ class Agent:
         Take some action based on state
         :param state: State-definition matrix that serves as the input for the model
         :param eps: Epsilon value (probability of exploration)
-        :return: None
+        :return: (start_node_index, end_node_index, action_index, was_successful)
         """
         # Epsilon-greedy action selection
         if random.random() > eps:
+
             # Turn on eval mode
             self.end_gnn.eval()
             self.action_gnn.eval()
@@ -195,7 +191,15 @@ class Agent:
 
             with torch.no_grad():
                 start_i, end_q = self.end_gnn(state_tensor, self.current_start)
-                end_q[start_i] = float('-inf')  # Do not allow taking the same action
+
+                if len(self.node_trace) == self.n_nodes - 1:
+                    self.node_trace = []
+
+                self.node_trace.append(int(start_i))
+
+                for i in range(len(self.node_trace)):
+                    end_q[self.node_trace[i]] = float('-inf')
+
                 end_i = torch.argmax(end_q).unsqueeze(-1)
                 self.current_start = end_i
 
@@ -205,14 +209,22 @@ class Agent:
 
             self.end_gnn.train()  # Put into train mode
             self.action_gnn.train()
+
             return int(start_i), int(end_i), int(action_i), False
 
         # Random action selection
         else:
             start = int(self.current_start)
+
+            if len(self.node_trace) == self.n_nodes - 1:
+                self.node_trace = []
+
+            self.node_trace.append(start)
+
             end = np.random.randint(self.n_nodes)
-            while end == start:
+            while end in self.node_trace:
                 end = np.random.randint(self.n_nodes)
+
             self.current_start = torch.tensor(end).unsqueeze(0)
             action = choose_random_action(start, end, state, self.action_size, self.state_high, self.trafficlight_inbound)
             return start, end, action, True
