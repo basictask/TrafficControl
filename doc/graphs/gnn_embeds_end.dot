@@ -1,0 +1,18 @@
+digraph "gnn_embed"{
+    // Node definitions
+    state [label = "state"]
+    start [label = "start"]
+    start_features [label = "start features"]
+    start_embedding [label = "start embedding"]
+    h1 [label = "h1"]
+    hx [label = "..."]
+    output [label = "Q(s, end)"]
+
+    state -> start_features
+    start -> start_features
+    start -> start_embedding
+    start_features -> h1
+    start_embedding -> h1
+    h1 -> hx
+    hx -> output
+}

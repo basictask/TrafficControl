@@ -192,8 +192,8 @@ class RewardCalculator:
         """
         n_alone = 0
         for i in range(matrix.shape[0]):
-            no_incoming = any(x != 0 for x in pd.Series(matrix.iloc[i, :]).drop(i).reset_index(drop=True))  # Rows: all --> node connections
-            no_outgoing = any(x != 0 for x in pd.Series(matrix.iloc[:, i]).drop(i).reset_index(drop=True))  # Columns: node --> all connections
+            no_incoming = not any(x != 0 for x in pd.Series(matrix.iloc[i, :]).drop(i).reset_index(drop=True))  # Rows: all --> node connections
+            no_outgoing = not any(x != 0 for x in pd.Series(matrix.iloc[:, i]).drop(i).reset_index(drop=True))  # Columns: node --> all connections
             n_alone += int(no_incoming and no_outgoing)  # If there are no incoming and no outgoing lanes from a node add 1 to counter
 
         if n_alone == 0:

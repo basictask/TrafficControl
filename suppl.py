@@ -6,10 +6,12 @@ These methods don't belong to any specific class operation and may be used acros
 from exceptions import *
 from trafficSimulator.window import Window
 from trafficSimulator.simulation import Simulation
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import torch
 import math
+import os
 
 # This is a constant to easily set the junction types' representations
 JUNCTION_CODES = {'righthand': 1, 'roundabout': 2, 'trafficlight': 3}
@@ -19,6 +21,9 @@ JUNCTION_TYPES = {v: k for k, v in JUNCTION_CODES.items()}  # Inverse of the JUN
 # ACTIONS = {0: 'add_lane', 1: 'remove_lane', 2: 'add_road', 3: 'remove_road', 4: 'add_righthand', 5: 'add_roundabout', 6: 'add_trafficlight'}
 ACTIONS = {0: 'add_lane', 1: 'remove_lane', 2: 'add_righthand', 3: 'add_roundabout', 4: 'add_trafficlight'}
 ACTION_NAMES = {v: k for k, v in ACTIONS.items()}  # Inverse of the ACTIONS dict
+
+# Images will be saved to this folder
+IMAGES_PATH = './doc/images'
 
 
 def start_sim(roads: list, vehicle_mtx: dict, offset: tuple, steps_per_update: int, n_steps: int, show_win: bool, signals: list = None) -> (float, float):
@@ -394,3 +399,19 @@ def get_batch_embeddings(embeddings: torch.tensor, indexer: torch.tensor):
     for i in range(len(indexer)):
         batch_embeddings = torch.vstack((batch_embeddings, embeddings[indexer[i], :]))
     return batch_embeddings
+
+
+def save_fig(fig_id: str, tight_layout: bool = True, fig_extension: str = "png", resolution: int = 200):
+    """
+    Saves a figure to the defined path
+    :param fig_id: Name of the figure without extension
+    :param tight_layout: If matplotlib tight layout should be turned on
+    :param fig_extension: Extension of the figure
+    :param resolution:
+    :return:
+    """
+    path = os.path.join(IMAGES_PATH, fig_id + '.' + fig_extension)
+    print('Saving figure', fig_id)
+    if tight_layout:
+        plt.tight_layout()
+    plt.savefig(path, format=fig_extension, dpi=resolution)

@@ -347,7 +347,9 @@ class Agent:
         starts, ends, local_action_q = self.action_gnn(states, starts, ends)
         local_action_q = local_action_q.gather(1, actions)
         starts, ends, target_action_q = self.action_gnn(next_states, starts, ends)
-        target_action_q = target_action_q.detach().max(1)[0].unsqueeze(1)
+        target_action_q = target_action_q.detach()
+        target_action_q = self.get_valid_actions(starts, ends, target_action_q, next_states)
+        target_action_q = target_action_q.max(1)[0].unsqueeze(1)
         target_action_q = rewards + self.gamma * target_action_q
 
         # Stepping with the action optimizer

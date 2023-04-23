@@ -1,0 +1,27 @@
+digraph "gnn_embeds_action"
+{
+    state [label = "state"]
+    start [label = "start"]
+    end [label = "end"]
+    start_features [label = "start features"]
+    end_features [label = "end features"]
+    start_embedding [label = "start embedding"]
+    end_embedding [label = "end embedding"]
+    h1 [label = "h1"]
+    hx [label = "..."]
+    output [label = "Q(s, action)"]
+
+    state -> start_features
+    state -> end_features
+    start -> start_features
+    end -> end_features
+    end -> end_embedding
+    start -> start_embedding
+    start_features -> h1
+    end_features -> h1
+    end_embedding -> h1
+    start_embedding -> h1
+    h1 -> hx
+    hx -> output
+
+}

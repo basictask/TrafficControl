@@ -12,3 +12,6 @@ literature
 /doc/todo.txt
 /doc/images/traffic-light-icon.svg
 ./.idea
+.idea/misc.xml
+.idea/profiles_settings.xml
+
