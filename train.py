@@ -13,10 +13,12 @@ from suppl import ACTIONS, apply_decay, save_fig
 from trial_functions import play_one_episode
 from environment import Environment
 from agents.agent_gnn2 import Agent
+# from agents.agent_gcnn import Agent
 import matplotlib.pyplot as plt
 from collections import deque
 import configparser
 import numpy as np
+import datetime
 import os
 # Additional settings
 plt.rcParams["font.family"] = "serif"
@@ -87,7 +89,7 @@ plt.title('Training scores')
 plt.plot(scores_history)
 plt.xlabel('Episode')
 plt.ylabel('Score')
-save_fig('scores_history')
+save_fig('scores_history ' + str(datetime.datetime.now()))
 plt.show()
 
 plt.Figure(figsize=(6, 6))
@@ -95,5 +97,5 @@ plt.title('Windowed average scores')
 plt.plot(scores_avg_history)
 plt.xlabel('Episode')
 plt.ylabel('Average score')
-save_fig('scores_avg_history')
+save_fig('scores_avg_history ' + str(datetime.datetime.now()))
 plt.show()

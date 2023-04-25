@@ -20,7 +20,8 @@ args.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini')
 class RewardCalculator:
     def __init__(self):
         """
-        Constructor for the reward calculator. Reads values from the config and saves them as data fields
+        Constructor for the reward calculator. Reads values from the config and saves them as data fields.
+        See config.ini for a detailed description for the description of the variables
         :return: None
         """
         # Costs
@@ -38,8 +39,9 @@ class RewardCalculator:
         self.trafficlight_to_roundabout = self.trafficlight_to_righthand + self.righthand_to_roundabout
 
         # Bonuses and penalties
-        self.righthand_penalty = args['reward'].getfloat('righthand_penalty')
+        self.short_road_bonus = args['reward'].getfloat('short_road_bonus')
         self.long_road_penalty = args['reward'].getfloat('long_road_penalty')
+        self.righthand_penalty = args['reward'].getfloat('righthand_penalty')
         self.multilane_penalty = args['reward'].getfloat('multilane_penalty')
         self.trafficlight_bonus = args['reward'].getfloat('trafficlight_bonus')
         self.alone_node_penalty = args['reward'].getfloat('alone_node_penalty')
@@ -182,7 +184,7 @@ class RewardCalculator:
         :param reward_type: Which bonus should he count be multiplied with
         :return: Integer reward value
         """
-        return len(np.where(np.diag(matrix) == JUNCTION_CODES[junction_type])) * reward_type
+        return np.sum(np.diag(matrix) == JUNCTION_CODES[junction_type]) * reward_type
 
     def calc_reward_no_nodes_alone(self, matrix: pd.DataFrame) -> int:
         """
@@ -220,7 +222,7 @@ class RewardCalculator:
                     if euclidean_distance(points[i], points[j]) > dist_thres:
                         reward -= self.long_road_penalty * matrix.loc[i, j]
                     else:
-                        reward += self.long_road_penalty * matrix.loc[i, j]
+                        reward += self.short_road_bonus
         return reward
 
     def calc_multilane_penalty(self, matrix: pd.DataFrame, points: dict) -> float:

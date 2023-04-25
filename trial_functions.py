@@ -71,6 +71,18 @@ def test_a_r_junct(r: Reader, infra: str, node: str) -> None:
     print(f'Convert to {infra}: {result}\n')
 
 
+def test_a_r_env(env: Environment, start: int, end: int, action: str) -> None:
+    """
+    Applies one action triplet in an environment and prints the result
+    :param start: Starting node index
+    :param end: Ending node index
+    :param action: Action to execute
+    :return: None
+    """
+    next_state, reward, successful = env.step(start, end, ACTION_NAMES[action])
+    print(f'start: {start}, end: {end}, action: {action}, reward: {reward}, successful: {successful}')
+
+
 def play_one_episode(env: Environment, agent, max_t: int) -> list:
     """
     Uses the agent to do some time steps inside the episode
