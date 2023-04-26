@@ -23,7 +23,7 @@ import os
 import inspect
 import configparser
 args = configparser.ConfigParser()
-args.read('/home/daniel/Documents/ELTE/trafficControl/config.ini')
+args.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini'))
 
 
 class Reader:
