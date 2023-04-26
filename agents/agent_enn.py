@@ -1,9 +1,9 @@
 """
-This is an agent that's implemented using graph-convoltuional neural networks.
+State-learning neural network without embeddings based on the GCNN architecture
 """
 # Own
 from suppl import JUNCTION_TYPES, ACTION_NAMES, \
-    check_all_attributes_initialized, count_incoming_lanes, choose_random_action, get_batch_graph_features, get_batch_embeddings
+    check_all_attributes_initialized, count_incoming_lanes, choose_random_action
 from agents.agent_1_net import ReplayBuffer
 # Generic
 import os
@@ -21,19 +21,18 @@ args = configparser.ConfigParser()
 args.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../config.ini'))
 
 
-class GraphEndNetwork(nn.Module):
+class EndNetwork(nn.Module):
     def __init__(self, n_nodes: int, action_size: int, embedding_size: int):
-        super(GraphEndNetwork, self).__init__()
+        super(EndNetwork, self).__init__()
 
         # Inner parameters
         self.n_nodes = n_nodes
         self.embedding_size = embedding_size
-        self.in_features = n_nodes + embedding_size
         self.n_neurons = [int(x) for x in args['learning'].get('n_neurons_local').split(',')]
 
         # Define the layers
         self.node_embedding = nn.Embedding(self.n_nodes, self.embedding_size)
-        self.fc1 = nn.Linear(self.in_features, self.n_neurons[0])  # States are input here
+        self.fc1 = nn.Linear(self.embedding_size, self.n_neurons[0])  # States are input here
         self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
         self.d1 = nn.Dropout(p=0.8)
         self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
@@ -46,22 +45,12 @@ class GraphEndNetwork(nn.Module):
 
         check_all_attributes_initialized(self)
 
-    def forward(self, state: torch.tensor, start=None):
-
-        node_embeddings = self.node_embedding(torch.arange(self.n_nodes))  # Learn embeddings for each node
-
-        if start.shape == torch.Size([1]):  # Acting pass
-            # Select the features for the node
-            start_features = state[start, :]
-            # Select the embeddings for the node
-            start_embedding = node_embeddings[start]
-        else:  # Learning pass
-            start_features = get_batch_graph_features(state, start)
-            start_embedding = get_batch_embeddings(node_embeddings, start)
-
-        # Compute the action
-        edge_features = torch.cat((start_features, start_embedding), dim=-1)
-        x = fn.relu(self.fc1(edge_features))
+    def forward(self, state: torch.tensor, start: torch.tensor) -> torch.tensor:
+        # Select the node features
+        node_embeddings = self.node_embedding(torch.arange(self.n_nodes))
+        node_features = torch.flatten(node_embeddings[start])
+        # Dense pass
+        x = fn.relu(self.fc1(node_features))
         x = fn.relu(self.fc2(x))
         x = self.d1(x)
         x = fn.relu(self.fc3(x))
@@ -69,24 +58,23 @@ class GraphEndNetwork(nn.Module):
         end_q = end_q.squeeze(0)
 
         # Return the output and the edge weight
-        return start, end_q
+        return end_q
 
 
-class GraphActionNetwork(nn.Module):
+class ActionNetwork(nn.Module):
     def __init__(self, n_nodes: int, action_size: int, embedding_size: int):
-        super(GraphActionNetwork, self).__init__()
+        super(ActionNetwork, self).__init__()
 
         # Inner parameters
         self.n_nodes = n_nodes
         self.embedding_size = embedding_size
-        self.in_features = 2 * n_nodes + 2 * embedding_size
-        self.n_neurons = [int(x) for x in args['learning'].get('n_neurons_target').split(',')]
+        self.n_neurons = [int(x) for x in args['learning'].get('n_neurons_local').split(',')]
 
         # Define the layers
         self.node_embedding = nn.Embedding(self.n_nodes, self.embedding_size)
-        self.fc1 = nn.Linear(self.in_features, self.n_neurons[0])  # States are input here
+        self.fc1 = nn.Linear(self.embedding_size * 2, self.n_neurons[0])  # States are input here
         self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
-        self.d1 = nn.Dropout(p=0.8)
+        self.d1 = nn.Dropout(p=0.5)
         self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
         self.d2 = nn.Dropout(p=0.5)
         self.fc4 = nn.Linear(self.n_neurons[2], action_size)
@@ -98,39 +86,28 @@ class GraphActionNetwork(nn.Module):
 
         check_all_attributes_initialized(self)
 
-    def forward(self, state: torch.tensor, start: torch.tensor, end: torch.tensor) -> (torch.tensor, torch.tensor, torch.tensor):
-
+    def forward(self, state: torch.tensor, start: torch.tensor, end: torch.tensor) -> torch.tensor:
         node_embeddings = self.node_embedding(torch.arange(self.n_nodes))  # Learn embeddings for each node
-
-        if start.shape == torch.Size([1]) and end.shape == torch.Size([1]):  # Acting pass
-            # Select the features for the two nodes
-            start_features = state[start, :]
-            end_features = state[end, :]
-            # Select the embeddings for the two nodes
-            start_embedding = node_embeddings[start]
-            end_embedding = node_embeddings[end]
-        else:  # Learning pass
-            start_features = get_batch_graph_features(state, start)
-            end_features = get_batch_graph_features(state, end)
-            start_embedding = get_batch_embeddings(node_embeddings, start)
-            end_embedding = get_batch_embeddings(node_embeddings, end)
-
-        # Compute the action
-        edge_features = torch.cat((start_features, end_features, start_embedding, end_embedding), dim=-1)
+        # Select the starting node
+        start_features = node_embeddings[start]
+        end_features = node_embeddings[end]
+        edge_features = torch.cat([start_features, end_features], dim=-1)
+        # Dense pass
         x = fn.relu(self.fc1(edge_features))
         x = fn.relu(self.fc2(x))
         x = self.d1(x)
         x = fn.relu(self.fc3(x))
         x = self.d2(x)
-        action_q = fn.relu(self.fc4(x)).squeeze(0)
+        action_q = fn.relu(self.fc4(x))
+        action_q = action_q.squeeze(0)
 
         # Return the output and the edge weight
-        return start, end, action_q,
+        return action_q
 
 
 class Agent:
     """
-    This class defines the reinforcement learning agent
+    This class defines the graph-convolutional reinforcement learning agent
     """
     def __init__(self, state_shape: tuple, action_size: int, state_high: pd.DataFrame):
         """
@@ -153,22 +130,22 @@ class Agent:
         # Setting inner parameters
         self.error_track = []
         self.node_trace = []
-        self.action_size = action_size
         self.state_high = state_high
         self.n_nodes = state_shape[0]
         self.state_shape = state_shape
+        self.action_size = action_size
         self.state_size = self.n_nodes * self.n_nodes
         self.current_start = torch.randint(size=(1,), low=0, high=self.n_nodes)
         self.memory = ReplayBuffer(self.buffer_size, self.batch_size)
         self.t_step = 0  # Initialize time step (for self.update_every)
 
         # Network, optimizer and replay memory
-        self.end_gnn = GraphEndNetwork(self.n_nodes, self.n_nodes, self.embedding_size)
-        self.end_optimizer = optim.Adadelta(self.end_gnn.parameters(), lr=self.learning_rate)
-        
-        self.action_gnn = GraphActionNetwork(self.n_nodes, self.action_size, self.embedding_size)
-        self.action_optimizer = optim.Adadelta(self.action_gnn.parameters(), lr=self.learning_rate)
-        
+        self.end_nn = EndNetwork(self.n_nodes, self.n_nodes, self.embedding_size)
+        self.end_optimizer = optim.Adadelta(self.end_nn.parameters(), lr=self.learning_rate)
+
+        self.action_nn = ActionNetwork(self.n_nodes, self.action_size, self.embedding_size)
+        self.action_optimizer = optim.Adadelta(self.action_nn.parameters(), lr=self.learning_rate)
+
         self.memory = ReplayBuffer(self.buffer_size, self.batch_size)
 
         check_all_attributes_initialized(self)
@@ -184,13 +161,14 @@ class Agent:
         if random.random() > eps:
 
             # Turn on eval mode
-            self.end_gnn.eval()
-            self.action_gnn.eval()
+            self.end_nn.eval()
+            self.action_nn.eval()
 
             state_tensor = torch.tensor(np.array(state), dtype=torch.float32)  # Convert the state to float and flatten
 
             with torch.no_grad():
-                start_i, end_q = self.end_gnn(state_tensor, self.current_start)
+                start_i = self.current_start
+                end_q = self.end_nn(state_tensor, start_i)
 
                 if len(self.node_trace) == self.n_nodes - 1:
                     self.node_trace = []
@@ -203,12 +181,12 @@ class Agent:
                 end_i = torch.argmax(end_q).unsqueeze(-1)
                 self.current_start = end_i
 
-                start_i, end_i, action_q = self.action_gnn(state_tensor, start_i, end_i)
+                action_q = self.action_nn(state_tensor, start_i, end_i)
                 action_q = self.get_valid_actions(start_i, end_i, action_q, state)
                 action_i = torch.argmax(action_q, dim=-1, keepdim=True)
 
-            self.end_gnn.train()  # Put into train mode
-            self.action_gnn.train()
+            self.end_nn.train()  # Put into train mode
+            self.action_nn.train()
 
             return int(start_i), int(end_i), int(action_i), False
 
@@ -330,10 +308,15 @@ class Agent:
         next_states = next_states.clone().detach().view(self.batch_size, self.n_nodes, self.n_nodes).requires_grad_(True)
         states = states.clone().detach().view(self.batch_size, self.n_nodes, self.n_nodes).requires_grad_(True)
 
-        # Estimating the Q-values for end
-        starts, local_end_q = self.end_gnn(states, starts)
+        # Estimating Q-values for end
+        local_end_q = torch.zeros([0, self.n_nodes])
+        for i in range(states.shape[0]):
+            local_end_q = torch.vstack([local_end_q, self.end_nn.forward(states[i], starts[i])])
         local_end_q = local_end_q.gather(1, ends)
-        starts, target_end_q = self.end_gnn(next_states, starts)
+
+        target_end_q = torch.zeros([0, self.n_nodes])
+        for i in range(next_states.shape[0]):
+            target_end_q = torch.vstack([target_end_q, self.end_nn.forward(next_states[i], starts[i])])
         target_end_q = target_end_q.detach().max(1)[0].unsqueeze(1)
         target_end_q = rewards + self.gamma * target_end_q
 
@@ -344,10 +327,15 @@ class Agent:
         self.end_optimizer.step()
 
         # Q-values for the action
-        starts, ends, local_action_q = self.action_gnn(states, starts, ends)
+        local_action_q = torch.zeros([0, self.action_size])
+        for i in range(states.shape[0]):
+            local_action_q = torch.vstack([local_action_q, self.action_nn.forward(states[i], starts[i], ends[i])])
         local_action_q = local_action_q.gather(1, actions)
-        starts, ends, target_action_q = self.action_gnn(next_states, starts, ends)
-        target_action_q = target_action_q.detach()
+
+        target_action_q = torch.zeros([0, self.action_size])
+        for i in range(next_states.shape[0]):
+            target_action_q = torch.vstack([target_action_q, self.action_nn.forward(next_states[i], starts[i], ends[i])])
+        # target_action_q = target_action_q.detach()
         target_action_q = self.get_valid_actions(starts, ends, target_action_q, next_states)
         target_action_q = target_action_q.max(1)[0].unsqueeze(1)
         target_action_q = rewards + self.gamma * target_action_q
@@ -364,20 +352,20 @@ class Agent:
         Sets necessasry attributes to the starting values
         :return: None
         """
-        self.current_start = torch.randint(size=(1,), low=0, high=self.n_nodes)
+        pass
 
     def save_models(self) -> None:
         """
         Iterates over all the models and saves their states
         :return: None
         """
-        torch.save(self.action_gnn.state_dict(), './models/action_gnn.pth')
-        torch.save(self.end_gnn.state_dict(), './models/end_gnn.pth')
+        torch.save(self.action_nn.state_dict(), './models/action_embednet.pth')
+        torch.save(self.end_nn.state_dict(), './models/end_embednet.pth')
 
     def load_models(self) -> None:
         """
         Loads all the state dicts for the models
         :return: None
         """
-        self.action_gnn.load_state_dict(torch.load('./models/action_gnn.pth'))
-        self.end_gnn.load_state_dict(torch.load('./models/end_gnn.pth'))
+        self.action_nn.load_state_dict(torch.load('./models/action_embednet.pth'))
+        self.end_nn.load_state_dict(torch.load('./models/end_embednet.pth'))

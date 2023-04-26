@@ -9,6 +9,8 @@
 This is the environment that handles actions, state and rewards.
 The environment is explicitly meant to be used by the agent
 """
+import torch
+
 from city_constructor import Reader
 from reward import RewardCalculator
 from suppl import *

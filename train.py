@@ -14,6 +14,8 @@ from trial_functions import play_one_episode
 from environment import Environment
 from agents.agent_gnn2 import Agent
 # from agents.agent_gcnn import Agent
+# from agents.agent_snn import Agent
+# from agents.agent_enn import Agent
 import matplotlib.pyplot as plt
 from collections import deque
 import configparser
@@ -46,6 +48,7 @@ agent = Agent(env.state_shape, env.action_shape, env.state_high)
 
 for e in range(n_episodes):
     state = env.reset()
+    agent.reset()
     score = 0
     for t in range(max_t):
         # Choose action based on state
@@ -83,19 +86,33 @@ scores_test = play_one_episode(env, agent, max_t)
 
 #%% Plotting
 
+# Info
+architecture = agent.__module__.split('.')[-1]
+timestamp = str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
+
 # Scores history
 plt.Figure(figsize=(6, 6))
-plt.title('Training scores')
+plt.title(f'Training scores ({architecture})')
 plt.plot(scores_history)
 plt.xlabel('Episode')
 plt.ylabel('Score')
-save_fig('scores_history ' + str(datetime.datetime.now()))
+save_fig(f'scores-history_{architecture}_{timestamp}')
 plt.show()
 
+# Windowed average scores history
 plt.Figure(figsize=(6, 6))
-plt.title('Windowed average scores')
+plt.title(f'Windowed average scores ({architecture})')
 plt.plot(scores_avg_history)
 plt.xlabel('Episode')
+plt.ylabel(f'Average score (window size={scores_window.maxlen})')
+save_fig(f'scores-avg-history_{architecture}_{timestamp}')
+plt.show()
+
+# Average scores history
+plt.Figure(figsize=(6, 6))
+plt.title(f'Average score ({architecture})')
+plt.plot(np.cumsum(scores_history) / np.arange(len(scores_history)))
+plt.xlabel('Episode')
 plt.ylabel('Average score')
-save_fig('scores_avg_history ' + str(datetime.datetime.now()))
+save_fig(f'scores-avg-history_{architecture}_{timestamp}')
 plt.show()

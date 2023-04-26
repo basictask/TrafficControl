@@ -173,6 +173,9 @@ class RewardCalculator:
         # Penalize long roads, reward short roads
         reward += self.calc_long_road_penalty(matrix, points)
 
+        # Cap reward value
+        reward = max(reward, -100000)
+
         return reward
 
     @staticmethod
@@ -213,7 +216,7 @@ class RewardCalculator:
         # Calculate the mean of all points
         junctions = [points[x] for x in matrix.index]  # Find the locations for all the nodes used as junctions
         midpoint = tuple(np.mean(junctions, axis=0))  # Find the midpoint of the city
-        dist_thres = max([euclidean_distance(midpoint, v) for v in points.values()])  # Find the distance between the furthest point and midpoint
+        dist_thres = max([euclidean_distance(midpoint, v) for v in points.values()]) * 1.35  # Find the distance between the furthest point and midpoint
 
         # Iterate over the matrix and find all roads longer than necessary. Reward short and penalize long roads
         for i in matrix.index:
@@ -222,7 +225,7 @@ class RewardCalculator:
                     if euclidean_distance(points[i], points[j]) > dist_thres:
                         reward -= self.long_road_penalty * matrix.loc[i, j]
                     else:
-                        reward += self.short_road_bonus
+                        reward += self.short_road_bonus * matrix.loc[i, j]
         return reward
 
     def calc_multilane_penalty(self, matrix: pd.DataFrame, points: dict) -> float:
