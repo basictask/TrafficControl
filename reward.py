@@ -50,7 +50,7 @@ class RewardCalculator:
         self.multilane_penalty_threshold = args['reward'].getfloat('multilane_penalty_threshold')
 
         # Other
-        self.reward_track = pd.Series([], dtype=np.float)
+        self.reward_track = pd.Series([], dtype=float)
         self.max_lanes = args['reader'].getfloat('max_lanes')
 
         check_all_attributes_initialized(self)  # Raise an error if a configuration has failed to read
@@ -225,7 +225,7 @@ class RewardCalculator:
                     if euclidean_distance(points[i], points[j]) > dist_thres:
                         reward -= self.long_road_penalty * matrix.loc[i, j]
                     else:
-                        reward += self.short_road_bonus * matrix.loc[i, j]
+                        reward += self.short_road_bonus
         return reward
 
     def calc_multilane_penalty(self, matrix: pd.DataFrame, points: dict) -> float:
