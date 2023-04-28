@@ -173,9 +173,6 @@ class RewardCalculator:
         # Penalize long roads, reward short roads
         reward += self.calc_long_road_penalty(matrix, points)
 
-        # Cap reward value
-        reward = max(reward, -100000)
-
         return reward
 
     @staticmethod

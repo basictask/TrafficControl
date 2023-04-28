@@ -75,7 +75,7 @@ class GraphEndNetwork(nn.Module):
 
         self.fc1 = nn.Linear(self.input_size, self.n_neurons[0])  # States are input here
         self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
-        self.d2 = nn.Dropout(p=0.5)
+        self.d1 = nn.Dropout(p=0.5)
         self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
         self.fc4 = nn.Linear(self.n_neurons[2], action_size)
 
@@ -103,7 +103,7 @@ class GraphEndNetwork(nn.Module):
         # Dense pass
         x = fn.relu(self.fc1(edge_features))
         x = fn.relu(self.fc2(x))
-        x = self.d2(x)
+        x = self.d1(x)
         x = fn.relu(self.fc3(x))
         end_q = fn.relu(self.fc4(x))
         end_q = end_q.squeeze(0)
@@ -120,7 +120,7 @@ class GraphActionNetwork(nn.Module):
         self.n_nodes = n_nodes
         self.embedding_size = embedding_size
         self.input_size = 2 * self.n_nodes + 2 * self.embedding_size
-        self.n_neurons = [int(x) for x in args['learning'].get('n_neurons_local').split(',')]
+        self.n_neurons = [int(x) for x in args['learning'].get('n_neurons_target').split(',')]
 
         # Define the layers
         self.gc1 = GraphConvolution(1, self.n_neurons[0])
@@ -128,7 +128,7 @@ class GraphActionNetwork(nn.Module):
 
         self.fc1 = nn.Linear(self.input_size, self.n_neurons[0] * 2)  # States are input here
         self.fc2 = nn.Linear(self.n_neurons[0] * 2, self.n_neurons[1] * 2)
-        self.d2 = nn.Dropout(p=0.5)
+        self.d1 = nn.Dropout(p=0.5)
         self.fc3 = nn.Linear(self.n_neurons[1] * 2, self.n_neurons[2] * 2)
         self.fc4 = nn.Linear(self.n_neurons[2] * 2, action_size)
 
@@ -158,7 +158,7 @@ class GraphActionNetwork(nn.Module):
         # Dense pass
         x = fn.relu(self.fc1(edge_features))
         x = fn.relu(self.fc2(x))
-        x = self.d2(x)
+        x = self.d1(x)
         x = fn.relu(self.fc3(x))
         action_q = fn.relu(self.fc4(x))
         action_q = action_q.squeeze(0)
@@ -192,6 +192,7 @@ class Agent:
         # Setting inner parameters
         self.error_track = []
         self.node_trace = []
+        self.history = torch.zeros(size=(0, 4))
         self.action_size = action_size
         self.state_high = state_high
         self.n_nodes = state_shape[0]
@@ -355,6 +356,7 @@ class Agent:
         if reward != 0:  # Skip adding the initial reward of 0 (as it's a delta)
             self.memory.add(state, start, end, action, reward, next_state, int(successful))  # Save experience in replay memory
             self.t_step = (self.t_step + 1) % self.update_every  # Update the time step
+            self.history = torch.vstack([self.history, torch.tensor([start, end, action, reward])])
 
         if self.t_step == 0 and len(self.memory) > self.batch_size:  # If there's enough experience in the memory we will sample it and learn
             self.learn()
@@ -408,6 +410,22 @@ class Agent:
         self.action_optimizer.zero_grad()
         action_loss.backward()
         self.action_optimizer.step()
+
+    def reset(self) -> None:
+        """
+        Sets necessasry attributes to the starting values
+        :return: None
+        """
+        self.current_start = torch.randint(size=(1,), low=0, high=self.n_nodes)
+
+    def save_history(self, architecture: str, timestamp: str):
+        """
+        Saves the record saved in the history stack
+        """
+        name_to_print = f'./logs/history_{architecture}_{timestamp}.csv'
+        df = pd.DataFrame(np.array(self.history), columns=['start', 'end', 'action', 'reward'])
+        df.to_csv(name_to_print, sep='\t', index=False, header=True)
+        print(f'Successful print to {name_to_print}')
 
     def save_models(self) -> None:
         """

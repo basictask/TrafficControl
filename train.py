@@ -8,6 +8,8 @@
   █▄▄▄█ █▄▄▄█  █▄█▄█ █▄▄█▄▄▄█▄█  █▄▄█
 This is the file used to train the reinforcement learning agent.
 """
+import pandas as pd
+
 # Imports
 from suppl import ACTIONS, apply_decay, save_fig
 from trial_functions import play_one_episode
@@ -79,16 +81,14 @@ for e in range(n_episodes):
     if e % 10 == 0:
         agent.save_models()
 
-
-#%% Letting the agent play for a certain number of steps to try the new protocol
-
-scores_test = play_one_episode(env, agent, max_t)
-
-#%% Plotting
+#%% Plotting and saving run results
 
 # Info
 architecture = agent.__module__.split('.')[-1]
 timestamp = str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
+
+# Save history
+agent.save_history(architecture, timestamp)
 
 # Scores history
 plt.Figure(figsize=(6, 6))
@@ -111,8 +111,18 @@ plt.show()
 # Average scores history
 plt.Figure(figsize=(6, 6))
 plt.title(f'Average score ({architecture})')
-plt.plot(np.cumsum(scores_history) / np.arange(len(scores_history)))
+plt.plot(np.cumsum(scores_history) / (np.arange(1, len(scores_history) + 1)))
 plt.xlabel('Episode')
 plt.ylabel('Average score')
 save_fig(f'scores-avg-history_{architecture}_{timestamp}')
 plt.show()
+
+#%% Print scores and mean scores
+
+logs_df = pd.DataFrame({'scores': scores_history,
+                        'window': scores_avg_history})
+logs_df.to_csv(f'./logs/scores_log_{architecture}_{timestamp}.csv', sep='\t', header=True, index=False)
+
+#%% Letting the agent play for a certain number of steps to try the new protocol
+
+scores_test = play_one_episode(env, agent, max_t)

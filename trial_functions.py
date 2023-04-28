@@ -104,4 +104,13 @@ def play_one_episode(env: Environment, agent, max_t: int) -> list:
         score += reward
         scores.append(reward)
         print('start: {}, end: {}, action: {}, reward: {}, total: {}'.format(start, end, ACTIONS[action], reward, score))
+
+    # Show the window
+    n_steps = 0
+    show_win = True
+    steps_per_update = 5
+    roads, vehicle_mtx, signals = env.reader.get_matrices()
+    start_sim(roads, vehicle_mtx, (-150, -110), steps_per_update, n_steps, show_win, signals)
+
+    print('\n')
     return scores
