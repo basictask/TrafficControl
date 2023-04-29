@@ -27,7 +27,7 @@ class GraphEndNetwork(nn.Module):
         # Inner parameters
         self.n_nodes = n_nodes
         self.embedding_size = embedding_size
-        self.in_features = n_nodes + embedding_size + 2
+        self.in_features = n_nodes + embedding_size
         self.n_neurons = [int(x) for x in args['learning'].get('n_neurons_local').split(',')]
 
         # Define the layers
@@ -72,7 +72,7 @@ class GraphActionNetwork(nn.Module):
         # Inner parameters
         self.n_nodes = n_nodes
         self.embedding_size = embedding_size
-        self.in_features = 2 * n_nodes + 2 * embedding_size + 2
+        self.in_features = 2 * n_nodes + 2 * embedding_size
         self.n_neurons = [int(x) for x in args['learning'].get('n_neurons_target').split(',')]
 
         # Define the layers
@@ -117,7 +117,7 @@ class Agent:
     """
     This class defines the reinforcement learning agent
     """
-    def __init__(self, state_shape: tuple, action_size: int, state_high: pd.DataFrame, points: dict):
+    def __init__(self, state_shape: tuple, action_size: int, state_high: pd.DataFrame):
         """
         Setup the agent by reading the learning parameters from the config
         :param state_shape: Size of the state-definition matrix
@@ -134,7 +134,6 @@ class Agent:
         self.embedding_size = args['learning'].getint('embedding_size')
         self.n_neurons = [int(x) for x in args['learning'].get('n_neurons_local').split(',')]
         self.trafficlight_inbound = [int(x) for x in args['trafficlight'].get('allow_inbound').split(',')]
-        self.points = points
 
         # Setting inner parameters
         self.error_track = []
@@ -178,8 +177,7 @@ class Agent:
 
             with torch.no_grad():
                 start_i = self.current_start
-                position = torch.tensor(self.points[int(start_i)])
-                end_q = self.end_gnn(state_tensor, start_i, position)
+                end_q = self.end_gnn(state_tensor, start_i)
 
                 if len(self.node_trace) == self.n_nodes - 1:
                     self.node_trace = []
@@ -192,7 +190,7 @@ class Agent:
                 end_i = torch.argmax(end_q).unsqueeze(-1)
                 self.current_start = end_i
 
-                action_q = self.action_gnn(state_tensor, start_i, end_i, position)
+                action_q = self.action_gnn(state_tensor, start_i, end_i)
                 action_q = self.get_valid_actions(start_i, end_i, action_q, state)
                 action_i = torch.argmax(action_q, dim=-1, keepdim=True)
 

@@ -1,13 +1,13 @@
 """
 This is a small script to render all dot files in this folder into png files
-Input: a folder path
-Output: png files from each dot file
+Input: None
+Output: .png files from each dot file
 """
 
 import os
 import pydot
 
-target_dir = '/home/daniel/Documents/ELTE/trafficControl/doc/graphs'
+target_dir = os.path.dirname(os.path.realpath(__file__))
 os.chdir(target_dir)
 
 for file in os.listdir(target_dir):

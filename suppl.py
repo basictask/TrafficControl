@@ -22,8 +22,9 @@ JUNCTION_TYPES = {v: k for k, v in JUNCTION_CODES.items()}  # Inverse of the JUN
 ACTIONS = {0: 'add_lane', 1: 'remove_lane', 2: 'add_righthand', 3: 'add_roundabout', 4: 'add_trafficlight'}
 ACTION_NAMES = {v: k for k, v in ACTIONS.items()}  # Inverse of the ACTIONS dict
 
-# Images will be saved to this folder
-IMAGES_PATH = './doc/images'
+# Logs folder
+IMAGES_PATH = './logs/images'
+HISTORY_PATH = './logs/history'
 
 
 def start_sim(roads: list, vehicle_mtx: dict, offset: tuple, steps_per_update: int, n_steps: int, show_win: bool, signals: list = None) -> (float, float):

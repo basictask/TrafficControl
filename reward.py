@@ -40,11 +40,12 @@ class RewardCalculator:
 
         # Bonuses and penalties
         self.short_road_bonus = args['reward'].getfloat('short_road_bonus')
+        self.righthand_reward = args['reward'].getfloat('righthand_reward')
         self.long_road_penalty = args['reward'].getfloat('long_road_penalty')
-        self.righthand_penalty = args['reward'].getfloat('righthand_penalty')
         self.multilane_penalty = args['reward'].getfloat('multilane_penalty')
-        self.trafficlight_bonus = args['reward'].getfloat('trafficlight_bonus')
+        self.roundabout_reward = args['reward'].getfloat('roundabout_reward')
         self.alone_node_penalty = args['reward'].getfloat('alone_node_penalty')
+        self.trafficlight_reward = args['reward'].getfloat('trafficlight_reward')
         self.no_nodes_alone_bonus = args['reward'].getfloat('no_nodes_alone_bonus')
         self.additional_lane_penalty = args['reward'].getfloat('additional_lane_penalty')
         self.multilane_penalty_threshold = args['reward'].getfloat('multilane_penalty_threshold')
@@ -161,11 +162,14 @@ class RewardCalculator:
         """
         reward = 0
 
-        # Calculate rewards for traffic lights
-        reward += self.calc_reward_junction(matrix, 'trafficlight', self.trafficlight_bonus)
-
         # Calculate penalty for righthand intersections
-        reward -= self.calc_reward_junction(matrix, 'righthand', self.righthand_penalty)
+        reward -= self.calc_reward_junction(matrix, 'righthand', self.righthand_reward)
+
+        # Calculate reward for roundabouts
+        reward += self.calc_reward_junction(matrix, 'roundabout', self.roundabout_reward)
+
+        # Calculate rewards for traffic lights
+        reward += self.calc_reward_junction(matrix, 'trafficlight', self.trafficlight_reward)
 
         # Penalize nodes that are left alone with no connection to any other node
         reward += self.calc_reward_no_nodes_alone(matrix)

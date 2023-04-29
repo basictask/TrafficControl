@@ -422,7 +422,7 @@ class Agent:
         """
         Saves the record saved in the history stack
         """
-        name_to_print = f'./logs/history_{architecture}_{timestamp}.csv'
+        name_to_print = f'./logs/history/history_{architecture}_{timestamp}.csv'
         df = pd.DataFrame(np.array(self.history), columns=['start', 'end', 'action', 'reward'])
         df.to_csv(name_to_print, sep='\t', index=False, header=True)
         print(f'Successful print to {name_to_print}')

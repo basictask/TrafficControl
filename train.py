@@ -11,11 +11,12 @@ This is the file used to train the reinforcement learning agent.
 import pandas as pd
 
 # Imports
-from suppl import ACTIONS, apply_decay, save_fig
+from suppl import ACTIONS, HISTORY_PATH, apply_decay, save_fig
 from trial_functions import play_one_episode
 from environment import Environment
-from agents.agent_gnn2 import Agent
-# from agents.agent_gcnn import Agent
+# from agents.agent_gnn2 import Agent
+from agents.agent_gcnn import Agent
+# from agents.agent_dualgcnn import Agent
 # from agents.agent_snn import Agent
 # from agents.agent_enn import Agent
 import matplotlib.pyplot as plt
@@ -86,42 +87,43 @@ for e in range(n_episodes):
 # Info
 architecture = agent.__module__.split('.')[-1]
 timestamp = str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
+city_name = os.path.splitext(os.path.basename(env.reader.filepath))[0]
 
 # Save history
 agent.save_history(architecture, timestamp)
 
 # Scores history
 plt.Figure(figsize=(6, 6))
-plt.title(f'Training scores ({architecture})')
+plt.title(f'Training scores ({architecture}, {city_name})')
 plt.plot(scores_history)
 plt.xlabel('Episode')
 plt.ylabel('Score')
-save_fig(f'scores-history_{architecture}_{timestamp}')
+save_fig(f'scores-history_{architecture}_{timestamp}_{city_name}')
 plt.show()
 
 # Windowed average scores history
 plt.Figure(figsize=(6, 6))
-plt.title(f'Windowed average scores ({architecture})')
+plt.title(f'Windowed average scores ({architecture}, {city_name})')
 plt.plot(scores_avg_history)
 plt.xlabel('Episode')
 plt.ylabel(f'Average score (window size={scores_window.maxlen})')
-save_fig(f'scores-avg-history_{architecture}_{timestamp}')
+save_fig(f'scores-windowed-avg-history_{architecture}_{timestamp}_{city_name}')
 plt.show()
 
 # Average scores history
 plt.Figure(figsize=(6, 6))
-plt.title(f'Average score ({architecture})')
+plt.title(f'Average score ({architecture}, {city_name})')
 plt.plot(np.cumsum(scores_history) / (np.arange(1, len(scores_history) + 1)))
 plt.xlabel('Episode')
 plt.ylabel('Average score')
-save_fig(f'scores-avg-history_{architecture}_{timestamp}')
+save_fig(f'scores-avg-history_{architecture}_{timestamp}_{city_name}')
 plt.show()
 
 #%% Print scores and mean scores
 
 logs_df = pd.DataFrame({'scores': scores_history,
                         'window': scores_avg_history})
-logs_df.to_csv(f'./logs/scores_log_{architecture}_{timestamp}.csv', sep='\t', header=True, index=False)
+logs_df.to_csv(f'{HISTORY_PATH}/scores_log_{architecture}_{timestamp}_{city_name}.csv', sep='\t', header=True, index=False)
 
 #%% Letting the agent play for a certain number of steps to try the new protocol
 
