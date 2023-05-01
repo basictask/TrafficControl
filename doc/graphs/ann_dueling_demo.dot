@@ -1,4 +1,5 @@
 digraph dueling_architecture {
+    graph [dpi = 300];
     labelloc = "top"
 
     # Make graph vertical

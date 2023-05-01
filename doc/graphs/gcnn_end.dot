@@ -1,0 +1,28 @@
+digraph "gcnn_action" {
+    graph [dpi = 300];
+    state [label = "state"]
+    start [label = "start"]
+    feat [label = "node weights"]
+    adj [label = "adjacency matrix"]
+    gc1 [label = "graph convolution 1", shape=box]
+    gc2 [label = "graph convolution 2", shape=box]
+    start_embeds [label = "start embeddings"]
+    start_feats [label = "start features"]
+    h1 [label = "hidden 1", shape=box]
+    h2 [label = "hidden 2", shape=box]
+    end_q [label = "Q(s, end)", shape=box]
+
+    state -> feat
+    state -> adj
+    feat -> gc1
+    adj -> gc1
+    gc1 -> gc2
+    gc2 -> start_embeds
+    start -> start_embeds
+    state -> start_feats
+    start -> start_feats
+    start_embeds -> h1
+    start_feats -> h1
+    h1 -> h2
+    h2 -> end_q
+}

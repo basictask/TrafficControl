@@ -1,5 +1,5 @@
-digraph "gnn_embeds_action"
-{
+digraph "gnn_embeds_action"{
+    graph [dpi = 300];
     state [label = "state"]
     start [label = "start"]
     end [label = "end"]

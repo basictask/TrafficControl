@@ -1,5 +1,6 @@
 digraph "ann_singlehead" { 
     // Label properies 
+    graph [dpi = 300];
     label = "Three-headed deep Q-network architecture"
     labelloc = "top"
     

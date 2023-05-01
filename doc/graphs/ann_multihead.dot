@@ -1,4 +1,5 @@
 digraph "ann_multihead" {
+    graph [dpi = 300];
     // Label properies 
     label = "Multi-head architecture"
     labelloc = "top"

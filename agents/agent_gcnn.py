@@ -418,11 +418,14 @@ class Agent:
         """
         self.current_start = torch.randint(size=(1,), low=0, high=self.n_nodes)
 
-    def save_history(self, architecture: str, timestamp: str):
+    def save_history(self, architecture: str, timestamp: str, city_name: str):
         """
         Saves the record saved in the history stack
+        :param architecture: The type of agent that was used to run the learning
+        :param timestamp: What time the learning has finished
+        :param city_name: The name of the input file that was used
         """
-        name_to_print = f'./logs/history/history_{architecture}_{timestamp}.csv'
+        name_to_print = f'./logs/history/history_{architecture}_{timestamp}_{city_name}.csv'
         df = pd.DataFrame(np.array(self.history), columns=['start', 'end', 'action', 'reward'])
         df.to_csv(name_to_print, sep='\t', index=False, header=True)
         print(f'Successful print to {name_to_print}')

@@ -1,4 +1,5 @@
 digraph "gnn_embed"{
+    graph [dpi = 300];
     // Node definitions
     state [label = "state"]
     start [label = "start"]

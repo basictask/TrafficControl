@@ -90,7 +90,7 @@ timestamp = str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
 city_name = os.path.splitext(os.path.basename(env.reader.filepath))[0]
 
 # Save history
-agent.save_history(architecture, timestamp)
+agent.save_history(architecture, timestamp, city_name)
 
 # Scores history
 plt.Figure(figsize=(6, 6))

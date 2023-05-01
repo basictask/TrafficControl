@@ -1,4 +1,5 @@
 digraph "ann_singlehead" { 
+    graph [dpi = 300];
     // Label properies 
     label = "Action-prediction architecture"
     labelloc = "top"

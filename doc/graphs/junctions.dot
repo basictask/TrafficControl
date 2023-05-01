@@ -1,4 +1,5 @@
 digraph "round-table" { 
+    graph [dpi = 300];
     // Label properies 
     // label = "Conversion rates between junctions"
     // labelloc = "top"
