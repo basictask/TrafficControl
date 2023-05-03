@@ -6,6 +6,7 @@ These methods don't belong to any specific class operation and may be used acros
 from exceptions import *
 from trafficSimulator.window import Window
 from trafficSimulator.simulation import Simulation
+from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -416,3 +417,17 @@ def save_fig(fig_id: str, tight_layout: bool = True, fig_extension: str = "png",
     if tight_layout:
         plt.tight_layout()
     plt.savefig(path, format=fig_extension, dpi=resolution)
+
+
+def visualize(h: torch.tensor, color: np.array):
+    """
+    Takes a tensor as an argument and embeds it into two dimensions
+    :param h: Activations from a graph convolutional layer
+    :param color: Hue of the nodes in the final plot
+    """
+    z = TSNE(n_components=2).fit_transform(h.detach().cpu().numpy())
+    plt.figure(figsize=(10, 10))
+    plt.xticks([])
+    plt.yticks([])
+    plt.scatter(z[:, 0], z[:, 1], s=70, c=color, cmap="Set2")
+    plt.show()

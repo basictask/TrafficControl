@@ -126,11 +126,11 @@ class GraphActionNetwork(nn.Module):
         self.gc1 = GraphConvolution(1, self.n_neurons[0])
         self.gc2 = GraphConvolution(self.n_neurons[0], self.embedding_size)
 
-        self.fc1 = nn.Linear(self.input_size, self.n_neurons[0] * 2)  # States are input here
-        self.fc2 = nn.Linear(self.n_neurons[0] * 2, self.n_neurons[1] * 2)
+        self.fc1 = nn.Linear(self.input_size, self.n_neurons[0])  # States are input here
+        self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
         self.d1 = nn.Dropout(p=0.5)
-        self.fc3 = nn.Linear(self.n_neurons[1] * 2, self.n_neurons[2] * 2)
-        self.fc4 = nn.Linear(self.n_neurons[2] * 2, action_size)
+        self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
+        self.fc4 = nn.Linear(self.n_neurons[2], action_size)
 
         nn.init.xavier_uniform_(self.fc1.weight)
         nn.init.xavier_uniform_(self.fc2.weight)
@@ -190,17 +190,18 @@ class Agent:
         self.trafficlight_inbound = [int(x) for x in args['trafficlight'].get('allow_inbound').split(',')]
 
         # Setting inner parameters
-        self.error_track = []
         self.node_trace = []
-        self.history = torch.zeros(size=(0, 4))
-        self.action_size = action_size
-        self.state_high = state_high
+        self.error_track = []
+        self.current_start = None
         self.n_nodes = state_shape[0]
+        self.state_high = state_high
         self.state_shape = state_shape
+        self.action_size = action_size
+        self.history = torch.zeros(size=(0, 4))
         self.state_size = self.n_nodes * self.n_nodes
-        self.current_start = torch.randint(size=(1,), low=0, high=self.n_nodes)
         self.memory = ReplayBuffer(self.buffer_size, self.batch_size)
         self.t_step = 0  # Initialize time step (for self.update_every)
+        self.reset()
 
         # Network, optimizer and replay memory
         self.end_gcnn = GraphEndNetwork(self.n_nodes, self.n_nodes, self.embedding_size)
@@ -416,7 +417,8 @@ class Agent:
         Sets necessasry attributes to the starting values
         :return: None
         """
-        self.current_start = torch.randint(size=(1,), low=0, high=self.n_nodes)
+        # self.current_start = torch.randint(size=(1,), low=0, high=self.n_nodes)
+        self.current_start = torch.tensor([0])
 
     def save_history(self, architecture: str, timestamp: str, city_name: str):
         """

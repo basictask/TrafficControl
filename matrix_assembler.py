@@ -8,8 +8,6 @@
 █▄█   █▄█▄█ █▄▄█ █▄▄▄█ █▄▄▄█  █▄█▄▄▄█▄▄█ █▄▄█  █▄█ █▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄█   █▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄█  █▄█
 This is a supportive class that is used to construct the matrices from the segments DataFrame and the location of the points
 """
-
-import numpy as np
 from suppl import *
 
 
@@ -174,6 +172,31 @@ class Assembler:
                 paths.extend(self.dfs(g, t, seen[:], t_path))
         return paths
 
+    def select_shortest(self, paths: dict[int, list[tuple[int, int]]]) -> dict[int, list[tuple[int, int]]]:
+        """
+        Select the route that's shortest from one entry point to others
+        :param paths: Dict of paths
+        :return: Filtered paths structure
+        """
+        result = {}
+        for k in paths.keys():
+            distances = []
+            for path in paths[k]:
+                start = path[0]
+                dist_sum = 0
+                for i in range(1, len(path)):
+                    dist_sum += euclidean_distance(self.points[start], self.points[path[i]])
+                distances.append(dist_sum)
+            distances, paths_sorted = zip(*sorted(zip(distances, paths[k])))  # Sort by distance
+            paths_filtered = []
+            nodes_visited = []
+            for x in paths_sorted:
+                if not (x[-1] in nodes_visited):
+                    paths_filtered.append(x)
+                    nodes_visited.append(x[-1])
+            result[k] = paths_filtered
+        return result
+
     def gen_paths(self) -> None:
         """
         Generates all the paths between entry points
@@ -194,6 +217,7 @@ class Assembler:
                     paths[v].append(path)  # Append to the path
 
         paths = drop_empty_keys(paths)
+        paths = self.select_shortest(paths)  # Select the shortest path from each starting point to all other starting points
         path_codes = {x: [] for x in list(self.points.keys())}
         paths_dual = {x: [] for x in list(self.points.keys())}
 
