@@ -1,19 +1,19 @@
 digraph "gcnn_action" {
     graph [dpi = 300];
-    state [label = "state"]
-    start [label = "start"]
-    end [label = "end"]
-    feat [label = "node weights"]
-    adj [label = "adjacency matrix"]
+    state [label = "state\n[n_nodes*n_nodes]"]
+    start [label = "start\n[1*1]"]
+    end [label = "end\n[1*1]"]
+    feat [label = "node weights\n[1*n_nodes]"]
+    adj [label = "adjacency matrix\n[n_nodes*n_nodes]"]
     gc1 [label = "graph convolution 1", shape=box]
     gc2 [label = "graph convolution 2", shape=box]
-    start_embeds [label = "start embeddings"]
-    end_embeds [label = "end embeddings"]
-    start_feats [label = "start features"]
-    end_feats [label = "end features"]
-    h1 [label = "hidden 1", shape=box]
-    h2 [label = "hidden 2", shape=box]
-    end_q [label = "Q(s, end)", shape=box]
+    start_embeds [label = "start embeddings\n[1*embedding_size]"]
+    end_embeds [label = "end embeddings\n[1*embedding_size]"]
+    start_feats [label = "start features\n[1*n_nodes]"]
+    end_feats [label = "end features\n[1*n_nodes]"]
+    h1 [label = "fully connected 1", shape=box]
+    h2 [label = "fully connected 2", shape=box]
+    end_q [label = "Q(s, end)\n[1*n_actions]", shape=box]
 
     state -> feat
     state -> adj

@@ -6,12 +6,12 @@ digraph dueling_architecture {
     rankdir = "LR"
 
     # Node definitions
-    MLP [label = "MLP"]
-    fc1 [label = "Fully connected"]
-    fc2 [label = "Fully connected"]
-    V_s [label = "V(s) [1*1]"]
-    A_sa [label = "A(s,a) [action_size*1]"]
-    Q_sa [label = "Q(s,a)"]
+    MLP [label = "MLP", shape=box]
+    fc1 [label = "fully connected", shape=box]
+    fc2 [label = "fully connected", shape=box]
+    V_s [label = "V(s)\n[1*1]", shape=box]
+    A_sa [label = "A(s,a)\n[action_size*1]", shape=box]
+    Q_sa [label = "Q(s,a)", shape=box]
 
     # Defining connections
     MLP -> fc1
