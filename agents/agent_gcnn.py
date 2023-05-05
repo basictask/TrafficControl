@@ -74,15 +74,14 @@ class GraphEndNetwork(nn.Module):
         self.gc2 = GraphConvolution(self.n_neurons[0], self.embedding_size)
 
         self.fc1 = nn.Linear(self.input_size, self.n_neurons[0])  # States are input here
+        self.d1 = nn.Dropout(p=0.2)
         self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
-        self.d1 = nn.Dropout(p=0.5)
-        self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
-        self.fc4 = nn.Linear(self.n_neurons[2], action_size)
+        self.d2 = nn.Dropout(p=0.5)
+        self.fc3 = nn.Linear(self.n_neurons[1], action_size)
 
         nn.init.xavier_uniform_(self.fc1.weight)
         nn.init.xavier_uniform_(self.fc2.weight)
         nn.init.xavier_uniform_(self.fc3.weight)
-        nn.init.xavier_uniform_(self.fc4.weight)
 
         check_all_attributes_initialized(self)
 
@@ -102,11 +101,10 @@ class GraphEndNetwork(nn.Module):
         edge_features = torch.cat((start_features, start_embedding), dim=-1)
         # Dense pass
         x = fn.relu(self.fc1(edge_features))
-        x = fn.relu(self.fc2(x))
         x = self.d1(x)
-        x = fn.relu(self.fc3(x))
-        end_q = fn.relu(self.fc4(x))
-        end_q = end_q.squeeze(0)
+        x = fn.relu(self.fc2(x))
+        x = self.d2(x)
+        end_q = fn.relu(self.fc3(x)).squeeze(0)
 
         # Return the output and the edge weight
         return end_q
@@ -127,15 +125,14 @@ class GraphActionNetwork(nn.Module):
         self.gc2 = GraphConvolution(self.n_neurons[0], self.embedding_size)
 
         self.fc1 = nn.Linear(self.input_size, self.n_neurons[0])  # States are input here
+        self.d1 = nn.Dropout(p=0.2)
         self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
-        self.d1 = nn.Dropout(p=0.5)
-        self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
-        self.fc4 = nn.Linear(self.n_neurons[2], action_size)
+        self.d2 = nn.Dropout(p=0.5)
+        self.fc3 = nn.Linear(self.n_neurons[1], action_size)
 
         nn.init.xavier_uniform_(self.fc1.weight)
         nn.init.xavier_uniform_(self.fc2.weight)
         nn.init.xavier_uniform_(self.fc3.weight)
-        nn.init.xavier_uniform_(self.fc4.weight)
 
         check_all_attributes_initialized(self)
 
@@ -157,11 +154,10 @@ class GraphActionNetwork(nn.Module):
         edge_features = torch.cat([start_features, end_features, start_embed, end_embed], dim=1)
         # Dense pass
         x = fn.relu(self.fc1(edge_features))
-        x = fn.relu(self.fc2(x))
         x = self.d1(x)
-        x = fn.relu(self.fc3(x))
-        action_q = fn.relu(self.fc4(x))
-        action_q = action_q.squeeze(0)
+        x = fn.relu(self.fc2(x))
+        x = self.d2(x)
+        action_q = fn.relu(self.fc3(x)).squeeze(0)
 
         # Return the output and the edge weight
         return action_q

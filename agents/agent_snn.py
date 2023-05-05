@@ -31,15 +31,14 @@ class EndNetwork(nn.Module):
         self.n_neurons = [int(x) for x in args['learning'].get('n_neurons_local').split(',')]
 
         self.fc1 = nn.Linear(self.input_size, self.n_neurons[0])  # States are input here
+        self.d1 = nn.Dropout(p=0.2)
         self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
         self.d2 = nn.Dropout(p=0.5)
-        self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
-        self.fc4 = nn.Linear(self.n_neurons[2], action_size)
+        self.fc3 = nn.Linear(self.n_neurons[1], action_size)
 
         nn.init.xavier_uniform_(self.fc1.weight)
         nn.init.xavier_uniform_(self.fc2.weight)
         nn.init.xavier_uniform_(self.fc3.weight)
-        nn.init.xavier_uniform_(self.fc4.weight)
 
         check_all_attributes_initialized(self)
 
@@ -50,11 +49,10 @@ class EndNetwork(nn.Module):
         edge_features = torch.cat([start_outgoing, start_incoming], dim=-1)
         # Dense pass
         x = fn.relu(self.fc1(edge_features))
+        x = self.d1(x)
         x = fn.relu(self.fc2(x))
         x = self.d2(x)
-        x = fn.relu(self.fc3(x))
-        end_q = fn.relu(self.fc4(x))
-        end_q = end_q.squeeze(0)
+        end_q = fn.relu(self.fc3(x)).squeeze(0)
 
         # Return the output and the edge weight
         return end_q
@@ -67,22 +65,18 @@ class ActionNetwork(nn.Module):
         # Inner parameters
         self.n_nodes = n_nodes
         self.input_size = 4 * self.n_nodes
-        self.n_neurons = [int(x) for x in args['learning'].get('n_neurons_local').split(',')]
+        self.n_neurons = [int(x) for x in args['learning'].get('n_neurons_target').split(',')]
 
         # Define the layers
-        self.fc1 = nn.Linear(self.input_size, self.n_neurons[0] * 2)  # States are input here
-        self.fc2 = nn.Linear(self.n_neurons[0] * 2, self.n_neurons[1] * 2)
-        self.d1 = nn.Dropout(p=0.8)
-        self.fc3 = nn.Linear(self.n_neurons[1] * 2, self.n_neurons[2] * 2)
-        self.d2 = nn.Dropout(p=0.8)
-        self.fc4 = nn.Linear(self.n_neurons[2] * 2, self.n_neurons[3] * 2)
-        self.fc5 = nn.Linear(self.n_neurons[3] * 2, action_size)
+        self.fc1 = nn.Linear(self.input_size, self.n_neurons[0])  # States are input here
+        self.d1 = nn.Dropout(p=0.2)
+        self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
+        self.d2 = nn.Dropout(p=0.5)
+        self.fc3 = nn.Linear(self.n_neurons[1], action_size)
 
         nn.init.xavier_uniform_(self.fc1.weight)
         nn.init.xavier_uniform_(self.fc2.weight)
         nn.init.xavier_uniform_(self.fc3.weight)
-        nn.init.xavier_uniform_(self.fc4.weight)
-        nn.init.xavier_uniform_(self.fc5.weight)
 
         check_all_attributes_initialized(self)
 
@@ -95,13 +89,10 @@ class ActionNetwork(nn.Module):
         edge_features = torch.cat([start_outgoing, start_incoming, end_outgoing, end_incoming], dim=-1)
         # Dense pass
         x = fn.relu(self.fc1(edge_features))
-        x = fn.relu(self.fc2(x))
         x = self.d1(x)
-        x = fn.relu(self.fc3(x))
+        x = fn.relu(self.fc2(x))
         x = self.d2(x)
-        x = fn.relu(self.fc4(x))
-        action_q = fn.relu(self.fc5(x))
-        action_q = action_q.squeeze(0)
+        action_q = fn.relu(self.fc3(x)).squeeze(0)
 
         # Return the output and the edge weight
         return action_q
@@ -132,14 +123,16 @@ class Agent:
         # Setting inner parameters
         self.error_track = []
         self.node_trace = []
+        self.current_start = None
         self.state_high = state_high
         self.n_nodes = state_shape[0]
         self.state_shape = state_shape
         self.action_size = action_size
+        self.history = torch.zeros(size=(0, 4))
         self.state_size = self.n_nodes * self.n_nodes
-        self.current_start = torch.randint(size=(1,), low=0, high=self.n_nodes)
         self.memory = ReplayBuffer(self.buffer_size, self.batch_size)
         self.t_step = 0  # Initialize time step (for self.update_every)
+        self.reset()
 
         # Network, optimizer and replay memory
         self.end_nn = EndNetwork(self.n_nodes, self.n_nodes)
@@ -295,6 +288,7 @@ class Agent:
         if reward != 0:  # Skip adding the initial reward of 0 (as it's a delta)
             self.memory.add(state, start, end, action, reward, next_state, int(successful))  # Save experience in replay memory
             self.t_step = (self.t_step + 1) % self.update_every  # Update the time step
+            self.history = torch.vstack([self.history, torch.tensor([start, end, action, reward])])
 
         if self.t_step == 0 and len(self.memory) > self.batch_size:  # If there's enough experience in the memory we will sample it and learn
             self.learn()
@@ -354,7 +348,19 @@ class Agent:
         Sets necessasry attributes to the starting values
         :return: None
         """
-        pass
+        self.current_start = torch.tensor([0])
+
+    def save_history(self, architecture: str, timestamp: str, city_name: str):
+        """
+        Saves the record saved in the history stack
+        :param architecture: The type of agent that was used to run the learning
+        :param timestamp: What time the learning has finished
+        :param city_name: The name of the input file that was used
+        """
+        name_to_print = f'./logs/history/history_{architecture}_{timestamp}_{city_name}.csv'
+        df = pd.DataFrame(np.array(self.history), columns=['start', 'end', 'action', 'reward'])
+        df.to_csv(name_to_print, sep='\t', index=False, header=True)
+        print(f'Successful print to {name_to_print}')
 
     def save_models(self) -> None:
         """

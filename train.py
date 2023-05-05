@@ -14,9 +14,7 @@ import pandas as pd
 from suppl import ACTIONS, HISTORY_PATH, apply_decay, save_fig
 from trial_functions import play_one_episode
 from environment import Environment
-# from agents.agent_gnn2 import Agent
 from agents.agent_gcnn import Agent
-# from agents.agent_dualgcnn import Agent
 # from agents.agent_snn import Agent
 # from agents.agent_enn import Agent
 import matplotlib.pyplot as plt
