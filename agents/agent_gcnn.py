@@ -60,7 +60,17 @@ class GraphConvolution(Module):
 
 
 class GraphEndNetwork(nn.Module):
+    """
+    GCNN architecture to predict the ending node based on the state-definition matrix and the starting node
+    """
     def __init__(self, n_nodes: int, action_size: int, embedding_size: int):
+        """
+        Set up the neural network
+        The input size is of the number of nodes + the embedding size
+        :param n_nodes: Number of junctions in the city map
+        :param action_size: The output of the neural network
+        :param embedding_size: Size of output for the graph convolutional layers
+        """
         super(GraphEndNetwork, self).__init__()
 
         # Inner parameters
@@ -86,6 +96,11 @@ class GraphEndNetwork(nn.Module):
         check_all_attributes_initialized(self)
 
     def forward(self, state: torch.tensor, start: torch.tensor) -> torch.tensor:
+        """
+        Graph convolution and dense layers to predict the ending nodes
+        :param state: State-definition matrix
+        :param start: Index of the starting node
+        """
         # Preprocessing
         x = torch.diag(state).unsqueeze(1).float()
         state_clone = state.clone()
@@ -109,9 +124,35 @@ class GraphEndNetwork(nn.Module):
         # Return the output and the edge weight
         return end_q
 
+    def get_embeddings(self, state: torch.tensor) -> np.array:
+        """
+        Returns the embeddings of the graph convolutional layers without the dense pass
+        :param state: State-definition matrix
+        """
+        # Preprocessing
+        x = torch.diag(state).unsqueeze(1).float()
+        state_clone = state.clone()
+        adj = state_clone.detach().fill_diagonal_(0).float().requires_grad_(True)
+        # Convolutional pass
+        x = fn.relu(self.gc1(x, adj))
+        x = fn.dropout(x, training=self.training, p=0.5)
+        x = fn.relu(self.gc2(x, adj))
+        embeds = fn.log_softmax(x, dim=1).detach().numpy()
+        return embeds
+
 
 class GraphActionNetwork(nn.Module):
+    """
+    GCNN architecture to predict the ending node based on the state-definition matrix and the starting node
+    """
     def __init__(self, n_nodes: int, action_size: int, embedding_size: int):
+        """
+        Set up the neural network
+        The input size is of the number of 2 * (nodes + the embedding size)
+        :param n_nodes: Number of junctions in the city map
+        :param action_size: The output of the neural network
+        :param embedding_size: Size of output for the graph convolutional layers
+        """
         super(GraphActionNetwork, self).__init__()
 
         # Inner parameters
@@ -137,6 +178,12 @@ class GraphActionNetwork(nn.Module):
         check_all_attributes_initialized(self)
 
     def forward(self, state: torch.tensor, start: torch.tensor, end: torch.tensor) -> torch.tensor:
+        """
+        Graph convolution and dense layers to predict the action Q-values
+        :param state: State-definition matrix
+        :param start: Index of the starting node
+        :param end: Index of the ending node
+        """
         # Preprocessing
         x = torch.diag(state).unsqueeze(1).float()
         state_clone = state.clone()
@@ -161,6 +208,22 @@ class GraphActionNetwork(nn.Module):
 
         # Return the output and the edge weight
         return action_q
+
+    def get_embeddings(self, state: torch.tensor) -> np.array:
+        """
+        Returns the embeddings of the graph convolutional layers without the dense pass
+        :param state: State-definition matrix
+        """
+        # Preprocessing
+        x = torch.diag(state).unsqueeze(1).float()
+        state_clone = state.clone()
+        adj = state_clone.detach().fill_diagonal_(0).float().requires_grad_(True)
+        # Convolutional pass
+        x = fn.relu(self.gc1(x, adj))
+        x = fn.dropout(x, training=self.training, p=0.5)
+        x = fn.relu(self.gc2(x, adj))
+        embeds = fn.log_softmax(x, dim=1).detach().numpy()
+        return embeds
 
 
 class Agent:
@@ -427,6 +490,31 @@ class Agent:
         df = pd.DataFrame(np.array(self.history), columns=['start', 'end', 'action', 'reward'])
         df.to_csv(name_to_print, sep='\t', index=False, header=True)
         print(f'Successful print to {name_to_print}')
+
+    def save_embeddings(self, e: int, timestamp: str, state: pd.DataFrame) -> None:
+        """
+        Passes the state through the convolutional layers and saves it to a directory
+        :param e: Current episode index
+        :param timestamp: Timestamp to print onto the file
+        :param state: Current state of the environment
+        """
+        state_tensor = torch.tensor(np.array(state), dtype=torch.float32)
+        trained = 'untrained' if e == 0 else f'trained_{e}'
+
+        self.end_gcnn.eval()
+        self.action_gcnn.eval()
+
+        with torch.no_grad():
+            end_embeddings = self.end_gcnn.get_embeddings(state_tensor)
+            df_end = pd.DataFrame(end_embeddings)
+            df_end.to_csv(f'./logs/embeddings/gcnn_end_embeddings_{trained}_{timestamp}.csv', sep='\t', header=False, index=False)
+
+            action_embeddings = self.action_gcnn.get_embeddings(state_tensor)
+            df_action = pd.DataFrame(action_embeddings)
+            df_action.to_csv(f'./logs/embeddings/gcnn_action_embeddings_{trained}_{timestamp}.csv', sep='\t', header=False, index=False)
+
+        self.end_gcnn.train()
+        self.action_gcnn.train()
 
     def save_models(self) -> None:
         """

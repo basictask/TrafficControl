@@ -11,7 +11,7 @@ This is the file used to train the reinforcement learning agent.
 import pandas as pd
 
 # Imports
-from suppl import ACTIONS, HISTORY_PATH, apply_decay, save_fig
+from suppl import ACTIONS, HISTORY_PATH, apply_decay, save_fig, save_agent_embeddings
 from trial_functions import play_one_episode
 from environment import Environment
 from agents.agent_gcnn import Agent
@@ -23,11 +23,13 @@ import configparser
 import numpy as np
 import datetime
 import os
+
 # Additional settings
 plt.rcParams["font.family"] = "serif"
 plt.rcParams["font.serif"] = ["Times New Roman"]
 args = configparser.ConfigParser()
 args.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini'))
+timestamp = str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
 
 #%% Read the parameters from the configuration file
 
@@ -48,9 +50,11 @@ env = Environment()
 agent = Agent(env.state_shape, env.action_shape, env.state_high)
 
 for e in range(n_episodes):
-    state = env.reset()
-    agent.reset()
     score = 0
+    agent.reset()
+    state = env.reset()
+    save_agent_embeddings(agent, e, n_episodes, timestamp, state)
+
     for t in range(max_t):
         # Choose action based on state
         start, end, action, was_random = agent.act(state, eps)
@@ -84,7 +88,6 @@ for e in range(n_episodes):
 
 # Info
 architecture = agent.__module__.split('.')[-1]
-timestamp = str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
 city_name = os.path.splitext(os.path.basename(env.reader.filepath))[0]
 
 # Save history

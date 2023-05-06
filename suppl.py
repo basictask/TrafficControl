@@ -431,3 +431,17 @@ def visualize(h: torch.tensor, color: np.array):
     plt.yticks([])
     plt.scatter(z[:, 0], z[:, 1], s=70, c=color, cmap="Set2")
     plt.show()
+
+
+def save_agent_embeddings(agent, e: int, n_episodes: int, timestamp: str, state: pd.DataFrame) -> None:
+    """
+    Saves the embeddings of the agent to the ./logs/embeddings folder
+    :param agent: The agent object (that implements the save_embeddings method)
+    :param e: Current episode index
+    :param n_episodes: Total number of episodes
+    :param timestamp: Timestamp to print onto the file
+    :param state: Current state of the environment
+    """
+    if e == 0 or e == n_episodes - 1:
+        if 'save_embeddings' in dir(agent):
+            agent.save_embeddings(e, timestamp, state)

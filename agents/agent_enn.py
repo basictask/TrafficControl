@@ -58,6 +58,10 @@ class EndNetwork(nn.Module):
         # Return the output and the edge weight
         return end_q
 
+    def get_embeddings(self) -> np.array:
+        node_embeddings = self.node_embedding(torch.arange(self.n_nodes))
+        return np.array(node_embeddings)
+
 
 class ActionNetwork(nn.Module):
     def __init__(self, n_nodes: int, action_size: int, embedding_size: int):
@@ -97,6 +101,10 @@ class ActionNetwork(nn.Module):
 
         # Return the output and the edge weight
         return action_q
+
+    def get_embeddings(self) -> np.array:
+        node_embeddings = self.node_embedding(torch.arange(self.n_nodes))
+        return np.array(node_embeddings)
 
 
 class Agent:
@@ -360,6 +368,30 @@ class Agent:
         df = pd.DataFrame(np.array(self.history), columns=['start', 'end', 'action', 'reward'])
         df.to_csv(name_to_print, sep='\t', index=False, header=True)
         print(f'Successful print to {name_to_print}')
+
+    def save_embeddings(self, e: int, timestamp: str, _) -> None:
+        """
+        Passes the state through the convolutional layers and saves it to a directory
+        :param e: Current episode index
+        :param timestamp: Timestamp to print onto the file
+        :param _: State gets passed at this point but it doesn't get used
+        """
+        trained = 'untrained' if e == 0 else f'trained_{e}'
+
+        self.end_nn.eval()
+        self.action_nn.eval()
+
+        with torch.no_grad():
+            end_embeddings = self.end_nn.get_embeddings()
+            df_end = pd.DataFrame(end_embeddings)
+            df_end.to_csv(f'./logs/embeddings/enn_end_embeddings_{trained}_{timestamp}.csv', sep='\t', header=False, index=False)
+
+            action_embeddings = self.action_nn.get_embeddings()
+            df_action = pd.DataFrame(action_embeddings)
+            df_action.to_csv(f'./logs/embeddings/enn_action_embeddings_{trained}_{timestamp}.csv', sep='\t', header=False, index=False)
+
+        self.end_nn.train()
+        self.action_nn.train()
 
     def save_models(self) -> None:
         """
