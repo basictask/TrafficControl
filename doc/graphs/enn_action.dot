@@ -1,0 +1,20 @@
+digraph "enn_action" {
+    graph [dpi = 300];
+    state [label = "state\n[n_nodes*n_nodes]"]
+    start [label = "start\n[1*1]"]
+    end [label = "end\n[1*1]"]
+    start_embeds [label = "start embeddings\n[1*embedding_size]"]
+    end_embeds [label = "end embeddings\n[1*embedding_size]"]
+    h1 [label = "fully connected 1", shape=box]
+    h2 [label = "fully connected 2", shape=box]
+    end_q [label = "Q(s, action)\n[1*n_actions]", shape=box]
+
+    state -> start_embeds
+    state -> end_embeds
+    start -> start_embeds
+    end -> end_embeds
+    start_embeds -> h1
+    end_embeds -> h1
+    h1 -> h2
+    h2 -> end_q
+}

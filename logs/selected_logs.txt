@@ -1,0 +1,22 @@
+test_5_intersection
+	GCNN
+		history_agent_gcnn_2023-05-03_23-33_test_5_intersection.csv
+		scores_log_agent_gcnn_2023-05-03_23-33_test_5_intersection.csv
+	ENN
+		history_agent_enn_2023-05-04_12-37_test_5_intersection.csv
+		scores_log_agent_enn_2023-05-04_12-37_test_5_intersection.csv
+	SNN
+		history_agent_snn_2023-05-04_14-28_test_5_intersection.csv
+		scores_log_agent_snn_2023-05-04_14-28_test_5_intersection.csv
+
+test_5_intersection_empty
+	GCNN
+		history_agent_gcnn_2023-05-01_14-21_test_5_intersection_empty.csv
+		scores_log_agent_gcnn_2023-05-01_14-21_test_5_intersection_empty.csv
+	ENN
+		history_agent_enn_2023-05-04_22-59_test_5_intersection_empty.csv
+		scores_log_agent_enn_2023-05-04_22-59_test_5_intersection_empty.csv
+	SNN
+		history_agent_snn_2023-05-04_20-30_test_5_intersection_empty.csv
+		scores_log_agent_snn_2023-05-04_20-30_test_5_intersection_empty.csv
+		

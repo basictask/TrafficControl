@@ -13,7 +13,7 @@ digraph "gcnn_action" {
     end_feats [label = "end features\n[1*n_nodes]"]
     h1 [label = "fully connected 1", shape=box]
     h2 [label = "fully connected 2", shape=box]
-    end_q [label = "Q(s, end)\n[1*n_actions]", shape=box]
+    end_q [label = "Q(s, action)\n[1*n_actions]", shape=box]
 
     state -> feat
     state -> adj
