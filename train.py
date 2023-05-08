@@ -14,9 +14,9 @@ import pandas as pd
 from suppl import ACTIONS, HISTORY_PATH, apply_decay, save_fig, save_agent_embeddings
 from trial_functions import play_one_episode
 from environment import Environment
-from agents.agent_gcnn import Agent
+# from agents.agent_gcnn import Agent
 # from agents.agent_snn import Agent
-# from agents.agent_enn import Agent
+from agents.agent_enn import Agent
 import matplotlib.pyplot as plt
 from collections import deque
 import configparser
@@ -92,6 +92,7 @@ city_name = os.path.splitext(os.path.basename(env.reader.filepath))[0]
 
 # Save history
 agent.save_history(architecture, timestamp, city_name)
+agent.save_stacks(architecture, timestamp, city_name)
 
 # Scores history
 plt.Figure(figsize=(6, 6))

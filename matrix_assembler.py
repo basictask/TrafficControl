@@ -217,7 +217,7 @@ class Assembler:
                     paths[v].append(path)  # Append to the path
 
         paths = drop_empty_keys(paths)
-        paths = self.select_shortest(paths)  # Select the shortest path from each starting point to all other starting points
+        #paths = self.select_shortest(paths)  # Select the shortest path from each starting point to all other starting points
         path_codes = {x: [] for x in list(self.points.keys())}
         paths_dual = {x: [] for x in list(self.points.keys())}
 

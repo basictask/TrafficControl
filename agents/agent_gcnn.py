@@ -84,14 +84,15 @@ class GraphEndNetwork(nn.Module):
         self.gc2 = GraphConvolution(self.n_neurons[0], self.embedding_size)
 
         self.fc1 = nn.Linear(self.input_size, self.n_neurons[0])  # States are input here
-        self.d1 = nn.Dropout(p=0.2)
         self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
-        self.d2 = nn.Dropout(p=0.5)
-        self.fc3 = nn.Linear(self.n_neurons[1], action_size)
+        self.d1 = nn.Dropout(p=0.5)
+        self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
+        self.fc4 = nn.Linear(self.n_neurons[2], action_size)
 
         nn.init.xavier_uniform_(self.fc1.weight)
         nn.init.xavier_uniform_(self.fc2.weight)
         nn.init.xavier_uniform_(self.fc3.weight)
+        nn.init.xavier_uniform_(self.fc4.weight)
 
         check_all_attributes_initialized(self)
 
@@ -116,10 +117,11 @@ class GraphEndNetwork(nn.Module):
         edge_features = torch.cat((start_features, start_embedding), dim=-1)
         # Dense pass
         x = fn.relu(self.fc1(edge_features))
-        x = self.d1(x)
         x = fn.relu(self.fc2(x))
-        x = self.d2(x)
-        end_q = fn.relu(self.fc3(x)).squeeze(0)
+        x = self.d1(x)
+        x = fn.relu(self.fc3(x))
+        end_q = fn.relu(self.fc4(x))
+        end_q = end_q.squeeze(0)
 
         # Return the output and the edge weight
         return end_q
@@ -166,14 +168,15 @@ class GraphActionNetwork(nn.Module):
         self.gc2 = GraphConvolution(self.n_neurons[0], self.embedding_size)
 
         self.fc1 = nn.Linear(self.input_size, self.n_neurons[0])  # States are input here
-        self.d1 = nn.Dropout(p=0.2)
         self.fc2 = nn.Linear(self.n_neurons[0], self.n_neurons[1])
-        self.d2 = nn.Dropout(p=0.5)
-        self.fc3 = nn.Linear(self.n_neurons[1], action_size)
+        self.d1 = nn.Dropout(p=0.5)
+        self.fc3 = nn.Linear(self.n_neurons[1], self.n_neurons[2])
+        self.fc4 = nn.Linear(self.n_neurons[2], action_size)
 
         nn.init.xavier_uniform_(self.fc1.weight)
         nn.init.xavier_uniform_(self.fc2.weight)
         nn.init.xavier_uniform_(self.fc3.weight)
+        nn.init.xavier_uniform_(self.fc4.weight)
 
         check_all_attributes_initialized(self)
 
@@ -201,10 +204,11 @@ class GraphActionNetwork(nn.Module):
         edge_features = torch.cat([start_features, end_features, start_embed, end_embed], dim=1)
         # Dense pass
         x = fn.relu(self.fc1(edge_features))
-        x = self.d1(x)
         x = fn.relu(self.fc2(x))
-        x = self.d2(x)
-        action_q = fn.relu(self.fc3(x)).squeeze(0)
+        x = self.d1(x)
+        x = fn.relu(self.fc3(x))
+        action_q = fn.relu(self.fc4(x))
+        action_q = action_q.squeeze(0)
 
         # Return the output and the edge weight
         return action_q
@@ -258,6 +262,8 @@ class Agent:
         self.action_size = action_size
         self.history = torch.zeros(size=(0, 4))
         self.state_size = self.n_nodes * self.n_nodes
+        self.node_stack = torch.zeros(size=(0, self.n_nodes))
+        self.action_stack = torch.zeros(size=(0, self.action_size))
         self.memory = ReplayBuffer(self.buffer_size, self.batch_size)
         self.t_step = 0  # Initialize time step (for self.update_every)
         self.reset()
@@ -301,11 +307,14 @@ class Agent:
                 for i in range(len(self.node_trace)):
                     end_q[self.node_trace[i]] = float('-inf')
 
+                self.node_stack = torch.vstack([self.node_stack, end_q])
+
                 end_i = torch.argmax(end_q).unsqueeze(-1)
                 self.current_start = end_i
 
                 action_q = self.action_gcnn(state_tensor, start_i, end_i)
                 action_q = self.get_valid_actions(start_i, end_i, action_q, state)
+                self.action_stack = torch.vstack([self.action_stack, action_q])
                 action_i = torch.argmax(action_q, dim=-1, keepdim=True)
 
             self.end_gcnn.train()  # Put into train mode
@@ -478,6 +487,23 @@ class Agent:
         """
         # self.current_start = torch.randint(size=(1,), low=0, high=self.n_nodes)
         self.current_start = torch.tensor([0])
+
+    def save_stacks(self, architecture: str, timestamp: str, city_name: str):
+        """
+        Saves the variables node_stack and action_stack to the logs folder
+        :param architecture: The type of agent that was used to run the learning
+        :param timestamp: What time the learning has finished
+        :param city_name: The name of the input file that was used
+        """
+        name_to_print = f'./logs/history/node_stack_{architecture}_{timestamp}_{city_name}.csv'
+        df = pd.DataFrame(np.array(self.node_stack))
+        df.to_csv(name_to_print, sep='\t', index=False, header=False)
+        print(f'Successful print to {name_to_print}')
+
+        name_to_print = f'./logs/history/action_stack_{architecture}_{timestamp}_{city_name}.csv'
+        df = pd.DataFrame(np.array(self.action_stack))
+        df.to_csv(name_to_print, sep='\t', index=False, header=False)
+        print(f'Successful print to {name_to_print}')
 
     def save_history(self, architecture: str, timestamp: str, city_name: str):
         """

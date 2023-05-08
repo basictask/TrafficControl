@@ -139,6 +139,8 @@ class Agent:
         self.action_size = action_size
         self.history = torch.zeros(size=(0, 4))
         self.state_size = self.n_nodes * self.n_nodes
+        self.node_stack = torch.zeros(size=(0, self.n_nodes))
+        self.action_stack = torch.zeros(size=(0, self.action_size))
         self.memory = ReplayBuffer(self.buffer_size, self.batch_size)
         self.t_step = 0  # Initialize time step (for self.update_every)
         self.reset()
@@ -180,11 +182,14 @@ class Agent:
                 for i in range(len(self.node_trace)):
                     end_q[self.node_trace[i]] = float('-inf')
 
+                self.node_stack = torch.vstack([self.node_stack, end_q])
+
                 end_i = torch.argmax(end_q).unsqueeze(-1)
                 self.current_start = end_i
 
                 action_q = self.action_nn(start_i, end_i)
                 action_q = self.get_valid_actions(start_i, end_i, action_q, state)
+                self.action_stack = torch.vstack([self.action_stack, action_q])
                 action_i = torch.argmax(action_q, dim=-1, keepdim=True)
 
             self.end_nn.train()  # Put into train mode
@@ -356,6 +361,23 @@ class Agent:
         :return: None
         """
         self.current_start = torch.tensor([0])
+
+    def save_stacks(self, architecture: str, timestamp: str, city_name: str):
+        """
+        Saves the variables node_stack and action_stack to the logs folder
+        :param architecture: The type of agent that was used to run the learning
+        :param timestamp: What time the learning has finished
+        :param city_name: The name of the input file that was used
+        """
+        name_to_print = f'./logs/history/node_stack_{architecture}_{timestamp}_{city_name}.csv'
+        df = pd.DataFrame(np.array(self.node_stack))
+        df.to_csv(name_to_print, sep='\t', index=False, header=False)
+        print(f'Successful print to {name_to_print}')
+
+        name_to_print = f'./logs/history/action_stack_{architecture}_{timestamp}_{city_name}.csv'
+        df = pd.DataFrame(np.array(self.action_stack))
+        df.to_csv(name_to_print, sep='\t', index=False, header=False)
+        print(f'Successful print to {name_to_print}')
 
     def save_history(self, architecture: str, timestamp: str, city_name: str):
         """
