@@ -8,6 +8,11 @@ args.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config
 
 class Road:
     def __init__(self, start, end):
+        """
+        Sets up a Road object in the simulation
+        :param start: Starting coordinate (x, y) of the road
+        :param end: Ending coordinate (x, y) of the road
+        """
         self.slow_factor = args['road'].getfloat('slow_factor')
         self.slow_distance = args['road'].getint('slow_distance')
 
@@ -23,18 +28,33 @@ class Road:
         self.angle_cos = (self.end[0] - self.start[0]) / self.length
 
     def set_traffic_signal(self, signal, group):
+        """
+        Attaches a traffic signal to a given junction
+        :param signal: Signal object with the correct parameters
+        :param group: Road group that the signal will control
+        :return: None
+        """
         self.traffic_signal = signal
         self.traffic_signal_group = group
         self.has_traffic_signal = True
 
     @property
     def traffic_signal_state(self):
+        """
+        Gets the traffic signal state: True: green, False: red
+        :return: None
+        """
         if self.has_traffic_signal:
             i = self.traffic_signal_group
             return self.traffic_signal.current_cycle[i]
         return True
 
     def update(self, dt):
+        """
+        Updates the vehicle positions on the roads
+        :param dt: Time elapsed
+        :return: None
+        """
         n = len(self.vehicles)
         vehicles_distance = 0
         if n > 0:

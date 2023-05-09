@@ -4,6 +4,11 @@ from numpy.random import randint
 
 class VehicleGenerator:
     def __init__(self, sim, config=None):
+        """
+        Vehicle generators are attached to the nodes of the graph. They spawn vehicles onto roads
+        :param sim: Simulation object
+        :param config: Optional configurations
+        """
         if config is None:
             config = {}
 
@@ -34,6 +39,7 @@ class VehicleGenerator:
     def update(self) -> bool:
         """
         If time elasped after last added vehicle is greater than vehicle_period, generate a vehicle
+        :return: True: spawn happened with new vehicle, False: spawn didn't happen
         """
         if self.sim.t - self.last_added_time >= 60 / self.vehicle_rate:
             road = self.sim.roads[self.upcoming_vehicle.path[0]]      

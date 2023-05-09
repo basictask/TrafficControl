@@ -6,6 +6,11 @@ args.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config
 
 class TrafficSignal:
     def __init__(self, roads, config=None):
+        """
+        Initializes a traffic signal for a given set of roads
+        :param roads: A list of road indices by pairs. The pairs define the traffic light cycle
+        :param config: an optional simulation object that is to be passed to the signal
+        """
         if config is None:
             config = {}
 
@@ -30,9 +35,18 @@ class TrafficSignal:
 
     @property
     def current_cycle(self):
+        """
+        :return: True: the light is green, False: the light is red
+        """
         return self.cycle[self.current_cycle_index]
     
     def update(self, sim):
+        """
+        Changes the state of the traffic light cycle by stepping in the traffic light index
+        Essentially sets the index to point to the updated boolean defined in the cycle
+        :param sim: Simulation object that is to be passed to the traffic light update
+        :return: None
+        """
         cycle_length = 30
         k = (sim.t // cycle_length) % 2
         self.current_cycle_index = int(k)

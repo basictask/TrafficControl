@@ -7,6 +7,10 @@ args.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config
 
 class Vehicle:
     def __init__(self, config):
+        """
+        Sets up a vehicle object. Called by the VehicleGenerator
+        :param config: Optional Simulation object
+        """
         if config is None:
             config = {}
 
@@ -31,6 +35,12 @@ class Vehicle:
             setattr(self, attr, val)
 
     def update(self, lead, dt):
+        """
+        This is the Intelligent Driver Model implementation that defines the position of the vehicle
+        :param lead: The vehicle in front of this object
+        :param dt: Delta time variable
+        :return: Change of position on the road
+        """
         # Update position and velocity
         if self.v + self.a * dt < 0:
             x_change = 1 / 2 * self.v * self.v / self.a
@@ -56,17 +66,37 @@ class Vehicle:
         return x_change
 
     def stop(self):
+        """
+        Called when a traffic light stops a vehicle
+        :return: None
+        """
         self.stopped = True
 
     def unstop(self):
+        """
+        Called when a traffic light turns to green to the first vehicle in its stopping zone
+        :return: None
+        """
         self.stopped = False
 
     def slow(self, v):
+        """
+        Sets the maximum velocity to an updated lower velocity
+        :param v: New velocity of the vehicle
+        :return: None
+        """
         self.v_max = v
 
     def unslow(self):
+        """
+        Sets the maximum velocity to the absolute maximum (the absolute maximum is unchangable)
+        :return: None
+        """
         self.v_max = self._v_max
 
     @property
     def get__v_max(self):
+        """
+        :return: The absolute maximum velocity (float)
+        """
         return self._v_max
