@@ -1,0 +1,33 @@
+\select@language {english} \addvspace {10\p@ }
+\select@language {english} \addvspace {10\p@ }
+\select@language {english} \addvspace {10\p@ }
+\select@language {english} \contentsline {figure}{\numberline {3.1}{\ignorespaces Graph-based representation of a city\relax }}{19}{figure.caption.4}%
+\select@language {english} \contentsline {figure}{\numberline {3.2}{\ignorespaces The simulation running the same city. \relax }}{19}{figure.caption.5}%
+\select@language {english} \contentsline {figure}{\numberline {3.3}{\ignorespaces Dueling network architecture\relax }}{28}{figure.caption.12}%
+\select@language {english} \addvspace {10\p@ }
+\select@language {english} \contentsline {figure}{\numberline {4.1}{\ignorespaces Right-hand intersection in the simulation window\relax }}{38}{figure.caption.16}%
+\select@language {english} \contentsline {figure}{\numberline {4.2}{\ignorespaces Roundabout in the simulation window\relax }}{38}{figure.caption.17}%
+\select@language {english} \contentsline {figure}{\numberline {4.3}{\ignorespaces Traffic light intersection in the simulation window\relax }}{39}{figure.caption.18}%
+\select@language {english} \contentsline {figure}{\numberline {4.4}{\ignorespaces Conversion rates between junctions\relax }}{39}{figure.caption.19}%
+\select@language {english} \contentsline {figure}{\numberline {4.5}{\ignorespaces Graph convolutional network to predict the ending node\relax }}{43}{figure.caption.21}%
+\select@language {english} \contentsline {figure}{\numberline {4.6}{\ignorespaces Graph convolutional network to predict the action\relax }}{45}{figure.caption.23}%
+\select@language {english} \contentsline {figure}{\numberline {4.7}{\ignorespaces Embedding network to predict the ending node (left) and the action (right)\relax }}{47}{figure.caption.24}%
+\select@language {english} \contentsline {figure}{\numberline {4.8}{\ignorespaces State-definition based architecture to predict the ending node (left) and the action (right)\relax }}{48}{figure.caption.25}%
+\select@language {english} \addvspace {10\p@ }
+\select@language {english} \contentsline {figure}{\numberline {5.1}{\ignorespaces Predefined suboptimal environment: \emph {test\_5\_intersection}\relax }}{50}{figure.caption.26}%
+\select@language {english} \contentsline {figure}{\numberline {5.2}{\ignorespaces Predefined empty environment: \emph {test\_5\_intersection\_empty}\relax }}{50}{figure.caption.27}%
+\select@language {english} \contentsline {figure}{\numberline {5.3}{\ignorespaces Training results in the \emph {test\_5\_intersection} environment unsmoothed (top), smoothed with a 50 size window (bottom left) and total average (bottom right)\relax }}{53}{figure.caption.28}%
+\select@language {english} \contentsline {figure}{\numberline {5.4}{\ignorespaces Training results in the \emph {test\_5\_intersection} environment\relax }}{54}{figure.caption.29}%
+\select@language {english} \contentsline {figure}{\numberline {5.5}{\ignorespaces Cumulated reward for graph nodes in the \emph {test\_5\_intersection} environment\relax }}{55}{figure.caption.30}%
+\select@language {english} \contentsline {figure}{\numberline {5.6}{\ignorespaces Cumulated reward for graph nodes in the \emph {test\_5\_intersection} environment\relax }}{56}{figure.caption.31}%
+\select@language {english} \contentsline {figure}{\numberline {5.7}{\ignorespaces End embeddings for the GCNN model untrained (left) and trained (right)\relax }}{58}{figure.caption.32}%
+\select@language {english} \contentsline {figure}{\numberline {5.8}{\ignorespaces Action embeddings for the GCNN model untrained (left) and trained (right)\relax }}{58}{figure.caption.33}%
+\select@language {english} \contentsline {figure}{\numberline {5.9}{\ignorespaces End embeddings for the ENN model untrained (left) and trained (right)\relax }}{59}{figure.caption.34}%
+\select@language {english} \contentsline {figure}{\numberline {5.10}{\ignorespaces Action embeddings for the ENN model untrained (left) and trained (right)\relax }}{59}{figure.caption.35}%
+\select@language {english} \contentsline {figure}{\numberline {5.11}{\ignorespaces GCNN model, evaluation, \emph {test\_5\_intersection}\relax }}{61}{figure.caption.36}%
+\select@language {english} \contentsline {figure}{\numberline {5.12}{\ignorespaces GCNN model, evaluation, \emph {test\_5\_intersection\_empty}\relax }}{61}{figure.caption.37}%
+\select@language {english} \contentsline {figure}{\numberline {5.13}{\ignorespaces ENN model, evaluation, \emph {test\_5\_intersection}\relax }}{62}{figure.caption.38}%
+\select@language {english} \contentsline {figure}{\numberline {5.14}{\ignorespaces ENN model, evaluation, \emph {test\_5\_intersection\_empty}\relax }}{62}{figure.caption.39}%
+\select@language {english} \contentsline {figure}{\numberline {5.15}{\ignorespaces SNN model, evaluation, \emph {test\_5\_intersection}\relax }}{63}{figure.caption.40}%
+\select@language {english} \contentsline {figure}{\numberline {5.16}{\ignorespaces SNN model, evaluation, \emph {test\_5\_intersection\_empty}\relax }}{64}{figure.caption.41}%
+\select@language {english} \addvspace {10\p@ }

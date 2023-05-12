@@ -1,7 +1,5 @@
 #!/bin/bash
 
-qpdf --empty --pages head.pdf body.pdf -- combined.pdf
+cp ./latex/elteikthesis_en.pdf .
 
-mv combined.pdf 'Daniel Kuknyo - Traffic Control and Infrastructure Organization Using Reinforcement Learning.pdf'
-
-echo "done."
+mv ./elteikthesis_en.pdf ./"Daniel Kuknyo - Traffic Control and Infrestructure Organization Using Reinforcement Learning"
