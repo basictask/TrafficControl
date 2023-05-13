@@ -6,37 +6,37 @@
 \select@language {english} \contentsline {section}{\numberline {2.1}City Design}{6}{section.2.1}%
 \select@language {english} \contentsline {subsection}{\numberline {2.1.1}A brief history of the modern day street}{6}{subsection.2.1.1}%
 \select@language {english} \contentsline {subsection}{\numberline {2.1.2}The current state of city design}{8}{subsection.2.1.2}%
-\select@language {english} \contentsline {subsection}{\numberline {2.1.3}The stroad}{10}{subsection.2.1.3}%
-\select@language {english} \contentsline {section}{\numberline {2.2}Practical uses of the research}{13}{section.2.2}%
-\select@language {english} \contentsline {section}{\numberline {2.3}Deep learning in Infrastructure organization}{15}{section.2.3}%
-\select@language {english} \contentsline {subsection}{\numberline {2.3.1}The spectrum of expert areas}{15}{subsection.2.3.1}%
+\select@language {english} \contentsline {subsection}{\numberline {2.1.3}The stroad}{9}{subsection.2.1.3}%
+\select@language {english} \contentsline {section}{\numberline {2.2}Practical uses of the research}{12}{section.2.2}%
+\select@language {english} \contentsline {section}{\numberline {2.3}Deep learning in Infrastructure organization}{14}{section.2.3}%
+\select@language {english} \contentsline {subsection}{\numberline {2.3.1}The spectrum of expert areas}{14}{subsection.2.3.1}%
 \select@language {english} \contentsline {subsection}{\numberline {2.3.2}Infrastructure and building modeling}{15}{subsection.2.3.2}%
-\select@language {english} \contentsline {chapter}{\numberline {3}Methodology}{18}{chapter.3}%
-\select@language {english} \contentsline {section}{\numberline {3.1}Constructing a city }{18}{section.3.1}%
-\select@language {english} \contentsline {section}{\numberline {3.2}Intelligent driver model}{20}{section.3.2}%
-\select@language {english} \contentsline {section}{\numberline {3.3}Modes of operation}{22}{section.3.3}%
-\select@language {english} \contentsline {section}{\numberline {3.4}Reinforcement learning}{23}{section.3.4}%
-\select@language {english} \contentsline {subsection}{\numberline {3.4.1}Basics}{23}{subsection.3.4.1}%
-\select@language {english} \contentsline {subsection}{\numberline {3.4.2}Deep Q-Learning }{25}{subsection.3.4.2}%
-\select@language {english} \contentsline {chapter}{\numberline {4}Deep learning architecture}{29}{chapter.4}%
-\select@language {english} \contentsline {section}{\numberline {4.1}The modeling procedure}{29}{section.4.1}%
-\select@language {english} \contentsline {section}{\numberline {4.2}State space}{31}{section.4.2}%
-\select@language {english} \contentsline {subsection}{\numberline {4.2.1}From city to graph}{31}{subsection.4.2.1}%
-\select@language {english} \contentsline {subsection}{\numberline {4.2.2}Definition of the graph}{32}{subsection.4.2.2}%
-\select@language {english} \contentsline {section}{\numberline {4.3}Action space}{33}{section.4.3}%
-\select@language {english} \contentsline {section}{\numberline {4.4}Rewarding mechanism }{35}{section.4.4}%
-\select@language {english} \contentsline {subsection}{\numberline {4.4.1}Cost of infrastructure}{36}{subsection.4.4.1}%
-\select@language {english} \contentsline {subsection}{\numberline {4.4.2}Human factors}{40}{subsection.4.4.2}%
-\select@language {english} \contentsline {subsection}{\numberline {4.4.3}Motor vehicle aspect}{41}{subsection.4.4.3}%
-\select@language {english} \contentsline {subsection}{\numberline {4.4.4}Other considerations}{41}{subsection.4.4.4}%
-\select@language {english} \contentsline {section}{\numberline {4.5}Network architecture}{42}{section.4.5}%
-\select@language {english} \contentsline {subsection}{\numberline {4.5.1}Graph convolutional architecture}{43}{subsection.4.5.1}%
-\select@language {english} \contentsline {subsection}{\numberline {4.5.2}Embedding architecture}{46}{subsection.4.5.2}%
-\select@language {english} \contentsline {subsection}{\numberline {4.5.3}State-based architecture}{47}{subsection.4.5.3}%
-\select@language {english} \contentsline {chapter}{\numberline {5}Results}{49}{chapter.5}%
-\select@language {english} \contentsline {section}{\numberline {5.1}The testing environment}{49}{section.5.1}%
-\select@language {english} \contentsline {section}{\numberline {5.2}Episodic rewards}{51}{section.5.2}%
-\select@language {english} \contentsline {section}{\numberline {5.3}Rewards for nodes}{55}{section.5.3}%
-\select@language {english} \contentsline {section}{\numberline {5.4}Embeddings}{57}{section.5.4}%
-\select@language {english} \contentsline {section}{\numberline {5.5}Examples}{60}{section.5.5}%
-\select@language {english} \contentsline {chapter}{\numberline {6}Conclusion}{65}{chapter.6}%
+\select@language {english} \contentsline {chapter}{\numberline {3}Methodology}{17}{chapter.3}%
+\select@language {english} \contentsline {section}{\numberline {3.1}Constructing a city }{17}{section.3.1}%
+\select@language {english} \contentsline {section}{\numberline {3.2}Intelligent driver model}{19}{section.3.2}%
+\select@language {english} \contentsline {section}{\numberline {3.3}Modes of operation}{21}{section.3.3}%
+\select@language {english} \contentsline {section}{\numberline {3.4}Reinforcement learning}{22}{section.3.4}%
+\select@language {english} \contentsline {subsection}{\numberline {3.4.1}Basics}{22}{subsection.3.4.1}%
+\select@language {english} \contentsline {subsection}{\numberline {3.4.2}Deep Q-Learning }{24}{subsection.3.4.2}%
+\select@language {english} \contentsline {chapter}{\numberline {4}Deep learning architecture}{28}{chapter.4}%
+\select@language {english} \contentsline {section}{\numberline {4.1}The modeling procedure}{28}{section.4.1}%
+\select@language {english} \contentsline {section}{\numberline {4.2}State space}{30}{section.4.2}%
+\select@language {english} \contentsline {subsection}{\numberline {4.2.1}From city to graph}{30}{subsection.4.2.1}%
+\select@language {english} \contentsline {subsection}{\numberline {4.2.2}Definition of the graph}{31}{subsection.4.2.2}%
+\select@language {english} \contentsline {section}{\numberline {4.3}Action space}{32}{section.4.3}%
+\select@language {english} \contentsline {section}{\numberline {4.4}Rewarding mechanism }{34}{section.4.4}%
+\select@language {english} \contentsline {subsection}{\numberline {4.4.1}Cost of infrastructure}{35}{subsection.4.4.1}%
+\select@language {english} \contentsline {subsection}{\numberline {4.4.2}Human factors}{39}{subsection.4.4.2}%
+\select@language {english} \contentsline {subsection}{\numberline {4.4.3}Motor vehicle aspect}{40}{subsection.4.4.3}%
+\select@language {english} \contentsline {subsection}{\numberline {4.4.4}Other considerations}{40}{subsection.4.4.4}%
+\select@language {english} \contentsline {section}{\numberline {4.5}Network architecture}{41}{section.4.5}%
+\select@language {english} \contentsline {subsection}{\numberline {4.5.1}Graph convolutional architecture}{42}{subsection.4.5.1}%
+\select@language {english} \contentsline {subsection}{\numberline {4.5.2}Embedding architecture}{45}{subsection.4.5.2}%
+\select@language {english} \contentsline {subsection}{\numberline {4.5.3}State-based architecture}{46}{subsection.4.5.3}%
+\select@language {english} \contentsline {chapter}{\numberline {5}Results}{48}{chapter.5}%
+\select@language {english} \contentsline {section}{\numberline {5.1}The testing environment}{48}{section.5.1}%
+\select@language {english} \contentsline {section}{\numberline {5.2}Episodic rewards}{50}{section.5.2}%
+\select@language {english} \contentsline {section}{\numberline {5.3}Rewards for nodes}{54}{section.5.3}%
+\select@language {english} \contentsline {section}{\numberline {5.4}Embeddings}{56}{section.5.4}%
+\select@language {english} \contentsline {section}{\numberline {5.5}Examples}{59}{section.5.5}%
+\select@language {english} \contentsline {chapter}{\numberline {6}Conclusion}{64}{chapter.6}%

@@ -1,0 +1,966 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{none/global//global/global}
+  \entry{jette2013book}{misc}{}
+    \name{author}{1}{}{%
+      {{hash=JS}{%
+         family={Jette},
+         familyi={J\bibinitperiod},
+         given={Susan},
+         giveni={S\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {SAGE Publications Sage CA: Los Angeles, CA}%
+    }
+    \strng{namehash}{JS1}
+    \strng{fullhash}{JS1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Book Review: Happy City: Transforming Our Lives through Urban
+  Design, by Charles Montgomery}
+    \field{year}{2013}
+  \endentry
+
+  \entry{williams2012tragedy}{book}{}
+    \name{author}{1}{}{%
+      {{hash=WRR}{%
+         family={Williams},
+         familyi={W\bibinitperiod},
+         given={Robert\bibnamedelima R},
+         giveni={R\bibinitperiod\bibinitdelim R\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {OUP Oxford}%
+    }
+    \strng{namehash}{WRR1}
+    \strng{fullhash}{WRR1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Tragedy, recognition, and the death of God: Studies in Hegel
+  and Nietzsche}
+    \field{year}{2012}
+  \endentry
+
+  \entry{marshall1996injuries}{article}{}
+    \name{author}{3}{}{%
+      {{hash=MC}{%
+         family={Marshall},
+         familyi={M\bibinitperiod},
+         given={C},
+         giveni={C},
+      }}%
+      {{hash=BK}{%
+         family={Boyd},
+         familyi={B\bibinitperiod},
+         given={KT},
+         giveni={K\bibinitperiod},
+      }}%
+      {{hash=MC}{%
+         family={Moran},
+         familyi={M\bibinitperiod},
+         given={CG},
+         giveni={C\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Elsevier}%
+    }
+    \strng{namehash}{MCBKMC1}
+    \strng{fullhash}{MCBKMC1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{number}{2}
+    \field{pages}{79\bibrangedash 80}
+    \field{title}{Injuries related to car crime: the joy-riding epidemic}
+    \field{volume}{27}
+    \field{journaltitle}{Injury}
+    \field{year}{1996}
+  \endentry
+
+  \entry{norton2011fighting}{book}{}
+    \name{author}{1}{}{%
+      {{hash=NPD}{%
+         family={Norton},
+         familyi={N\bibinitperiod},
+         given={Peter\bibnamedelima D},
+         giveni={P\bibinitperiod\bibinitdelim D\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Mit Press}%
+    }
+    \strng{namehash}{NPD1}
+    \strng{fullhash}{NPD1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Fighting traffic: the dawn of the motor age in the American
+  city}
+    \field{year}{2011}
+  \endentry
+
+  \entry{norton2007street}{article}{}
+    \name{author}{1}{}{%
+      {{hash=NPD}{%
+         family={Norton},
+         familyi={N\bibinitperiod},
+         given={Peter\bibnamedelima D},
+         giveni={P\bibinitperiod\bibinitdelim D\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {JSTOR}%
+    }
+    \strng{namehash}{NPD1}
+    \strng{fullhash}{NPD1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{number}{2}
+    \field{pages}{331\bibrangedash 359}
+    \field{title}{Street rivals: Jaywalking and the invention of the motor age
+  street}
+    \field{volume}{48}
+    \field{journaltitle}{Technology and culture}
+    \field{year}{2007}
+  \endentry
+
+  \entry{pucher1996united}{incollection}{}
+    \name{author}{2}{}{%
+      {{hash=PJ}{%
+         family={Pucher},
+         familyi={P\bibinitperiod},
+         given={John},
+         giveni={J\bibinitperiod},
+      }}%
+      {{hash=LC}{%
+         family={Lefevre},
+         familyi={L\bibinitperiod},
+         given={Christian},
+         giveni={C\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer}%
+    }
+    \strng{namehash}{PJLC1}
+    \strng{fullhash}{PJLC1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{booktitle}{The urban transport crisis in Europe and North America}
+    \field{pages}{175\bibrangedash 200}
+    \field{title}{The United States: the car-dependent society}
+    \field{year}{1996}
+  \endentry
+
+  \entry{parolek2020missing}{book}{}
+    \name{author}{1}{}{%
+      {{hash=PDG}{%
+         family={Parolek},
+         familyi={P\bibinitperiod},
+         given={Daniel\bibnamedelima G},
+         giveni={D\bibinitperiod\bibinitdelim G\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Island Press}%
+    }
+    \strng{namehash}{PDG1}
+    \strng{fullhash}{PDG1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Missing Middle Housing: Thinking Big and Building Small to
+  Respond to Today's Housing Crisis}
+    \field{year}{2020}
+  \endentry
+
+  \entry{milton1998relationship}{article}{}
+    \name{author}{2}{}{%
+      {{hash=MJ}{%
+         family={Milton},
+         familyi={M\bibinitperiod},
+         given={John},
+         giveni={J\bibinitperiod},
+      }}%
+      {{hash=MF}{%
+         family={Mannering},
+         familyi={M\bibinitperiod},
+         given={Fred},
+         giveni={F\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{MJMF1}
+    \strng{fullhash}{MJMF1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{The Relationship Among Highway Geometries}
+    \field{year}{1998}
+  \endentry
+
+  \entry{abdel2000modeling}{article}{}
+    \name{author}{2}{}{%
+      {{hash=AAMA}{%
+         family={Abdel-Aty},
+         familyi={A\bibinithyphendelim A\bibinitperiod},
+         given={Mohamed\bibnamedelima A},
+         giveni={M\bibinitperiod\bibinitdelim A\bibinitperiod},
+      }}%
+      {{hash=RAE}{%
+         family={Radwan},
+         familyi={R\bibinitperiod},
+         given={A\bibnamedelima Essam},
+         giveni={A\bibinitperiod\bibinitdelim E\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Elsevier}%
+    }
+    \strng{namehash}{AAMARAE1}
+    \strng{fullhash}{AAMARAE1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{number}{5}
+    \field{pages}{633\bibrangedash 642}
+    \field{title}{Modeling traffic accident occurrence and involvement}
+    \field{volume}{32}
+    \field{journaltitle}{Accident Analysis \& Prevention}
+    \field{year}{2000}
+  \endentry
+
+  \entry{decicco2006global}{book}{}
+    \name{author}{3}{}{%
+      {{hash=DJ}{%
+         family={DeCicco},
+         familyi={D\bibinitperiod},
+         given={John},
+         giveni={J\bibinitperiod},
+      }}%
+      {{hash=FF}{%
+         family={Fung},
+         familyi={F\bibinitperiod},
+         given={Freda},
+         giveni={F\bibinitperiod},
+      }}%
+      {{hash=AF}{%
+         family={An},
+         familyi={A\bibinitperiod},
+         given={Feng},
+         giveni={F\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Environmental Defense}%
+    }
+    \strng{namehash}{DJFFAF1}
+    \strng{fullhash}{DJFFAF1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Global warming on the road: the climate impact of America's
+  automobiles}
+    \field{year}{2006}
+  \endentry
+
+  \entry{gately2015cities}{article}{}
+    \name{author}{3}{}{%
+      {{hash=GCK}{%
+         family={Gately},
+         familyi={G\bibinitperiod},
+         given={Conor\bibnamedelima K},
+         giveni={C\bibinitperiod\bibinitdelim K\bibinitperiod},
+      }}%
+      {{hash=HLR}{%
+         family={Hutyra},
+         familyi={H\bibinitperiod},
+         given={Lucy\bibnamedelima R},
+         giveni={L\bibinitperiod\bibinitdelim R\bibinitperiod},
+      }}%
+      {{hash=SWI}{%
+         family={Sue\bibnamedelima Wing},
+         familyi={S\bibinitperiod\bibinitdelim W\bibinitperiod},
+         given={Ian},
+         giveni={I\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {National Acad Sciences}%
+    }
+    \strng{namehash}{GCKHLRSWI1}
+    \strng{fullhash}{GCKHLRSWI1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{number}{16}
+    \field{pages}{4999\bibrangedash 5004}
+    \field{title}{Cities, traffic, and CO2: A multidecadal assessment of
+  trends, drivers, and scaling relationships}
+    \field{volume}{112}
+    \field{journaltitle}{Proceedings of the National Academy of Sciences}
+    \field{year}{2015}
+  \endentry
+
+  \entry{marohn2021confessions}{book}{}
+    \name{author}{1}{}{%
+      {{hash=MJCL}{%
+         family={Marohn\bibnamedelima Jr},
+         familyi={M\bibinitperiod\bibinitdelim J\bibinitperiod},
+         given={Charles\bibnamedelima L},
+         giveni={C\bibinitperiod\bibinitdelim L\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {John Wiley \& Sons}%
+    }
+    \strng{namehash}{MJCL1}
+    \strng{fullhash}{MJCL1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Confessions of a Recovering Engineer: Transportation for a
+  Strong Town}
+    \field{year}{2021}
+  \endentry
+
+  \entry{marohn2012thoughts}{book}{}
+    \name{author}{1}{}{%
+      {{hash=MCL}{%
+         family={Marohn},
+         familyi={M\bibinitperiod},
+         given={Charles\bibnamedelima L},
+         giveni={C\bibinitperiod\bibinitdelim L\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {CreateSpace Independent Publishing Platform}%
+    }
+    \strng{namehash}{MCL1}
+    \strng{fullhash}{MCL1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Thoughts on building strong towns}
+    \field{year}{2012}
+  \endentry
+
+  \entry{bates2015mixed}{article}{}
+    \name{author}{4}{}{%
+      {{hash=BD}{%
+         family={Bates},
+         familyi={B\bibinitperiod},
+         given={Douglas},
+         giveni={D\bibinitperiod},
+      }}%
+      {{hash=MM}{%
+         family={Maechler},
+         familyi={M\bibinitperiod},
+         given={Martin},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=BB}{%
+         family={Bolker},
+         familyi={B\bibinitperiod},
+         given={Ben},
+         giveni={B\bibinitperiod},
+      }}%
+      {{hash=WS}{%
+         family={Walker},
+         familyi={W\bibinitperiod},
+         given={Steven},
+         giveni={S\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{BD+1}
+    \strng{fullhash}{BDMMBBWS1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{number}{1}
+    \field{pages}{1\bibrangedash 48}
+    \field{title}{Mixed-effects models using lme4}
+    \field{volume}{67}
+    \field{journaltitle}{J Stat Softw}
+    \field{year}{2015}
+  \endentry
+
+  \entry{motorvehicle2020}{article}{}
+    \name{author}{1}{}{%
+      {{hash=ANHTS}{%
+         family={Administration},
+         familyi={A\bibinitperiod},
+         given={National Highway Traffic\bibnamedelima Safety},
+         giveni={N\bibinitperiod\bibinitdelim H\bibinitperiod\bibinitdelim
+  T\bibinitperiod\bibinitdelim S\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{ANHTS1}
+    \strng{fullhash}{ANHTS1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{National Center for Statistics and Analysis. (2020,
+  December). Early estimate of motor vehicle traffic fatalities for the first 9
+  months (jan-sep) of 2020 (crash stats brief statistical summary. report No.
+  DOT HS 813 053).}
+    \field{year}{2020}
+  \endentry
+
+  \entry{marohn2019strong}{book}{}
+    \name{author}{1}{}{%
+      {{hash=MJCL}{%
+         family={Marohn\bibnamedelima Jr},
+         familyi={M\bibinitperiod\bibinitdelim J\bibinitperiod},
+         given={Charles\bibnamedelima L},
+         giveni={C\bibinitperiod\bibinitdelim L\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {John Wiley \& Sons}%
+    }
+    \strng{namehash}{MJCL1}
+    \strng{fullhash}{MJCL1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Strong towns: A bottom-up revolution to rebuild American
+  prosperity}
+    \field{year}{2019}
+  \endentry
+
+  \entry{hoult2009wireless}{inproceedings}{}
+    \name{author}{8}{}{%
+      {{hash=HN}{%
+         family={Hoult},
+         familyi={H\bibinitperiod},
+         given={Neil},
+         giveni={N\bibinitperiod},
+      }}%
+      {{hash=BPJ}{%
+         family={Bennett},
+         familyi={B\bibinitperiod},
+         given={Peter\bibnamedelima J},
+         giveni={P\bibinitperiod\bibinitdelim J\bibinitperiod},
+      }}%
+      {{hash=SI}{%
+         family={Stoianov},
+         familyi={S\bibinitperiod},
+         given={Ivan},
+         giveni={I\bibinitperiod},
+      }}%
+      {{hash=FP}{%
+         family={Fidler},
+         familyi={F\bibinitperiod},
+         given={Paul},
+         giveni={P\bibinitperiod},
+      }}%
+      {{hash=eM}{%
+         family={edo},
+         familyi={e\bibinitperiod},
+         given={Maksimovi},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=MC}{%
+         family={Middleton},
+         familyi={M\bibinitperiod},
+         given={Campbell},
+         giveni={C\bibinitperiod},
+      }}%
+      {{hash=GN}{%
+         family={Graham},
+         familyi={G\bibinitperiod},
+         given={Nigel},
+         giveni={N\bibinitperiod},
+      }}%
+      {{hash=SK}{%
+         family={Soga},
+         familyi={S\bibinitperiod},
+         given={Kenichi},
+         giveni={K\bibinitperiod},
+      }}%
+    }
+    \list{organization}{1}{%
+      {Thomas Telford Ltd}%
+    }
+    \strng{namehash}{HN+1}
+    \strng{fullhash}{HNBPJSIFPeMMCGNSK1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{booktitle}{Proceedings of the Institution of Civil Engineers-Civil
+  Engineering}
+    \field{number}{3}
+    \field{pages}{136\bibrangedash 143}
+    \field{title}{Wireless sensor networks: creating smart infrastructure}
+    \field{volume}{162}
+    \field{year}{2009}
+  \endentry
+
+  \entry{salo2021ai}{inproceedings}{}
+    \name{author}{1}{}{%
+      {{hash=SPH}{%
+         family={Salo-Pontinen},
+         familyi={S\bibinithyphendelim P\bibinitperiod},
+         given={Henrikki},
+         giveni={H\bibinitperiod},
+      }}%
+    }
+    \list{organization}{1}{%
+      {Springer}%
+    }
+    \strng{namehash}{SPH1}
+    \strng{fullhash}{SPH1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{booktitle}{International Conference on Human-Computer Interaction}
+    \field{pages}{311\bibrangedash 329}
+    \field{title}{AI Ethics-Critical Reflections on Embedding Ethical
+  Frameworks in AI Technology}
+    \field{year}{2021}
+  \endentry
+
+  \entry{sukhadia2020optimization}{article}{}
+    \name{author}{5}{}{%
+      {{hash=SA}{%
+         family={Sukhadia},
+         familyi={S\bibinitperiod},
+         given={Aayush},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=UK}{%
+         family={Upadhyay},
+         familyi={U\bibinitperiod},
+         given={Khush},
+         giveni={K\bibinitperiod},
+      }}%
+      {{hash=GM}{%
+         family={Gundeti},
+         familyi={G\bibinitperiod},
+         given={Meghashree},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=SS}{%
+         family={Shah},
+         familyi={S\bibinitperiod},
+         given={Smit},
+         giveni={S\bibinitperiod},
+      }}%
+      {{hash=SM}{%
+         family={Shah},
+         familyi={S\bibinitperiod},
+         given={Manan},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer}%
+    }
+    \strng{namehash}{SA+1}
+    \strng{fullhash}{SAUKGMSSSM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{number}{1}
+    \field{pages}{1\bibrangedash 14}
+    \field{title}{Optimization of smart traffic governance system using
+  artificial intelligence}
+    \field{volume}{5}
+    \field{journaltitle}{Augmented Human Research}
+    \field{year}{2020}
+  \endentry
+
+  \entry{wei2021recent}{article}{}
+    \name{author}{4}{}{%
+      {{hash=WH}{%
+         family={Wei},
+         familyi={W\bibinitperiod},
+         given={Hua},
+         giveni={H\bibinitperiod},
+      }}%
+      {{hash=ZG}{%
+         family={Zheng},
+         familyi={Z\bibinitperiod},
+         given={Guanjie},
+         giveni={G\bibinitperiod},
+      }}%
+      {{hash=GV}{%
+         family={Gayah},
+         familyi={G\bibinitperiod},
+         given={Vikash},
+         giveni={V\bibinitperiod},
+      }}%
+      {{hash=LZ}{%
+         family={Li},
+         familyi={L\bibinitperiod},
+         given={Zhenhui},
+         giveni={Z\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {ACM New York, NY, USA}%
+    }
+    \strng{namehash}{WH+1}
+    \strng{fullhash}{WHZGGVLZ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{number}{2}
+    \field{pages}{12\bibrangedash 18}
+    \field{title}{Recent advances in reinforcement learning for traffic signal
+  control: A survey of models and evaluation}
+    \field{volume}{22}
+    \field{journaltitle}{ACM SIGKDD Explorations Newsletter}
+    \field{year}{2021}
+  \endentry
+
+  \entry{kangari1990automation}{article}{}
+    \name{author}{2}{}{%
+      {{hash=KR}{%
+         family={Kangari},
+         familyi={K\bibinitperiod},
+         given={Roozbeh},
+         giveni={R\bibinitperiod},
+      }}%
+      {{hash=YT}{%
+         family={Yoshida},
+         familyi={Y\bibinitperiod},
+         given={Tetsuji},
+         giveni={T\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Elsevier}%
+    }
+    \strng{namehash}{KRYT1}
+    \strng{fullhash}{KRYT1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{number}{4}
+    \field{pages}{327\bibrangedash 335}
+    \field{title}{Automation in construction}
+    \field{volume}{6}
+    \field{journaltitle}{Robotics and autonomous systems}
+    \field{year}{1990}
+  \endentry
+
+  \entry{sacks2020building}{article}{}
+    \name{author}{3}{}{%
+      {{hash=SR}{%
+         family={Sacks},
+         familyi={S\bibinitperiod},
+         given={Rafael},
+         giveni={R\bibinitperiod},
+      }}%
+      {{hash=GM}{%
+         family={Girolami},
+         familyi={G\bibinitperiod},
+         given={Mark},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=BI}{%
+         family={Brilakis},
+         familyi={B\bibinitperiod},
+         given={Ioannis},
+         giveni={I\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Elsevier}%
+    }
+    \strng{namehash}{SRGMBI1}
+    \strng{fullhash}{SRGMBI1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{pages}{100011}
+    \field{title}{Building information modelling, artificial intelligence and
+  construction tech}
+    \field{volume}{4}
+    \field{journaltitle}{Developments in the Built Environment}
+    \field{year}{2020}
+  \endentry
+
+  \entry{andersen2018state}{article}{}
+    \name{author}{2}{}{%
+      {{hash=AK}{%
+         family={Andersen},
+         familyi={A\bibinitperiod},
+         given={K},
+         giveni={K},
+      }}%
+      {{hash=FT}{%
+         family={Forr},
+         familyi={F\bibinitperiod},
+         given={T},
+         giveni={T},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Jones Lang LaSalle IP, Inc.}%
+    }
+    \strng{namehash}{AKFT1}
+    \strng{fullhash}{AKFT1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{The State of Construction Technology}
+    \field{year}{2018}
+  \endentry
+
+  \entry{geogebra2017geogebra}{article}{}
+    \name{author}{1}{}{%
+      {{hash=GF}{%
+         family={GeoGebra},
+         familyi={G\bibinitperiod},
+         given={Fermez},
+         giveni={F\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{GF1}
+    \strng{fullhash}{GF1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{GeoGebra n}
+    \field{year}{2017}
+  \endentry
+
+  \entry{treiber2000congested}{article}{}
+    \name{author}{3}{}{%
+      {{hash=TM}{%
+         family={Treiber},
+         familyi={T\bibinitperiod},
+         given={Martin},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=HA}{%
+         family={Hennecke},
+         familyi={H\bibinitperiod},
+         given={Ansgar},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=HD}{%
+         family={Helbing},
+         familyi={H\bibinitperiod},
+         given={Dirk},
+         giveni={D\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {APS}%
+    }
+    \strng{namehash}{TMHAHD1}
+    \strng{fullhash}{TMHAHD1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{number}{2}
+    \field{pages}{1805}
+    \field{title}{Congested traffic states in empirical observations and
+  microscopic simulations}
+    \field{volume}{62}
+    \field{journaltitle}{Physical review E}
+    \field{year}{2000}
+  \endentry
+
+  \entry{Sutton2018}{book}{}
+    \name{author}{2}{}{%
+      {{hash=SRS}{%
+         family={Sutton},
+         familyi={S\bibinitperiod},
+         given={Richard\bibnamedelima S.},
+         giveni={R\bibinitperiod\bibinitdelim S\bibinitperiod},
+      }}%
+      {{hash=BAG}{%
+         family={Barto},
+         familyi={B\bibinitperiod},
+         given={Andrew\bibnamedelima G.},
+         giveni={A\bibinitperiod\bibinitdelim G\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{SRSBAG1}
+    \strng{fullhash}{SRSBAG1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{abstract}{%
+    This chapter provides a concise introduction to Reinforcement Learning (RL)
+  from a machine learning perspective. It provides the required background to
+  understand the chapters related to RL in this book. It makes no assumption on
+  previous knowledge in this research area and includes short descriptions of
+  some of the latest trends, which are normally excluded from other
+  introductions or overviews on RL. The chapter provides more emphasis on the
+  general conceptual framework and ideas of RL rather than on presenting a
+  rigorous mathematical discussion that may require a great deal of effort by
+  the reader. The first section provides a general introduction to the area.
+  The following section describes the most common solution techniques. In the
+  third section, some of the most recent techniques proposed to deal with large
+  search spaces are described. Finally, the last section provides some final
+  remarks and current research challenges in RL. {\textcopyright} 2012, IGI
+  Global.%
+    }
+    \field{isbn}{9780262039246}
+    \field{pages}{481}
+    \field{title}{{Reinforcement Leaning}}
+    \verb{file}
+    \verb :C\:/Users/Daniel Kuknyo/Documents/ELTE/2/Artificial Intelligence in
+    \verb Processes and Automation/Project/Report/References/book - Reinforceme
+    \verb nt Learning An Introduction, 2nd Edition by Richard S. Sutton, Andrew
+    \verb  G Barto (z-lib.org).pdf:pdf
+    \endverb
+    \field{year}{2018}
+  \endentry
+
+  \entry{kipf2016semi}{article}{}
+    \name{author}{2}{}{%
+      {{hash=KTN}{%
+         family={Kipf},
+         familyi={K\bibinitperiod},
+         given={Thomas\bibnamedelima N},
+         giveni={T\bibinitperiod\bibinitdelim N\bibinitperiod},
+      }}%
+      {{hash=WM}{%
+         family={Welling},
+         familyi={W\bibinitperiod},
+         given={Max},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{KTNWM1}
+    \strng{fullhash}{KTNWM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Semi-Supervised Classification with Graph Convolutional
+  Networks}
+    \field{journaltitle}{arXiv preprint arXiv:1609.02907}
+    \field{year}{2016}
+  \endentry
+
+  \entry{lin1992self}{article}{}
+    \name{author}{1}{}{%
+      {{hash=LLJ}{%
+         family={Lin},
+         familyi={L\bibinitperiod},
+         given={Long-Ji},
+         giveni={L\bibinithyphendelim J\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer}%
+    }
+    \strng{namehash}{LLJ1}
+    \strng{fullhash}{LLJ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{number}{3}
+    \field{pages}{293\bibrangedash 321}
+    \field{title}{Self-improving reactive agents based on reinforcement
+  learning, planning and teaching}
+    \field{volume}{8}
+    \field{journaltitle}{Machine learning}
+    \field{year}{1992}
+  \endentry
+
+  \entry{hasselt2010double}{article}{}
+    \name{author}{1}{}{%
+      {{hash=HH}{%
+         family={Hasselt},
+         familyi={H\bibinitperiod},
+         given={Hado},
+         giveni={H\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{HH1}
+    \strng{fullhash}{HH1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Double Q-learning}
+    \field{volume}{23}
+    \field{journaltitle}{Advances in neural information processing systems}
+    \field{year}{2010}
+  \endentry
+
+  \entry{wang2016dueling}{inproceedings}{}
+    \name{author}{6}{}{%
+      {{hash=WZ}{%
+         family={Wang},
+         familyi={W\bibinitperiod},
+         given={Ziyu},
+         giveni={Z\bibinitperiod},
+      }}%
+      {{hash=ST}{%
+         family={Schaul},
+         familyi={S\bibinitperiod},
+         given={Tom},
+         giveni={T\bibinitperiod},
+      }}%
+      {{hash=HM}{%
+         family={Hessel},
+         familyi={H\bibinitperiod},
+         given={Matteo},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=HH}{%
+         family={Hasselt},
+         familyi={H\bibinitperiod},
+         given={Hado},
+         giveni={H\bibinitperiod},
+      }}%
+      {{hash=LM}{%
+         family={Lanctot},
+         familyi={L\bibinitperiod},
+         given={Marc},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=FN}{%
+         family={Freitas},
+         familyi={F\bibinitperiod},
+         given={Nando},
+         giveni={N\bibinitperiod},
+      }}%
+    }
+    \list{organization}{1}{%
+      {PMLR}%
+    }
+    \strng{namehash}{WZ+1}
+    \strng{fullhash}{WZSTHMHHLMFN1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{booktitle}{International conference on machine learning}
+    \field{pages}{1995\bibrangedash 2003}
+    \field{title}{Dueling network architectures for deep reinforcement
+  learning}
+    \field{year}{2016}
+  \endentry
+
+  \entry{glorot2010understanding}{inproceedings}{}
+    \name{author}{2}{}{%
+      {{hash=GX}{%
+         family={Glorot},
+         familyi={G\bibinitperiod},
+         given={Xavier},
+         giveni={X\bibinitperiod},
+      }}%
+      {{hash=BY}{%
+         family={Bengio},
+         familyi={B\bibinitperiod},
+         given={Yoshua},
+         giveni={Y\bibinitperiod},
+      }}%
+    }
+    \list{organization}{2}{%
+      {JMLR Workshop}%
+      {Conference Proceedings}%
+    }
+    \strng{namehash}{GXBY1}
+    \strng{fullhash}{GXBY1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{booktitle}{Proceedings of the thirteenth international conference on
+  artificial intelligence and statistics}
+    \field{pages}{249\bibrangedash 256}
+    \field{title}{Understanding the difficulty of training deep feedforward
+  neural networks}
+    \field{year}{2010}
+  \endentry
+\enddatalist
+\endinput

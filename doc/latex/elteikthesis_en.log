@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.5.10)  11 MAY 2023 17:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.5.10)  13 MAY 2023 11:45
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1298,24 +1298,24 @@ Package csquotes Info: ... found 'babel' package.
  (./elteikthesis_en.aux)
 \openout1 = `elteikthesis_en.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
 
 
 Package hungarian.ldf Warning: All Hungarian hyphenation= patterns missing.
@@ -1381,7 +1381,7 @@ Package: ltcaption 2020/05/30 v1.4b longtable captions (AR)
 )
 Package caption Info: rotating package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring OFF on input line 39.
+Package hyperref Info: Link coloring OFF on input line 40.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
@@ -1394,9 +1394,9 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count496
 )
-LaTeX Info: Redefining \ref on input line 39.
-LaTeX Info: Redefining \pageref on input line 39.
-LaTeX Info: Redefining \nameref on input line 39.
+LaTeX Info: Redefining \ref on input line 40.
+LaTeX Info: Redefining \pageref on input line 40.
+LaTeX Info: Redefining \nameref on input line 40.
 
 (/usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape.sty
 Package: pdflscape 2019/12/05 v0.12 Display of landscape pages in PDF (HO)
@@ -1438,23 +1438,24 @@ Package biblatex Info: Data encoding 'utf8' specified.
 \openout3 = `elteikthesis_en-blx.bib'.
 
 Package biblatex Info: Trying to load bibliographic data...
-Package biblatex Info: ... file 'elteikthesis_en.bbl' not found.
+Package biblatex Info: ... file 'elteikthesis_en.bbl' found.
 
-No file elteikthesis_en.bbl.
-Package biblatex Info: Reference section=0 on input line 39.
-Package biblatex Info: Reference segment=0 on input line 39.
+(./elteikthesis_en.bbl)
+Package biblatex Info: Reference section=0 on input line 40.
+Package biblatex Info: Reference segment=0 on input line 40.
 \c@lstlisting=\count497
+
 (/usr/share/texlive/texmf-dist/tex/latex/base/report.cls
 LaTeX Info: Redefining \cal on input line 577.
 LaTeX Info: Redefining \mit on input line 578.
 )
-LaTeX Font Info:    Trying to load font information for U+msa on input line 49.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 50.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 49.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 50.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
@@ -1463,20 +1464,20 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 <./images//elte_cimer_szines.jpg, id=7, 400.74803pt x 400.74803pt>
 File: ./images//elte_cimer_szines.jpg Graphic file (type jpg)
 <use ./images//elte_cimer_szines.jpg>
-Package pdftex.def Info: ./images//elte_cimer_szines.jpg  used on input line 49
+Package pdftex.def Info: ./images//elte_cimer_szines.jpg  used on input line 50
 .
 (pdftex.def)             Requested size: 106.69783pt x 106.69302pt.
 
-Overfull \vbox (30.10992pt too high) detected at line 49
+Overfull \vbox (30.10992pt too high) detected at line 50
  []
 
 
-Overfull \hbox (45.65988pt too wide) in paragraph at lines 49--49
+Overfull \hbox (45.65988pt too wide) in paragraph at lines 50--50
  [] 
  []
 
 
-Overfull \hbox (20.75804pt too wide) in paragraph at lines 49--49
+Overfull \hbox (20.75804pt too wide) in paragraph at lines 50--50
  [][] 
  []
 
@@ -1492,7 +1493,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.}) has b
 een already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.53 \tableofcontents
+l.54 \tableofcontents
                      {}\newpage{} [2]
 \c@conpageno=\count498
 
@@ -1503,426 +1504,311 @@ Chapter 1.
 
 ] [4] [5]
 Chapter 2.
-
-LaTeX Warning: Citation 'jette2013book' on page 6 undefined on input line 159.
-
-
-LaTeX Warning: Citation 'williams2012tragedy' on page 6 undefined on input line
- 173.
-
 [6
 
-]
-
-LaTeX Warning: Citation 'marshall1996injuries' on page 7 undefined on input lin
-e 204.
-
-
-LaTeX Warning: Citation 'norton2011fighting' on page 7 undefined on input line 
-206.
-
-
-LaTeX Warning: Citation 'norton2007street' on page 7 undefined on input line 20
-8.
-
-[7]
-
-LaTeX Warning: Citation 'pucher1996united' on page 8 undefined on input line 22
-7.
-
-
-LaTeX Warning: Citation 'parolek2020missing' on page 8 undefined on input line 
-239.
-
-[8]
-
-LaTeX Warning: Citation 'milton1998relationship' on page 9 undefined on input l
-ine 275.
-
-
-LaTeX Warning: Citation 'abdel2000modeling' on page 9 undefined on input line 2
-77.
-
-
-LaTeX Warning: Citation 'decicco2006global' on page 9 undefined on input line 2
-88.
-
-
-LaTeX Warning: Citation 'gately2015cities' on page 9 undefined on input line 29
-1.
-
-
-LaTeX Warning: Citation 'marohn2021confessions' on page 9 undefined on input li
-ne 299.
-
-[9] [10]
-
-LaTeX Warning: Citation 'marohn2012thoughts' on page 11 undefined on input line
- 366.
-
-[11]
-
-LaTeX Warning: Citation 'bates2015mixed' on page 12 undefined on input line 408
-.
-
-
-LaTeX Warning: Citation 'motorvehicle2020' on page 12 undefined on input line 4
-12.
-
-
-LaTeX Warning: Citation 'marohn2019strong' on page 12 undefined on input line 4
-24.
-
-[12] [13]
-
-LaTeX Warning: Citation 'hoult2009wireless' on page 14 undefined on input line 
-511.
-
-
-LaTeX Warning: Citation 'salo2021ai' on page 14 undefined on input line 514.
-
-
-LaTeX Warning: Citation 'sukhadia2020optimization' on page 14 undefined on inpu
-t line 516.
-
-
-LaTeX Warning: Citation 'wei2021recent' on page 14 undefined on input line 518.
-
-
-[14]
-
-LaTeX Warning: Citation 'kangari1990automation' on page 15 undefined on input l
-ine 553.
-
-[15]
-
-LaTeX Warning: Citation 'sacks2020building' on page 16 undefined on input line 
-562.
-
-
-LaTeX Warning: Citation 'andersen2018state' on page 16 undefined on input line 
-581.
-
-[16] [17]
+] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16]
 Chapter 3.
-
-LaTeX Warning: Citation 'geogebra2017geogebra' on page 18 undefined on input li
-ne 607.
-
-<images/simple_graph.png, id=205, 931.48pt x 522.95375pt>
+<images/simple_graph.png, id=248, 931.48pt x 522.95375pt>
 File: images/simple_graph.png Graphic file (type png)
 <use images/simple_graph.png>
-Package pdftex.def Info: images/simple_graph.png  used on input line 613.
+Package pdftex.def Info: images/simple_graph.png  used on input line 614.
 (pdftex.def)             Requested size: 284.52028pt x 159.73605pt.
-[18
+[17
 
 ]
-<images/simple.png, id=217, 1517.67pt x 1043.9pt>
+<images/simple.png, id=260, 1517.67pt x 1043.9pt>
 File: images/simple.png Graphic file (type png)
 <use images/simple.png>
-Package pdftex.def Info: images/simple.png  used on input line 628.
+Package pdftex.def Info: images/simple.png  used on input line 629.
 (pdftex.def)             Requested size: 284.51611pt x 195.69891pt.
- [19 <./images/simple_graph.png> <./images/simple.png>]
-
-LaTeX Warning: Citation 'treiber2000congested' on page 20 undefined on input li
-ne 673.
-
-[20] [21] [22]
-
-LaTeX Warning: Citation 'Sutton2018' on page 23 undefined on input line 776.
-
-[23] [24]
-
-LaTeX Warning: Citation 'kipf2016semi' on page 25 undefined on input line 867.
-
-[25]
-
-LaTeX Warning: Citation 'lin1992self' on page 26 undefined on input line 919.
-
-
-LaTeX Warning: Citation 'hasselt2010double' on page 26 undefined on input line 
-939.
-
-[26]
-
-LaTeX Warning: Citation 'wang2016dueling' on page 27 undefined on input line 97
-7.
-
-[27]
-<images/ann_dueling_demo.png, id=292, 1777.64125pt x 426.59375pt>
+ [18 <./images/simple_graph.png> <./images/simple.png>] [19] [20] [21]
+[22] [23] [24] [25] [26]
+<images/ann_dueling_demo.png, id=348, 1777.64125pt x 426.59375pt>
 File: images/ann_dueling_demo.png Graphic file (type png)
 <use images/ann_dueling_demo.png>
-Package pdftex.def Info: images/ann_dueling_demo.png  used on input line 999.
+Package pdftex.def Info: images/ann_dueling_demo.png  used on input line 1001.
 (pdftex.def)             Requested size: 284.50978pt x 68.27591pt.
- [28 <./images/ann_dueling_demo.png>]
+ [27 <./images/ann_dueling_demo.png>]
 Chapter 4.
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 1026.
-[29
+put line 1028.
+[28
 
-] [30] [31] [32] [33] [34] [35] [36]
-<images/junction_righthand.png, id=377, 1517.67pt x 1043.9pt>
+] [29] [30] [31] [32] [33] [34] [35]
+<images/junction_righthand.png, id=434, 1517.67pt x 1043.9pt>
 File: images/junction_righthand.png Graphic file (type png)
 <use images/junction_righthand.png>
-Package pdftex.def Info: images/junction_righthand.png  used on input line 1385
+Package pdftex.def Info: images/junction_righthand.png  used on input line 1388
 .
 (pdftex.def)             Requested size: 227.61752pt x 156.5623pt.
- [37]
-<images/junction_roundabout.png, id=391, 1517.67pt x 1043.9pt>
+ [36]
+<images/junction_roundabout.png, id=449, 1517.67pt x 1043.9pt>
 File: images/junction_roundabout.png Graphic file (type png)
 <use images/junction_roundabout.png>
-Package pdftex.def Info: images/junction_roundabout.png  used on input line 139
-7.
+Package pdftex.def Info: images/junction_roundabout.png  used on input line 140
+0.
 (pdftex.def)             Requested size: 227.61752pt x 156.5623pt.
-<images/junction_trafficlight.png, id=392, 1517.67pt x 1043.9pt>
+<images/junction_trafficlight.png, id=450, 1517.67pt x 1043.9pt>
 File: images/junction_trafficlight.png Graphic file (type png)
 <use images/junction_trafficlight.png>
 Package pdftex.def Info: images/junction_trafficlight.png  used on input line 1
-417.
+420.
 (pdftex.def)             Requested size: 227.61752pt x 156.5623pt.
- [38 <./images/junction_righthand.png> <./images/junction_roundabout.png>]
-<images/junctions.png, id=404, 1809.76125pt x 391.4625pt>
+ [37 <./images/junction_righthand.png> <./images/junction_roundabout.png>]
+<images/junctions.png, id=461, 1809.76125pt x 391.4625pt>
 File: images/junctions.png Graphic file (type png)
 <use images/junctions.png>
-Package pdftex.def Info: images/junctions.png  used on input line 1431.
+Package pdftex.def Info: images/junctions.png  used on input line 1434.
 (pdftex.def)             Requested size: 369.87126pt x 80.00542pt.
- [39 <./images/junction_trafficlight.png> <./images/junctions.png>] [40] [41] [
-42]
-<images/gcnn_end.png, id=435, 1713.40125pt x 2596.70125pt>
+ [38 <./images/junction_trafficlight.png> <./images/junctions.png>] [39] [40] [
+41]
+<images/gcnn_end.png, id=491, 1713.40125pt x 2596.70125pt>
 File: images/gcnn_end.png Graphic file (type png)
 <use images/gcnn_end.png>
-Package pdftex.def Info: images/gcnn_end.png  used on input line 1582.
+Package pdftex.def Info: images/gcnn_end.png  used on input line 1585.
 (pdftex.def)             Requested size: 281.60094pt x 426.77309pt.
- [43 <./images/gcnn_end.png>]
-<images/gcnn_action.png, id=442, 2778.38pt x 2596.70125pt>
+ [42 <./images/gcnn_end.png>]
+<images/gcnn_action.png, id=499, 2778.38pt x 2596.70125pt>
 File: images/gcnn_action.png Graphic file (type png)
 <use images/gcnn_action.png>
-Package pdftex.def Info: images/gcnn_action.png  used on input line 1616.
+Package pdftex.def Info: images/gcnn_action.png  used on input line 1619.
 (pdftex.def)             Requested size: 456.63235pt x 426.77309pt.
 
-Overfull \hbox (29.841pt too wide) in paragraph at lines 1616--1617
+Overfull \hbox (29.841pt too wide) in paragraph at lines 1619--1620
  [][] 
  []
 
-[44] [45 <./images/gcnn_action.png>]
-
-LaTeX Warning: Citation 'glorot2010understanding' on page 46 undefined on input
- line 1650.
-
-<images/enn_end.png, id=454, 1103.12125pt x 1545.775pt>
+[43] [44 <./images/gcnn_action.png>]
+<images/enn_end.png, id=512, 1103.12125pt x 1545.775pt>
 File: images/enn_end.png Graphic file (type png)
 <use images/enn_end.png>
-Package pdftex.def Info: images/enn_end.png  used on input line 1677.
+Package pdftex.def Info: images/enn_end.png  used on input line 1680.
 (pdftex.def)             Requested size: 162.43124pt x 227.61066pt.
-<images/enn_action.png, id=455, 1623.06375pt x 1545.775pt>
+<images/enn_action.png, id=513, 1623.06375pt x 1545.775pt>
 File: images/enn_action.png Graphic file (type png)
 <use images/enn_action.png>
-Package pdftex.def Info: images/enn_action.png  used on input line 1678.
+Package pdftex.def Info: images/enn_action.png  used on input line 1681.
 (pdftex.def)             Requested size: 227.62363pt x 216.78441pt.
-[46]
-<images/snn_end.png, id=461, 1103.12125pt x 1545.775pt>
+ [45]
+<images/snn_end.png, id=520, 1103.12125pt x 1545.775pt>
 File: images/snn_end.png Graphic file (type png)
 <use images/snn_end.png>
-Package pdftex.def Info: images/snn_end.png  used on input line 1703.
+Package pdftex.def Info: images/snn_end.png  used on input line 1706.
 (pdftex.def)             Requested size: 162.43124pt x 227.61066pt.
-<images/snn_action.png, id=462, 1451.4225pt x 1545.775pt>
+<images/snn_action.png, id=521, 1451.4225pt x 1545.775pt>
 File: images/snn_action.png Graphic file (type png)
 <use images/snn_action.png>
-Package pdftex.def Info: images/snn_action.png  used on input line 1704.
+Package pdftex.def Info: images/snn_action.png  used on input line 1707.
 (pdftex.def)             Requested size: 213.71754pt x 227.61066pt.
- [47 <./images/enn_end.png> <./images/enn_action.png>] [48 <./images/snn_end.pn
+ [46 <./images/enn_end.png> <./images/enn_action.png>] [47 <./images/snn_end.pn
 g> <./images/snn_action.png>]
 Chapter 5.
-[49
+[48
 
 ]
-<images/test_5_intersection.png, id=484, 724.7075pt x 399.4925pt>
+<images/test_5_intersection.png, id=543, 724.7075pt x 399.4925pt>
 File: images/test_5_intersection.png Graphic file (type png)
 <use images/test_5_intersection.png>
-Package pdftex.def Info: images/test_5_intersection.png  used on input line 175
-8.
+Package pdftex.def Info: images/test_5_intersection.png  used on input line 176
+1.
 (pdftex.def)             Requested size: 227.62057pt x 125.47505pt.
-<images/test_5_intersection_empty.png, id=485, 724.7075pt x 399.4925pt>
+<images/test_5_intersection_empty.png, id=544, 724.7075pt x 399.4925pt>
 File: images/test_5_intersection_empty.png Graphic file (type png)
 <use images/test_5_intersection_empty.png>
 Package pdftex.def Info: images/test_5_intersection_empty.png  used on input li
-ne 1765.
+ne 1768.
 (pdftex.def)             Requested size: 227.62057pt x 125.47505pt.
- [50 <./images/test_5_intersection.png> <./images/test_5_intersection_empty.png
->] [51]
-<images/scores_history_comparison_test_5_intersection.png, id=503, 433.62pt x 4
+ [49 <./images/test_5_intersection.png> <./images/test_5_intersection_empty.png
+>] [50]
+<images/scores_history_comparison_test_5_intersection.png, id=563, 433.62pt x 4
 33.62pt>
 File: images/scores_history_comparison_test_5_intersection.png Graphic file (ty
 pe png)
 <use images/scores_history_comparison_test_5_intersection.png>
 Package pdftex.def Info: images/scores_history_comparison_test_5_intersection.p
-ng  used on input line 1831.
+ng  used on input line 1834.
 (pdftex.def)             Requested size: 199.16988pt x 199.16988pt.
-<images/windowed_scores_comparison_test_5_intersection.png, id=504, 433.62pt x 
+<images/windowed_scores_comparison_test_5_intersection.png, id=564, 433.62pt x 
 433.62pt>
 File: images/windowed_scores_comparison_test_5_intersection.png Graphic file (t
 ype png)
 <use images/windowed_scores_comparison_test_5_intersection.png>
 Package pdftex.def Info: images/windowed_scores_comparison_test_5_intersection.
-png  used on input line 1832.
+png  used on input line 1835.
 (pdftex.def)             Requested size: 199.16988pt x 199.16988pt.
-<images/average_scores_comparison_test_5_intersection.png, id=505, 433.62pt x 4
+<images/average_scores_comparison_test_5_intersection.png, id=565, 433.62pt x 4
 33.62pt>
 File: images/average_scores_comparison_test_5_intersection.png Graphic file (ty
 pe png)
 <use images/average_scores_comparison_test_5_intersection.png>
 Package pdftex.def Info: images/average_scores_comparison_test_5_intersection.p
-ng  used on input line 1832.
+ng  used on input line 1835.
 (pdftex.def)             Requested size: 199.16988pt x 199.16988pt.
- [52] [53 <./images/scores_history_comparison_test_5_intersection.png> <./image
+ [51] [52 <./images/scores_history_comparison_test_5_intersection.png> <./image
 s/windowed_scores_comparison_test_5_intersection.png> <./images/average_scores_
 comparison_test_5_intersection.png>]
-<images/scores_history_comparison_test_5_intersection_empty.png, id=519, 433.62
+<images/scores_history_comparison_test_5_intersection_empty.png, id=578, 433.62
 pt x 433.62pt>
 File: images/scores_history_comparison_test_5_intersection_empty.png Graphic fi
 le (type png)
 <use images/scores_history_comparison_test_5_intersection_empty.png>
 Package pdftex.def Info: images/scores_history_comparison_test_5_intersection_e
-mpty.png  used on input line 1862.
+mpty.png  used on input line 1865.
 (pdftex.def)             Requested size: 199.16988pt x 199.16988pt.
-<images/windowed_scores_comparison_test_5_intersection_empty.png, id=520, 433.6
+<images/windowed_scores_comparison_test_5_intersection_empty.png, id=579, 433.6
 2pt x 433.62pt>
 File: images/windowed_scores_comparison_test_5_intersection_empty.png Graphic f
 ile (type png)
 <use images/windowed_scores_comparison_test_5_intersection_empty.png>
 Package pdftex.def Info: images/windowed_scores_comparison_test_5_intersection_
-empty.png  used on input line 1863.
+empty.png  used on input line 1866.
 (pdftex.def)             Requested size: 199.16988pt x 199.16988pt.
-<images/average_scores_comparison_test_5_intersection_empty.png, id=521, 433.62
+<images/average_scores_comparison_test_5_intersection_empty.png, id=580, 433.62
 pt x 433.62pt>
 File: images/average_scores_comparison_test_5_intersection_empty.png Graphic fi
 le (type png)
 <use images/average_scores_comparison_test_5_intersection_empty.png>
 Package pdftex.def Info: images/average_scores_comparison_test_5_intersection_e
-mpty.png  used on input line 1863.
+mpty.png  used on input line 1866.
 (pdftex.def)             Requested size: 199.16988pt x 199.16988pt.
- [54 <./images/scores_history_comparison_test_5_intersection_empty.png> <./imag
+ [53 <./images/scores_history_comparison_test_5_intersection_empty.png> <./imag
 es/windowed_scores_comparison_test_5_intersection_empty.png> <./images/average_
 scores_comparison_test_5_intersection_empty.png>]
-<images/node_reward_plot_node_weights_plot_test_5_intersection.png, id=531, 108
+<images/node_reward_plot_node_weights_plot_test_5_intersection.png, id=589, 108
 4.05pt x 361.35pt>
 File: images/node_reward_plot_node_weights_plot_test_5_intersection.png Graphic
  file (type png)
 <use images/node_reward_plot_node_weights_plot_test_5_intersection.png>
 Package pdftex.def Info: images/node_reward_plot_node_weights_plot_test_5_inter
-section.png  used on input line 1905.
+section.png  used on input line 1908.
 (pdftex.def)             Requested size: 398.32983pt x 132.77661pt.
- [55 <./images/node_reward_plot_node_weights_plot_test_5_intersection.png>]
-<images/node_reward_plot_node_weights_plot_test_5_intersection_empty.png, id=53
-8, 1084.05pt x 361.35pt>
+ [54 <./images/node_reward_plot_node_weights_plot_test_5_intersection.png>]
+<images/node_reward_plot_node_weights_plot_test_5_intersection_empty.png, id=59
+7, 1084.05pt x 361.35pt>
 File: images/node_reward_plot_node_weights_plot_test_5_intersection_empty.png G
 raphic file (type png)
 <use images/node_reward_plot_node_weights_plot_test_5_intersection_empty.png>
 Package pdftex.def Info: images/node_reward_plot_node_weights_plot_test_5_inter
-section_empty.png  used on input line 1937.
+section_empty.png  used on input line 1947.
 (pdftex.def)             Requested size: 398.32983pt x 132.77661pt.
- [56 <./images/node_reward_plot_node_weights_plot_test_5_intersection_empty.png
+ [55 <./images/node_reward_plot_node_weights_plot_test_5_intersection_empty.png
 >]
-<images/embeddings_before_after_end_gcnn_2023-05-05_15-03.png, id=545, 722.7pt 
+<images/embeddings_before_after_end_gcnn_2023-05-05_15-03.png, id=604, 722.7pt 
 x 361.35pt>
 File: images/embeddings_before_after_end_gcnn_2023-05-05_15-03.png Graphic file
  (type png)
 <use images/embeddings_before_after_end_gcnn_2023-05-05_15-03.png>
 Package pdftex.def Info: images/embeddings_before_after_end_gcnn_2023-05-05_15-
-03.png  used on input line 1983.
+03.png  used on input line 1992.
 (pdftex.def)             Requested size: 398.33534pt x 199.16766pt.
- [57]
-<images/embeddings_before_after_action_gcnn_2023-05-05_15-03.png, id=552, 722.7
+ [56]
+<images/embeddings_before_after_action_gcnn_2023-05-05_15-03.png, id=610, 722.7
 pt x 361.35pt>
 File: images/embeddings_before_after_action_gcnn_2023-05-05_15-03.png Graphic f
 ile (type png)
 <use images/embeddings_before_after_action_gcnn_2023-05-05_15-03.png>
 Package pdftex.def Info: images/embeddings_before_after_action_gcnn_2023-05-05_
-15-03.png  used on input line 1990.
+15-03.png  used on input line 1999.
 (pdftex.def)             Requested size: 398.33534pt x 199.16766pt.
-<images/embeddings_before_after_end_enn_2023-05-05_22-54.png, id=553, 722.7pt x
+<images/embeddings_before_after_end_enn_2023-05-05_22-54.png, id=611, 722.7pt x
  361.35pt>
 File: images/embeddings_before_after_end_enn_2023-05-05_22-54.png Graphic file 
 (type png)
 <use images/embeddings_before_after_end_enn_2023-05-05_22-54.png>
 Package pdftex.def Info: images/embeddings_before_after_end_enn_2023-05-05_22-5
-4.png  used on input line 1998.
+4.png  used on input line 2007.
 (pdftex.def)             Requested size: 398.33534pt x 199.16766pt.
- [58 <./images/embeddings_before_after_end_gcnn_2023-05-05_15-03.png> <./images
+ [57 <./images/embeddings_before_after_end_gcnn_2023-05-05_15-03.png> <./images
 /embeddings_before_after_action_gcnn_2023-05-05_15-03.png>]
-<images/embeddings_before_after_action_enn_2023-05-05_22-54.png, id=564, 722.7p
+<images/embeddings_before_after_action_enn_2023-05-05_22-54.png, id=622, 722.7p
 t x 361.35pt>
 File: images/embeddings_before_after_action_enn_2023-05-05_22-54.png Graphic fi
 le (type png)
 <use images/embeddings_before_after_action_enn_2023-05-05_22-54.png>
 Package pdftex.def Info: images/embeddings_before_after_action_enn_2023-05-05_2
-2-54.png  used on input line 2006.
+2-54.png  used on input line 2015.
 (pdftex.def)             Requested size: 398.33534pt x 199.16766pt.
-[59 <./images/embeddings_before_after_end_enn_2023-05-05_22-54.png> <./images/e
+[58 <./images/embeddings_before_after_end_enn_2023-05-05_22-54.png> <./images/e
 mbeddings_before_after_action_enn_2023-05-05_22-54.png>]
-<images/city_agent_gcnn_2023-05-03_23-33_test_5_intersection.png, id=574, 1517.
+<images/city_agent_gcnn_2023-05-03_23-33_test_5_intersection.png, id=632, 1517.
 67pt x 1043.9pt>
 File: images/city_agent_gcnn_2023-05-03_23-33_test_5_intersection.png Graphic f
 ile (type png)
 <use images/city_agent_gcnn_2023-05-03_23-33_test_5_intersection.png>
 Package pdftex.def Info: images/city_agent_gcnn_2023-05-03_23-33_test_5_interse
-ction.png  used on input line 2056.
+ction.png  used on input line 2065.
 (pdftex.def)             Requested size: 227.61752pt x 156.5623pt.
- [60]
-<images/city_agent_gcnn_2023-04-29_18-06_test_5_intersection_empty.png, id=581,
+ [59]
+<images/city_agent_gcnn_2023-04-29_18-06_test_5_intersection_empty.png, id=638,
  1517.67pt x 1043.9pt>
 File: images/city_agent_gcnn_2023-04-29_18-06_test_5_intersection_empty.png Gra
 phic file (type png)
 <use images/city_agent_gcnn_2023-04-29_18-06_test_5_intersection_empty.png>
 Package pdftex.def Info: images/city_agent_gcnn_2023-04-29_18-06_test_5_interse
-ction_empty.png  used on input line 2071.
+ction_empty.png  used on input line 2080.
 (pdftex.def)             Requested size: 227.61752pt x 156.5623pt.
-<images/city_agent_enn_2023-05-04_10-53_test_5_intersection.png, id=582, 1517.6
+<images/city_agent_enn_2023-05-04_10-53_test_5_intersection.png, id=639, 1517.6
 7pt x 1043.9pt>
 File: images/city_agent_enn_2023-05-04_10-53_test_5_intersection.png Graphic fi
 le (type png)
 <use images/city_agent_enn_2023-05-04_10-53_test_5_intersection.png>
 Package pdftex.def Info: images/city_agent_enn_2023-05-04_10-53_test_5_intersec
-tion.png  used on input line 2086.
+tion.png  used on input line 2095.
 (pdftex.def)             Requested size: 227.61752pt x 156.5623pt.
- [61 <./images/city_agent_gcnn_2023-05-03_23-33_test_5_intersection.png> <./ima
+ [60 <./images/city_agent_gcnn_2023-05-03_23-33_test_5_intersection.png> <./ima
 ges/city_agent_gcnn_2023-04-29_18-06_test_5_intersection_empty.png>]
-<images/city_agent_enn_2023-05-04_22-59_test_5_intersection_empty.png, id=593, 
+<images/city_agent_enn_2023-05-04_22-59_test_5_intersection_empty.png, id=651, 
 1517.67pt x 1043.9pt>
 File: images/city_agent_enn_2023-05-04_22-59_test_5_intersection_empty.png Grap
 hic file (type png)
 <use images/city_agent_enn_2023-05-04_22-59_test_5_intersection_empty.png>
 Package pdftex.def Info: images/city_agent_enn_2023-05-04_22-59_test_5_intersec
-tion_empty.png  used on input line 2101.
+tion_empty.png  used on input line 2110.
 (pdftex.def)             Requested size: 227.61752pt x 156.5623pt.
-<images/city_agent_snn_2023-05-04_14-28_test_5_intersection.png, id=594, 1517.6
+<images/city_agent_snn_2023-05-04_14-28_test_5_intersection.png, id=652, 1517.6
 7pt x 1043.9pt>
 File: images/city_agent_snn_2023-05-04_14-28_test_5_intersection.png Graphic fi
 le (type png)
 <use images/city_agent_snn_2023-05-04_14-28_test_5_intersection.png>
 Package pdftex.def Info: images/city_agent_snn_2023-05-04_14-28_test_5_intersec
-tion.png  used on input line 2120.
+tion.png  used on input line 2129.
 (pdftex.def)             Requested size: 227.61752pt x 156.5623pt.
- [62 <./images/city_agent_enn_2023-05-04_10-53_test_5_intersection.png> <./imag
+ [61 <./images/city_agent_enn_2023-05-04_10-53_test_5_intersection.png> <./imag
 es/city_agent_enn_2023-05-04_22-59_test_5_intersection_empty.png>]
-<images/city_agent_snn_2023-05-04_20-30_test_5_intersection_empty.png, id=605, 
+<images/city_agent_snn_2023-05-04_20-30_test_5_intersection_empty.png, id=663, 
 1517.67pt x 1043.9pt>
 File: images/city_agent_snn_2023-05-04_20-30_test_5_intersection_empty.png Grap
 hic file (type png)
 <use images/city_agent_snn_2023-05-04_20-30_test_5_intersection_empty.png>
 Package pdftex.def Info: images/city_agent_snn_2023-05-04_20-30_test_5_intersec
-tion_empty.png  used on input line 2139.
+tion_empty.png  used on input line 2148.
 (pdftex.def)             Requested size: 227.61752pt x 156.5623pt.
- [63 <./images/city_agent_snn_2023-05-04_14-28_test_5_intersection.png>] [64 <.
+ [62 <./images/city_agent_snn_2023-05-04_14-28_test_5_intersection.png>] [63 <.
 /images/city_agent_snn_2023-05-04_20-30_test_5_intersection_empty.png>]
 Chapter 6.
-[65
+[64
 
-] [66] [67] [68]
+] [65] [66] [67]
+Underfull \hbox (badness 1173) in paragraph at lines 2278--2278
+[]\T1/cmr/m/n/12 John Milton and Fred Mannering. ^^P  The Relationship Among Hi
+ghway
+ []
 
-LaTeX Warning: Empty bibliography on input line 2263.
+[68
 
-(./elteikthesis_en.lof [69])
+]
+Underfull \hbox (badness 3449) in paragraph at lines 2278--2278
+[]\T1/cmr/m/n/12 Charles L Marohn. \T1/cmr/m/it/12 Thoughts on build-ing strong
+ towns\T1/cmr/m/n/12 . CreateSpace
+ []
+
+
+Underfull \hbox (badness 2197) in paragraph at lines 2278--2278
+[]\T1/cmr/m/n/12 National Highway Traffic Safety Administration. ^^P  National 
+Center for
+ []
+
+[69] (./elteikthesis_en.lof [70])
 \tf@lof=\write8
 \openout8 = `elteikthesis_en.lof'.
 
@@ -1930,7 +1816,7 @@ LaTeX Warning: Empty bibliography on input line 2263.
 \tf@lot=\write9
 \openout9 = `elteikthesis_en.lot'.
 
- [70]
+ [71] [72]
 (./elteikthesis_en.aux)
 
 LaTeX Warning: There were undefined references.
@@ -1945,39 +1831,40 @@ Package logreq Info: Writing requests to 'elteikthesis_en.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 39478 strings out of 480129
- 749861 string characters out of 5893409
- 1436063 words of memory out of 5000000
- 56455 multiletter control sequences out of 15000+600000
+ 39670 strings out of 480129
+ 757259 string characters out of 5893409
+ 1437033 words of memory out of 5000000
+ 56611 multiletter control sequences out of 15000+600000
  492121 words of font info for 82 fonts, out of 8000000 for 9000
  81 hyphenation exceptions out of 8191
- 124i,13n,145p,1857b,2154s stack positions out of 5000i,500n,10000p,200000b,80000s
- </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.60
-0pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.
-600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsl120
-0.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1
+ 124i,13n,145p,1857b,2157s stack positions out of 5000i,500n,10000p,200000b,80000s
+ </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/eccc1200.60
+0pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.
+600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx172
+8.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsl1
 200.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/ecb
-x2488.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/e
-cti1200.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec
-/ecrm1200.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/
-ec/ecrm1440.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappe
-n/ec/ecti1440.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknap
-pen/ec/ecbx2074.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jkn
-appen/ec/eccc1440.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/j
-knappen/ec/eccc1728.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmm
-i6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb>
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/s
-hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/tex
-live/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on elteikthesis_en.pdf (71 pages, 8830535 bytes).
+x1200.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/e
+cbx2488.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec
+/ecti1200.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/
+ec/ecrm1200.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappe
+n/ec/ecrm1440.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jknap
+pen/ec/ecti1440.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/jkn
+appen/ec/ecbx2074.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour/j
+knappen/ec/eccc1440.600pk> </home/daniel/.texlive2021/texmf-var/fonts/pk/ljfour
+/jknappen/ec/eccc1728.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/t
+exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmsy8.pfb>
+Output written on elteikthesis_en.pdf (73 pages, 8853619 bytes).
 PDF statistics:
- 1383 PDF objects out of 1440 (max. 8388607)
- 791 compressed objects within 8 object streams
- 284 named destinations out of 1000 (max. 500000)
+ 1503 PDF objects out of 1728 (max. 8388607)
+ 872 compressed objects within 9 object streams
+ 318 named destinations out of 1000 (max. 500000)
  519 words of extra memory for PDF output out of 10000 (max. 10000000)
 

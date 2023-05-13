@@ -34,6 +34,7 @@
 
 % Add bibliography file
 \addbibresource{elteikthesis.bib}
+\bibliography{elteikthesis}
 
 % The document
 \begin{document}
@@ -1632,12 +1633,12 @@ end are selected from the matrix using the same indices. The four
 extracted vectors get concatenated into a single one that has the
 shape of $2*embedding\_size+2*n\_nodes$ and the resulting 1-dimensional
 vector gets passed to the fully connected layers. The amount of layers
-at each neural pass can be customized but during training two hidden
+at each neural pass can be customized though during training two hidden
 layers were used. The output layer is used to predict the state-action
 value function for the action which represents how lucrative is it
-for the agent to be in a certain state and given two nodes for the
-start and end take each action. The Q-values of the actions that cannot
-be taken for each start, end pair get suppressed to $-\infty$. This
+for the agent to be in a certain state and (given two nodes for the
+start and end) take each action. The Q-values of the actions that cannot
+be acted upon for each start, end pair get suppressed to $-\infty$. This
 involves finding what the current junction is and how many lanes are
 currently built between the starting and ending node. If for example
 there are no lanes between the two junctions the agent cannot take
@@ -1647,7 +1648,7 @@ Some other considerations have also been taken into account while
 designing the neural networks for the modeling process like regularization
 through dropout which eliminates a node from the learning pass with
 a predefined probability. This forces the agent to generalize better.
-Another aspect of the models is that before each training iteration
+Another design aspect of the models is that before each training iteration
 starts the model weights are initialized randomly using the Xavier
 method also known as Glorot initialization \cite{glorot2010understanding}.
 The resulting tensor will have weights uniformly sampled from $\mathcal{U}(-a,a)$
@@ -1666,7 +1667,7 @@ One that has used only embeddings (not graph convolutional) to make
 predictions, and one that used only the graph features from the state
 to determine the input for the dense connections. These models can
 be understood as submodels of the GCNN architecture with slight modifications
-so they will be introduced briefly.
+so they are introduced briefly.
 
 The embedding architecture uses embeddings used in natural language
 processing to extract structural information from the graph. These
@@ -1725,8 +1726,8 @@ deep learning environment has more than 35 parameters, not counting
 the ones needed to define and train the neural network. The main metric
 that was used to measure the performance of the models was the cumulated
 reward during each learning epoch. The comparison of networks in this
-section will include networks trained with slightly different hyperparameters
-but with the same rewarding scheme for a fair criterion.
+section includes networks trained with slightly different hyperparameters
+but with the same rewarding scheme for a fair examination.
 
 \section{The testing environment}
 
@@ -1747,11 +1748,11 @@ travel times in a motor vehicle.
 For the above reasons two testing environments were created. They
 are defined in such a way that there are multiple ways the agents
 can reach a fast transportation time, but creating a humanly livable
-environment at the same time is a difficult task. The number and locations
+environment at the same time remains a difficult task. The number and locations
 of the nodes are exactly the same, the only difference is that there
-are some connections added to one of the environments. Out of the
-two distinct tasks the empty starting configuration can be classified
-as the harder one as the agent has no prior infrastructure to work
+are some connections added to one of the environments, the other one
+remained empty. Out of the two distinct tasks the empty starting configuration 
+can be classified as the harder one as the agent has no prior infrastructure to work
 with. The images of the starting configurations can be seen below: 
 \begin{enumerate}
 \item The intersection that the agent will have to learn to optimize: 
@@ -1800,7 +1801,7 @@ the traffic control problem better. The types of the agents are:
 \item GCNN (Graph Convolutional Neural Network): a special architecture
 that uses embeddings from graph convolutional layers as well as node
 feature information indexed straight from the state-definition matrix. 
-\item ENN (Embedding Neural Network): a configuration which use solely node
+\item ENN (Embedding Neural Network): a configuration which uses solely node
 embeddings as the input for the densely connected layers. The embeddings
 here are the same as the ones used in natural language processing.
 The input for the embeddings is the state-definition matrix. 
@@ -1815,7 +1816,7 @@ iterations. For the end prediction networks the dense layers' number
 of neurons were {[}16,12,8{]} and for action prediction {[}32,16,8{]}.
 The GCN layers had 10 hidden units as well as the dimensions of the
 embeddings. As the agent will have to learn to optimize for long term
-rewards a discount factor of 0.99 was used all over the training.
+rewards a discount factor of 0.99 was used over the entire training procedure.
 The strategy to optimize the rewards was epsilon greedy, where the
 agent is taking random actions with a given probability which is large
 at the beginning and decreases towards the end of the training. This
@@ -1867,20 +1868,20 @@ are presented below:
 \caption{Training results in the \emph{test\_5\_intersection} environment}
 \end{figure}
 
-This time the learning curves are diverging instead of showing a steadily
+This time the learning curves are diverging instead of all of them showing a steadily
 increasing pace. The best performing model was the GCNN architecture
 which learned to increase rewards over time. The embedding based network
-was measured to be very unstable with the reward fluctuating between
-increasing and decreasing. Overall the reward has been slowly decreasing
-over time. Only the graph convolution based model learned how to increase
+was measured to be very unstable with the reward fluctuating with large
+amplitude with the reward slowly decreasing over time. 
+Only the graph convolution based model learned how to increase
 rewards in the more difficult environment. Despite being noisier in
-terms of score deviation, still measured higher than the embedding
+terms of score deviation it still measured higher than the embedding
 based network which has converged around a value that is still lower
 in score than the bottom mark of the GCNN model. 
 
 Another insight to note is that in this case it wasn't possible for
 the agents to add a traffic light intersection as the agent couldn't
-return to the same node twice.
+return to the same node enough times to hit the traffic light inbound limit.
 
 \section{Rewards for nodes}
 
@@ -1919,7 +1920,7 @@ in numeric form in the million scale.
 Both the GCNN and the ENN models found the nodes in the middle of
 the other nodes to be more reward prone than the others on the outside.
 From the scoring we know that this is a better strategy than that
-of the feature based network. It's interesting to notice that some
+of the feature based network. It's intriguing to notice that some
 of the outer nodes have negative cumulative rewards for the GCNN and
 ENN models. The reason for this is that these are very likely to induce
 heavy infrastructure costs as the roads become longer. Even more so
@@ -1929,7 +1930,14 @@ negative reward if a node is left out of the graph without any incoming
 or outgoing nodes. For the SNN the rewards are distributed more evenly
 among the inner and outer nodes which leads to the conclusion that
 the model didn't develop enough experience to distinguish the state-values
-of the nodes from each other. 
+of the nodes from each other. A key observation here is that an instant reward
+for an action doesn't necessarily get followed with an instant positive reward.
+Some road systems can only work if there are more interconnecting junctions
+that achieve a high reward only if taken together. E.g. there's no point in 
+having a 4-lane road if it ends in a single one-way street. The traffic flow 
+gets disrupted which cannot be attributed to the larger road. The expansion
+only makes sense if the connected roads get expanded too otherwise traffic jams
+will occur.
 
 The following plot is the same type of metric in the \emph{test\_5\_intersection\_empty}
 environment as seen in the plot below: 
@@ -1974,10 +1982,9 @@ them a PCA based T-SNE model was applied using the same parameters
 across all the datasets containing the values of the embeddings. This
 method projects down a higher dimensional dataset into a lower dimensional
 space by aggregating axes into latent variables called components.
-To be able to visualize the dataset there has to be two components
-to be applied to the embeddings. There are in total two models with
-two neural networks each and two distinct states where the embeddings
-were captured.
+To be able to visualize the dataset the number of components was set to two. 
+There are in total two models with two neural networks each and two distinct 
+states where the embeddings were captured.
 \begin{enumerate}
 \item GCNN, end prediction network:
 \begin{figure}[H]
@@ -2027,7 +2034,7 @@ to have an equal basis of comparison.
 It's worth observing that the graph convolutional model made a larger
 change in the embeddings while training the weights. This leads to
 the conclusion that it has learned to distinguish them better and
-use the structural information from the graph in a more profitable
+use the structural and connection information from the graph in a more profitable
 manner. The fact that it has performed better in the harder task than
 the embedding based network proves this idea.
 
@@ -2037,7 +2044,7 @@ The following part is about giving examples on well scoring and badly
 designed cities. After the training process the agents were used to
 design a city for 15 discrete time steps, which means they had 15
 opportunities to build or destroy infrastructure. One rule of building
-is that no new junction can be created, so when two roads cross the
+is that no new junction gets created when two roads cross so the
 vehicles cannot change from one road to the other one in the intersection
 (essentially the crossing functions as a bridge). This was a way to
 simplify the learning task but can be the ground for the continuation
@@ -2050,7 +2057,7 @@ way to display a graph. Some examples with words of analysis are:
 cities of the entire training procedure. The agent has learned that
 if it connects the outer nodes then the traffic can be diverted between
 these nodes giving them a much larger vehicle score. It has also realized
-that in the center of the city many roads are meeting so it has added
+that in the center of the city many roads meet so it has added
 traffic light intersections to the central nodes thereby gaining a
 large positive reward in the human aspect scoring as well. 
 \begin{figure}[H]
@@ -2060,7 +2067,7 @@ large positive reward in the human aspect scoring as well.
 \caption{GCNN model, evaluation, \emph{test\_5\_intersection}}
 
 \end{figure}
-\item GCNN, \emph{test\_5\_intersection\_empty: }this is a fairly well designed
+\item GCNN, \emph{test\_5\_intersection\_empty}: this is a fairly well designed
 city for the harder task. The structure is again very similar to the
 one seen above: the outer nodes are connected for traffic flow, however
 the agent hasn't learned to add traffic light intersections to the
@@ -2132,7 +2139,7 @@ an even higher reward. It has failed to realize that adding roundabouts
 only makes sense if there are multiple inbound roads to the intersection
 so it has added three roundabouts with only two incoming lanes. The
 discontinuity of the graph and the fact that some nodes remained without
-any connections to other graphs also yielded a large negative reward.
+any connections to others also yielded a large negative reward.
 This is clearly a wrong configuration and is shown as an example to
 demonstrate the difference between an agent of superior and inferior
 performance in the testing environments. 
@@ -2150,14 +2157,17 @@ performance in the testing environments.
 The task of traffic control using reinforcement learning has proved
 itself to be very difficult in terms of modeling, optimization and
 simulation. The need for a realistic simulation environment is large,
-however with a realistic simulation environment come a large number
+however with such a simulation environment comes a large number
 of variables which need to be handled by the machine learning model.
 It's a very time consuming problem to find the rewarding scheme that
 reflects what a human expects from a well-designed city while being
 able to combine it with the capability of a neural network to uncover
-insights from factors underlying the data. With the gained experience
-and understanding the following paragraphs will deal with answering
-the research hypotheses supposed in the beginning of the study. 
+insights from factors underlying the data. For this reason an insight is that 
+very thorough research should precede the modeling phase where the cost of
+each infrastructure building and destroying is determined specifically to 
+the area and economical setting where the project is being executed. 
+With the gained experience and understanding the following paragraphs 
+will deal with answering the research hypotheses supposed in the beginning of the study. 
 
 \section*{Hypotheses}
 \begin{enumerate}
@@ -2176,7 +2186,9 @@ the environment would take heavy tolls on the time and budget of the
 laboratory, however technologically it is possible. The environment
 employed in this research wasn't nearly as complicated as the real
 world, however it was enough for the agent to learn the main city
-design guidelines that it was designed to do. The hypothesis is supported. 
+design guidelines that it was designed to do. It's also worth pointing out 
+that so far these models didn't perform nearly as well as a professional would. 
+The hypothesis is supported. 
 \end{description}
 \item Can predefined road configurations be optimized for traffic flow,
 human livability and cost efficiency at the same time? 
@@ -2219,7 +2231,7 @@ rejected.
 The purpose of this research was to develop a reinforcement learning
 model that can optimize traffic flow in a city by building roads,
 lanes and intersections between predefined nodes that are defined
-on a user friendly interface. The model will take into account how
+on a user friendly interface. The model takes into account how
 fast and dynamically does traffic flow and how welcoming a city is
 to its residents: the number of lanes and infrastructure cost have
 to be minimal while also minimizing the time taken to travel between
@@ -2243,7 +2255,7 @@ vehicles and different driver behaviors would also help make the simulation
 environment more realistic in the sense that traffic flow would behave
 even more like in real life. It's also worth noting that this would
 add even more noise to an already very noisy system. One key thing
-that could prove itself useful is counting in the type of terrain
+that could prove itself useful is factoring in the type of terrain
 that the roads are built on and being able to assign different infrastructure
 costs to different areas of land.
 
@@ -2262,7 +2274,7 @@ motor vehicles.
 
 \newpage{}
 
-\printbibliography{elteikthesis}
+\printbibliography
 
 \listoffigures
 
