@@ -1251,15 +1251,15 @@ and $B$ going from $A\rightarrow B$ and $B\rightarrow A$: \textit{\emph{$x(A,B)-
 Only valid if $x(A,B)>1\ \&\ x(B,A)>1$.}}
 \item \emph{$add\_righthand(A,A)$: }Removes current traffic light or roundabout
 infrastructure to create a right-hand priority intersection in graph
-node $A$ in the state-descriptor: $X(A,A)=1$. Only valid if $X(A,A)\neq1$.
+node $A$ in the state-descriptor: $x(A,A)=1$. Only valid if $x(A,A)\neq1$.
 \item \emph{$add\_roundabout(A,A)$: }Adds a roundabout to all roads entering
 the intersection of graph node $A$. Destroys current traffic light
-or right-hand intersection in the state-descriptor: $X(A,A)=2$. Only
-valid if $X(A,A)\neq2.$
+or right-hand intersection in the state-descriptor: $x(A,A)=2$. Only
+valid if $x(A,A)\neq2.$
 \item \emph{$add\_trafficlight(A,A)$: }Creates a traffic light system to
 all roads entering the intersection of graph node $A$. Destroys current
-right-hand intersection or roundabout in the state-descriptor: $X(A,A)=3$.
-Only valid if $X(A,A)\neq3.$
+right-hand intersection or roundabout in the state-descriptor: $x(A,A)=3$.
+Only valid if $x(A,A)\neq3.$
 \end{enumerate}
 The action space presented here corresponds to the operation mode
 '\emph{Junctions and roads}'. The action space corresponding to \emph{'Lane

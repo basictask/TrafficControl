@@ -1,0 +1,14 @@
+\babel@toc {english}{}\relax 
+\beamer@sectionintoc {1}{Introduction}{1}{0}{1}
+\beamer@sectionintoc {2}{Motivation of the research}{3}{0}{2}
+\beamer@subsectionintoc {2}{1}{Urban design}{4}{0}{2}
+\beamer@subsectionintoc {2}{2}{Use cases of the research}{6}{0}{2}
+\beamer@sectionintoc {3}{Methodology}{9}{0}{3}
+\beamer@subsectionintoc {3}{1}{Interface}{10}{0}{3}
+\beamer@subsectionintoc {3}{2}{Simulation}{12}{0}{3}
+\beamer@subsectionintoc {3}{3}{Modeling}{13}{0}{3}
+\beamer@subsectionintoc {3}{4}{Testing environment}{20}{0}{3}
+\beamer@sectionintoc {4}{Results}{21}{0}{4}
+\beamer@subsectionintoc {4}{1}{Episodic rewards}{22}{0}{4}
+\beamer@subsectionintoc {4}{2}{Cities designed by the agents}{28}{0}{4}
+\beamer@sectionintoc {5}{Conclusion}{34}{0}{5}

@@ -1,0 +1,10 @@
+digraph "rl_task" {
+    graph[dpi = 300]
+    label = "One prediction pass for the agent"
+    rankdir = "LR"
+
+    start [label = "Start"]
+    end [label = "End"]    
+    
+    start -> end [label = "Action"]
+}
