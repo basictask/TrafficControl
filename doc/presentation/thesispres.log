@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2023.6.20)  26 JUN 2023 18:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2023.6.20)  27 JUN 2023 20:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1046,169 +1046,169 @@ ne 353.
 [21
 
 ]
-<images/scores_history_comparison_test_5_intersection.png, id=835, 433.62pt x 4
+<images/scores_history_comparison_test_5_intersection.png, id=834, 433.62pt x 4
 33.62pt>
 File: images/scores_history_comparison_test_5_intersection.png Graphic file (ty
 pe png)
 <use images/scores_history_comparison_test_5_intersection.png>
 Package pdftex.def Info: images/scores_history_comparison_test_5_intersection.p
-ng  used on input line 422.
+ng  used on input line 421.
 (pdftex.def)             Requested size: 184.9429pt x 184.9444pt.
 
-Overfull \hbox (2.84286pt too wide) detected at line 422
+Overfull \hbox (2.84286pt too wide) detected at line 421
 [][][] $[]$[][][][][][][][] $[]$[][][][][][] 
  []
 
 [22
 
  <./images/scores_history_comparison_test_5_intersection.png>]
-<images/windowed_scores_comparison_test_5_intersection.png, id=869, 433.62pt x 
+<images/windowed_scores_comparison_test_5_intersection.png, id=867, 433.62pt x 
 433.62pt>
 File: images/windowed_scores_comparison_test_5_intersection.png Graphic file (t
 ype png)
 <use images/windowed_scores_comparison_test_5_intersection.png>
 Package pdftex.def Info: images/windowed_scores_comparison_test_5_intersection.
-png  used on input line 422.
+png  used on input line 421.
 (pdftex.def)             Requested size: 184.9429pt x 184.9444pt.
 
-Overfull \hbox (2.84286pt too wide) detected at line 422
+Overfull \hbox (2.84286pt too wide) detected at line 421
 [][][] $[]$[][][][][][][][] $[]$[][][][][][] 
  []
 
 [23
 
  <./images/windowed_scores_comparison_test_5_intersection.png>]
-<images/average_scores_comparison_test_5_intersection.png, id=900, 433.62pt x 4
+<images/average_scores_comparison_test_5_intersection.png, id=898, 433.62pt x 4
 33.62pt>
 File: images/average_scores_comparison_test_5_intersection.png Graphic file (ty
 pe png)
 <use images/average_scores_comparison_test_5_intersection.png>
 Package pdftex.def Info: images/average_scores_comparison_test_5_intersection.p
-ng  used on input line 422.
+ng  used on input line 421.
 (pdftex.def)             Requested size: 184.9429pt x 184.9444pt.
 
-Overfull \hbox (2.84286pt too wide) detected at line 422
+Overfull \hbox (2.84286pt too wide) detected at line 421
 [][][] $[]$[][][][][][][][] $[]$[][][][][][] 
  []
 
 [24
 
  <./images/average_scores_comparison_test_5_intersection.png>]
-<images/scores_history_comparison_test_5_intersection_empty.png, id=931, 433.62
+<images/scores_history_comparison_test_5_intersection_empty.png, id=929, 433.62
 pt x 433.62pt>
 File: images/scores_history_comparison_test_5_intersection_empty.png Graphic fi
 le (type png)
 <use images/scores_history_comparison_test_5_intersection_empty.png>
 Package pdftex.def Info: images/scores_history_comparison_test_5_intersection_e
-mpty.png  used on input line 422.
+mpty.png  used on input line 421.
 (pdftex.def)             Requested size: 184.9429pt x 184.9444pt.
 
-Overfull \hbox (2.84286pt too wide) detected at line 422
+Overfull \hbox (2.84286pt too wide) detected at line 421
 [][][] $[]$[][][][][][][][] $[]$[][][][][][] 
  []
 
 [25
 
  <./images/scores_history_comparison_test_5_intersection_empty.png>]
-<images/windowed_scores_comparison_test_5_intersection_empty.png, id=964, 433.6
+<images/windowed_scores_comparison_test_5_intersection_empty.png, id=962, 433.6
 2pt x 433.62pt>
 File: images/windowed_scores_comparison_test_5_intersection_empty.png Graphic f
 ile (type png)
 <use images/windowed_scores_comparison_test_5_intersection_empty.png>
 Package pdftex.def Info: images/windowed_scores_comparison_test_5_intersection_
-empty.png  used on input line 422.
+empty.png  used on input line 421.
 (pdftex.def)             Requested size: 184.9429pt x 184.9444pt.
 
-Overfull \hbox (2.84286pt too wide) detected at line 422
+Overfull \hbox (2.84286pt too wide) detected at line 421
 [][][] $[]$[][][][][][][][] $[]$[][][][][][] 
  []
 
 [26
 
  <./images/windowed_scores_comparison_test_5_intersection_empty.png>]
-<images/average_scores_comparison_test_5_intersection_empty.png, id=995, 433.62
+<images/average_scores_comparison_test_5_intersection_empty.png, id=993, 433.62
 pt x 433.62pt>
 File: images/average_scores_comparison_test_5_intersection_empty.png Graphic fi
 le (type png)
 <use images/average_scores_comparison_test_5_intersection_empty.png>
 Package pdftex.def Info: images/average_scores_comparison_test_5_intersection_e
-mpty.png  used on input line 422.
+mpty.png  used on input line 421.
 (pdftex.def)             Requested size: 184.9429pt x 184.9444pt.
 
-Overfull \hbox (2.84286pt too wide) detected at line 422
+Overfull \hbox (2.84286pt too wide) detected at line 421
 [][][] $[]$[][][][][][][][] $[]$[][][][][][] 
  []
 
 [27
 
  <./images/average_scores_comparison_test_5_intersection_empty.png>]
-<images/city_agent_gcnn_2023-05-03_23-33_test_5_intersection.png, id=1025, 1517
+<images/city_agent_gcnn_2023-05-03_23-33_test_5_intersection.png, id=1023, 1517
 .67pt x 1043.9pt>
 File: images/city_agent_gcnn_2023-05-03_23-33_test_5_intersection.png Graphic f
 ile (type png)
 <use images/city_agent_gcnn_2023-05-03_23-33_test_5_intersection.png>
 Package pdftex.def Info: images/city_agent_gcnn_2023-05-03_23-33_test_5_interse
-ction.png  used on input line 480.
+ction.png  used on input line 479.
 (pdftex.def)             Requested size: 199.15665pt x 136.98605pt.
 
 [28
 
  <./images/city_agent_gcnn_2023-05-03_23-33_test_5_intersection.png>]
-<images/city_agent_gcnn_2023-04-29_18-06_test_5_intersection_empty.png, id=1057
+<images/city_agent_gcnn_2023-04-29_18-06_test_5_intersection_empty.png, id=1054
 , 1517.67pt x 1043.9pt>
 File: images/city_agent_gcnn_2023-04-29_18-06_test_5_intersection_empty.png Gra
 phic file (type png)
 <use images/city_agent_gcnn_2023-04-29_18-06_test_5_intersection_empty.png>
 Package pdftex.def Info: images/city_agent_gcnn_2023-04-29_18-06_test_5_interse
-ction_empty.png  used on input line 480.
+ction_empty.png  used on input line 479.
 (pdftex.def)             Requested size: 199.15665pt x 136.98605pt.
 
 [29
 
  <./images/city_agent_gcnn_2023-04-29_18-06_test_5_intersection_empty.png>]
-<images/city_agent_enn_2023-05-04_10-53_test_5_intersection.png, id=1089, 1517.
+<images/city_agent_enn_2023-05-04_10-53_test_5_intersection.png, id=1086, 1517.
 67pt x 1043.9pt>
 File: images/city_agent_enn_2023-05-04_10-53_test_5_intersection.png Graphic fi
 le (type png)
 <use images/city_agent_enn_2023-05-04_10-53_test_5_intersection.png>
 Package pdftex.def Info: images/city_agent_enn_2023-05-04_10-53_test_5_intersec
-tion.png  used on input line 480.
+tion.png  used on input line 479.
 (pdftex.def)             Requested size: 199.15665pt x 136.98605pt.
 
 [30
 
  <./images/city_agent_enn_2023-05-04_10-53_test_5_intersection.png>]
-<images/city_agent_enn_2023-05-04_22-59_test_5_intersection_empty.png, id=1120,
+<images/city_agent_enn_2023-05-04_22-59_test_5_intersection_empty.png, id=1117,
  1517.67pt x 1043.9pt>
 File: images/city_agent_enn_2023-05-04_22-59_test_5_intersection_empty.png Grap
 hic file (type png)
 <use images/city_agent_enn_2023-05-04_22-59_test_5_intersection_empty.png>
 Package pdftex.def Info: images/city_agent_enn_2023-05-04_22-59_test_5_intersec
-tion_empty.png  used on input line 480.
+tion_empty.png  used on input line 479.
 (pdftex.def)             Requested size: 199.15665pt x 136.98605pt.
 
 [31
 
  <./images/city_agent_enn_2023-05-04_22-59_test_5_intersection_empty.png>]
-<images/city_agent_snn_2023-05-04_14-28_test_5_intersection.png, id=1152, 1517.
+<images/city_agent_snn_2023-05-04_14-28_test_5_intersection.png, id=1149, 1517.
 67pt x 1043.9pt>
 File: images/city_agent_snn_2023-05-04_14-28_test_5_intersection.png Graphic fi
 le (type png)
 <use images/city_agent_snn_2023-05-04_14-28_test_5_intersection.png>
 Package pdftex.def Info: images/city_agent_snn_2023-05-04_14-28_test_5_intersec
-tion.png  used on input line 480.
+tion.png  used on input line 479.
 (pdftex.def)             Requested size: 199.15665pt x 136.98605pt.
 
 [32
 
  <./images/city_agent_snn_2023-05-04_14-28_test_5_intersection.png>]
-<images/city_agent_snn_2023-05-04_20-30_test_5_intersection_empty.png, id=1184,
+<images/city_agent_snn_2023-05-04_20-30_test_5_intersection_empty.png, id=1181,
  1517.67pt x 1043.9pt>
 File: images/city_agent_snn_2023-05-04_20-30_test_5_intersection_empty.png Grap
 hic file (type png)
 <use images/city_agent_snn_2023-05-04_20-30_test_5_intersection_empty.png>
 Package pdftex.def Info: images/city_agent_snn_2023-05-04_20-30_test_5_intersec
-tion_empty.png  used on input line 480.
+tion_empty.png  used on input line 479.
 (pdftex.def)             Requested size: 199.15665pt x 136.98605pt.
 
 [33
@@ -1231,57 +1231,39 @@ tion_empty.png  used on input line 480.
 \openout8 = `thesispres.snm'.
 
  (./thesispres.aux)
-
-Package rerunfilecheck Warning: File `thesispres.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `thesispres.out':
-(rerunfilecheck)             Before: 3625FE200504F00D21CC073C7DBC6B8D;1693
-(rerunfilecheck)             After:  4C8B1E2366AD6B372FD07CB4CFC97D4F;1693.
+Package rerunfilecheck Info: File `thesispres.out' has not changed.
+(rerunfilecheck)             Checksum: 4C8B1E2366AD6B372FD07CB4CFC97D4F;1693.
  ) 
 Here is how much of TeX's memory you used:
- 23483 strings out of 477933
- 462073 string characters out of 5838201
+ 23480 strings out of 477933
+ 462028 string characters out of 5838201
  1875330 words of memory out of 5000000
  43024 multiletter control sequences out of 15000+600000
  524816 words of font info for 63 fonts, out of 8000000 for 9000
  81 hyphenation exceptions out of 8191
  101i,20n,104p,409b,1009s stack positions out of 10000i,1000n,20000p,200000b,200000s
-
-pdfTeX warning (dest): name{Outline0.4.3.28} has been referenced but does not e
-xist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{Outline0.4.2.22} has been referenced but does not e
-xist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{Outline0.4.1.21} has been referenced but does not e
-xist, replaced by a fixed one
-
- </home/daniel/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx2074.600p
-k> </home/daniel/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss1000.60
-0pk> </home/daniel/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx1095.
-600pk> </home/daniel/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss080
-0.600pk> </home/daniel/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss1
-095.600pk> </home/daniel/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec/ecs
-s1440.600pk> </home/daniel/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec/e
-css0600.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cme
-x10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex
-8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb>
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/s
-hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/te
-xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-di
-st/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmsy8.pfb>
-Output written on thesispres.pdf (36 pages, 7277060 bytes).
+ </home/daniel/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx2074.60
+0pk> </home/daniel/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss1000.
+600pk> </home/daniel/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx109
+5.600pk> </home/daniel/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss0
+800.600pk> </home/daniel/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec/ecs
+s1095.600pk> </home/daniel/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec/e
+css1440.600pk> </home/daniel/.texlive2022/texmf-var/fonts/pk/ljfour/jknappen/ec
+/ecss0600.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cm
+ex8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmsy8.pfb>
+Output written on thesispres.pdf (36 pages, 7277009 bytes).
 PDF statistics:
- 1654 PDF objects out of 1728 (max. 8388607)
- 1236 compressed objects within 13 object streams
- 89 named destinations out of 1000 (max. 500000)
+ 1651 PDF objects out of 1728 (max. 8388607)
+ 1233 compressed objects within 13 object streams
+ 86 named destinations out of 1000 (max. 500000)
  364 words of extra memory for PDF output out of 10000 (max. 10000000)
 
